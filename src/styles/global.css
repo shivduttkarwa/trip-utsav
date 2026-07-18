@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Adamina&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;600;700&display=swap");
 
 /* ============================================================
    TRIP UTSAV — Design System
@@ -35,7 +35,7 @@
   --grad-sunset: linear-gradient(135deg, #0f4c9c 0%, #6a3d9e 55%, #f26b21 110%);
 
   /* Type */
-  --font-heading: "Adamina", Georgia, serif;
+  --font-heading: "Libre Franklin", "Segoe UI", sans-serif;
   --font-display: "Sora", "Segoe UI", sans-serif;
   --font-body: "Inter", "Segoe UI", sans-serif;
 
@@ -91,7 +91,7 @@ h1, h2, h3, h4, h5 {
   font-family: var(--font-heading);
   color: var(--ink);
   line-height: 1.18;
-  font-weight: 400;
+  font-weight: 700;
   letter-spacing: 0;
 }
 
