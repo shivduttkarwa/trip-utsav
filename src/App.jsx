@@ -18,7 +18,11 @@ import NotFound from "./pages/NotFound";
 /* Jump to top on every route change (browser back/forward keeps native behaviour) */
 function ScrollToTop() {
   const { pathname } = useLocation();
-  useEffect(() => window.scrollTo(0, 0), [pathname]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   return null;
 }
 
