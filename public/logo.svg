@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" role="img" aria-label="Trip Utsav — Travel More, Celebrate Life">
+  <!-- Placeholder recreation of the Trip Utsav logo. Swap this file with the official SVG when provided. -->
+  <g>
+    <!-- Location pin -->
+    <path d="M38 28c-9.4 0-17 7.6-17 17 0 12.7 17 30 17 30s17-17.3 17-30c0-9.4-7.6-17-17-17zm0 23a6 6 0 1 1 0-12 6 6 0 0 1 0 12z" fill="#F26B21"/>
+    <!-- Wordmark -->
+    <text x="66" y="72" font-family="Poppins, Arial, sans-serif" font-size="52" font-weight="700">
+      <tspan fill="#0F4C9C">Trip </tspan><tspan fill="#F26B21">Utsav</tspan>
+    </text>
+    <!-- Tagline -->
+    <line x1="70" y1="94" x2="118" y2="94" stroke="#F26B21" stroke-width="2"/>
+    <text x="128" y="99" font-family="Poppins, Arial, sans-serif" font-size="15" font-weight="500" letter-spacing="2" fill="#3A4252">TRAVEL MORE, CELEBRATE LIFE</text>
+    <line x1="382" y1="94" x2="412" y2="94" stroke="#F26B21" stroke-width="2"/>
+    <!-- Plane -->
+    <path d="M360 30l28-12-14 26-6-8-10 2z" fill="#0F4C9C" transform="rotate(8 370 25)"/>
+    <path d="M300 34c20-10 44-14 60-12" stroke="#F26B21" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="1 6"/>
+  </g>
+</svg>
