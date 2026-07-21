@@ -44,16 +44,16 @@ export function Preloader() {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setDone(true), 1400);
+    const t = setTimeout(() => setDone(true), 1900);
     return () => clearTimeout(t);
   }, []);
 
   return (
     <div className={`preloader${done ? " done" : ""}`} aria-hidden={done}>
       <div className="preloader-inner">
-        <div className="preloader-plane"><Icon name="plane" /></div>
-        <div className="brand-text"><b>Trip</b> <span>Utsav</span></div>
-        <div className="preloader-bar"></div>
+        <span className="preloader-kicker">Travel More · Celebrate Life</span>
+        <div className="preloader-word">Trip <em>Utsav</em></div>
+        <div className="preloader-line"><span></span></div>
       </div>
     </div>
   );

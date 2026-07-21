@@ -6,12 +6,20 @@ import { useUI } from "../components/UIContext";
 import Icon from "../components/Icon";
 import Button from "../components/Button";
 import Reveal from "../components/Reveal";
+import RotatingWord from "../components/RotatingWord";
+import HeroSlider from "../components/HeroSlider";
 import SectionHead from "../components/SectionHead";
 import PackageCard from "../components/PackageCard";
 import Stat from "../components/Stat";
 import TestimonialSlider from "../components/TestimonialSlider";
 
-const HERO_IMG = IMG("photo-1476514525535-07fb3b4ae5f1", 2000);
+const HERO_SLIDES = [
+  IMG("photo-1476514525535-07fb3b4ae5f1", 2000), // misty forest road
+  IMG("photo-1464822759023-fed622ff2c3b", 2000), // snow mountain peaks
+  IMG("photo-1512343879784-a960bf40e7f2", 2000), // turquoise beach aerial
+  IMG("photo-1533105079780-92b9be482077", 2000), // maldives overwater villas
+  IMG("photo-1502602898657-3e91760cbb34", 2000), // paris golden hour
+];
 const WHYUS_IMG = IMG("photo-1488646953014-85cb44e25828", 1000);
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -54,13 +62,13 @@ export default function Home() {
     <>
       {/* ---------- HERO ---------- */}
       <header className="hero">
-        <div className="hero-media">
-          <img src={HERO_IMG} alt="" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = FALLBACK_IMG; }} />
-        </div>
+        <HeroSlider slides={HERO_SLIDES} interval={3000} />
         <div className="container hero-inner">
           <Reveal as="span" className="eyebrow">Travel More, Celebrate Life</Reveal>
           <Reveal as="h1" className="display-1" delay={0.12}>
-            Every Trip is a <em>Festival</em> Waiting to Happen
+            Chase{" "}
+            <RotatingWord words={["sunsets", "festivals", "horizons", "monsoons", "mountains"]} />
+            <br className="hero-h1-break" />not deadlines.
           </Reveal>
           <Reveal as="p" delay={0.24}>
             From Himalayan passes to Maldivian lagoons — hand-crafted domestic and international

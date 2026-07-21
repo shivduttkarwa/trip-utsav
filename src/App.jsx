@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import EnquiryModal from "./components/EnquiryModal";
 import { ToastHost, FloatingButtons, Preloader } from "./components/Chrome";
+import MagicFX from "./components/MagicFX";
 
 import Home from "./pages/Home";
 import Packages from "./pages/Packages";
@@ -31,6 +32,7 @@ export default function App() {
     <UIProvider>
       <Preloader />
       <ScrollToTop />
+      <MagicFX />
       <Navbar />
       <main>
         <Routes>
