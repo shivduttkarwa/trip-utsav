@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { NAV_LINKS, SITE } from "../data/site";
+import { NAV_LINKS } from "../data/site";
 import { useUI } from "./UIContext";
-import Icon from "./Icon";
 import Button from "./Button";
 
 export default function Navbar() {
@@ -31,21 +30,7 @@ export default function Navbar() {
   };
 
   return (
-    <>
-      <div className="topbar">
-        <div className="container">
-          <div className="topbar-group">
-            <a href={SITE.phoneHref}><Icon name="phone" /> {SITE.phone}</a>
-            <a href={`mailto:${SITE.email}`} className="hide-mobile"><Icon name="mail" /> {SITE.email}</a>
-          </div>
-          <div className="topbar-group">
-            <span className="hide-mobile"><Icon name="clock" /> Mon–Sat · 9:30 AM – 7:30 PM</span>
-            <Link to="/contact"><Icon name="headset" /> 24×7 Trip Support</Link>
-          </div>
-        </div>
-      </div>
-
-      <nav className={`navbar${scrolled ? " scrolled" : ""}`}>
+    <nav className={`navbar${scrolled ? " scrolled" : ""}`}>
         <div className="container">
           <Link className="brand" to="/" aria-label="Trip Utsav home">
             <img src="/logo.svg" alt="Trip Utsav — Travel More, Celebrate Life" />
@@ -74,6 +59,5 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
-    </>
   );
 }

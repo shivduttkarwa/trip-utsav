@@ -7,7 +7,7 @@ import Icon from "../components/Icon";
 import Button from "../components/Button";
 import Reveal from "../components/Reveal";
 import RotatingWord from "../components/RotatingWord";
-import HeroSlider from "../components/HeroSlider";
+import HeroReveal from "../components/HeroReveal";
 import SectionHead from "../components/SectionHead";
 import PackageCard from "../components/PackageCard";
 import Stat from "../components/Stat";
@@ -60,32 +60,28 @@ export default function Home() {
 
   return (
     <>
-      {/* ---------- HERO ---------- */}
-      <header className="hero">
-        <HeroSlider slides={HERO_SLIDES} interval={3000} />
-        <div className="container hero-inner">
-          <Reveal as="span" className="eyebrow">Travel More, Celebrate Life</Reveal>
-          <Reveal as="h1" className="display-1" delay={0.12}>
-            Chase{" "}
-            <RotatingWord words={["sunsets", "festivals", "horizons", "monsoons", "mountains"]} />
-            <br className="hero-h1-break" />not deadlines.
-          </Reveal>
-          <Reveal as="p" delay={0.24}>
-            From Himalayan passes to Maldivian lagoons — hand-crafted domestic and international
-            holidays, planned by real experts and backed by 24×7 on-trip support.
-          </Reveal>
-          <Reveal className="hero-actions" delay={0.36}>
-            <Button size="lg" icon="arrow" to="/packages">Explore Packages</Button>
-            <Button variant="white" size="lg" onClick={() => openEnquiry()}>Get Free Itinerary</Button>
-          </Reveal>
-          <Reveal className="hero-badges" delay={0.5}>
-            <span className="hero-badge"><Icon name="shield" /> 100% Customisable Trips</span>
-            <span className="hero-badge"><Icon name="star" /> 4.8★ Rated by 2,000+ Travellers</span>
-            <span className="hero-badge"><Icon name="headset" /> 24×7 On-trip Support</span>
-          </Reveal>
+      {/* ---------- HERO (scroll-reveal world map) ---------- */}
+      <HeroReveal image={HERO_SLIDES[0]}>
+        <span className="eyebrow">Travel More, Celebrate Life</span>
+        <h1 className="display-1">
+          Chase{" "}
+          <RotatingWord words={["sunsets", "festivals", "horizons", "monsoons", "mountains"]} />
+          <br className="hero-h1-break" />not deadlines.
+        </h1>
+        <p>
+          From Himalayan passes to Maldivian lagoons — hand-crafted domestic and international
+          holidays, planned by real experts and backed by 24×7 on-trip support.
+        </p>
+        <div className="hero-actions">
+          <Button size="lg" icon="arrow" to="/packages">Explore Packages</Button>
+          <Button variant="white" size="lg" onClick={() => openEnquiry()}>Get Free Itinerary</Button>
         </div>
-        <div className="scroll-hint" aria-hidden="true"></div>
-      </header>
+        <div className="hero-badges">
+          <span className="hero-badge"><Icon name="shield" /> 100% Customisable Trips</span>
+          <span className="hero-badge"><Icon name="star" /> 4.8★ Rated by 2,000+ Travellers</span>
+          <span className="hero-badge"><Icon name="headset" /> 24×7 On-trip Support</span>
+        </div>
+      </HeroReveal>
 
       {/* ---------- SEARCH CARD ---------- */}
       <div className="container">
