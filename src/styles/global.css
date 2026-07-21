@@ -73,7 +73,10 @@ body {
   line-height: 1.7;
   color: var(--body);
   background: var(--white);
-  overflow-x: hidden;
+  /* `clip` (not `hidden`) so the body never becomes a scroll container —
+     otherwise nested position:sticky (the hero stage) fails to re-pin
+     after the first scroll. */
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -242,7 +245,8 @@ h3 { font-size: 1.4rem; letter-spacing: -0.012em; }
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid transparent;
-  transition: box-shadow 0.35s ease, border-color 0.35s ease, height 0.35s ease;
+  transition: box-shadow 0.35s ease, border-color 0.35s ease, height 0.35s ease,
+              transform 0.75s var(--ease-out), opacity 0.6s ease;
 }
 .navbar.scrolled { height: 66px; box-shadow: var(--shadow-md); border-color: var(--line); }
 .navbar .container { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
@@ -468,8 +472,10 @@ h3 { font-size: 1.4rem; letter-spacing: -0.012em; }
   background-size: cover;
   background-position: center;
   opacity: var(--reveal);
-  transform: scale(calc(1.08 - var(--reveal) * 0.08));
+  transform: scale(calc(1.08 - var(--reveal) * 0.08)) translateZ(0);
   filter: blur(calc((1 - var(--reveal)) * 10px));
+  will-change: opacity, transform, filter;
+  backface-visibility: hidden;
 }
 
 /* same photo, clipped to the world map — spreads open and dissolves away.
@@ -481,10 +487,11 @@ h3 { font-size: 1.4rem; letter-spacing: -0.012em; }
   background-size: cover;
   background-position: center;
   opacity: clamp(0, calc(1 - var(--reveal) * 1.25), 1);
-  transform: scale(calc(1.08 - var(--reveal) * 0.08));
+  transform: scale(calc(1.08 - var(--reveal) * 0.08)) translateZ(0);
   -webkit-mask: url(/world.svg) center / var(--mask-w) auto no-repeat;
           mask: url(/world.svg) center / var(--mask-w) auto no-repeat;
-  will-change: opacity;
+  will-change: opacity, -webkit-mask-size, mask-size;
+  backface-visibility: hidden;
 }
 
 /* darkening scrim for text legibility — only fades in with the reveal */
@@ -497,6 +504,90 @@ h3 { font-size: 1.4rem; letter-spacing: -0.012em; }
   background:
     linear-gradient(105deg, rgba(7, 22, 48, 0.82) 0%, rgba(7, 22, 48, 0.42) 42%, rgba(7, 22, 48, 0.16) 70%),
     linear-gradient(180deg, transparent 45%, rgba(7, 22, 48, 0.66) 100%);
+}
+
+/* Phase 1 — big attractive intro text over the map; fades + lifts away
+   in lock-step with the map dissolve (driven by --reveal). */
+.hero-intro {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  pointer-events: none;
+  opacity: clamp(0, calc(1 - var(--reveal) * 1.7), 1);
+  transform: translateY(calc(var(--reveal) * -36px)) scale(calc(1 - var(--reveal) * 0.04));
+  will-change: opacity, transform;
+}
+.hero-intro-title {
+  font-family: var(--font-hero);
+  margin: 0;
+  font-size: clamp(3rem, 11vw, 8.5rem);
+  font-weight: 800;
+  line-height: 0.96;
+  letter-spacing: -0.015em;
+  color: var(--blue-ink);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5), 0 6px 44px rgba(255, 255, 255, 0.72);
+}
+.hero-intro-title em {
+  font-style: italic;
+  font-weight: 700;
+  color: var(--orange);
+}
+.hero-intro-cue {
+  position: absolute;
+  bottom: clamp(24px, 6vh, 52px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(7, 31, 66, 0.6);
+  text-shadow: 0 2px 18px rgba(255, 255, 255, 0.7);
+}
+.hero-intro-cue i {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(rgba(7, 31, 66, 0.45), rgba(7, 31, 66, 0));
+  position: relative;
+  overflow: hidden;
+}
+.hero-intro-cue i::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--orange);
+  animation: cueRun 1.9s ease-in-out infinite;
+}
+@keyframes cueRun {
+  0% { transform: translateY(-100%); }
+  60%, 100% { transform: translateY(100%); }
+}
+
+/* ---- Intro lock: hide global chrome during the map intro, animate it in
+   once we reach the real hero (class toggled on <html> by HeroReveal) ---- */
+html.intro-lock .navbar {
+  opacity: 0;
+  transform: translateY(-118%);
+  pointer-events: none;
+}
+html.intro-lock .wa-float {
+  opacity: 0;
+  transform: translateY(28px) scale(0.4);
+  pointer-events: none;
+}
+html.intro-lock .to-top {
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* hero text */
@@ -863,7 +954,7 @@ h3 { font-size: 1.4rem; letter-spacing: -0.012em; }
   background: #25d366;
   color: #fff;
   box-shadow: 0 14px 30px rgba(37, 211, 102, 0.45);
-  transition: transform 0.35s var(--ease-spring);
+  transition: transform 0.6s var(--ease-spring), opacity 0.5s ease;
 }
 .wa-float:hover { transform: scale(1.1) rotate(8deg); }
 .wa-float svg { width: 28px; height: 28px; }

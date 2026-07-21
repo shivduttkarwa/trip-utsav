@@ -37,21 +37,44 @@ export default function HeroReveal({ image, children }) {
     }
 
     let raf = 0;
-    const update = () => {
-      raf = 0;
+    let running = false;
+    let current = 0; // smoothed progress actually rendered
+    let target = 0;  // raw scroll progress we chase
+
+    const readTarget = () => {
       const rect = scene.getBoundingClientRect();
       const stickTop = parseFloat(getComputedStyle(stage).top) || 0;
       const travel = scene.offsetHeight - stage.offsetHeight;
-      const raw = travel > 0 ? clamp((stickTop - rect.top) / travel, 0, 1) : 0;
-      stage.style.setProperty("--p", ease(raw).toFixed(4));
+      target = travel > 0 ? clamp((stickTop - rect.top) / travel, 0, 1) : 0;
       // Hysteresis so the timed text entrance doesn't flicker mid-scroll.
-      setRevealed((was) => (raw > 0.62 ? true : raw < 0.45 ? false : was));
-    };
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update);
+      setRevealed((was) => (target > 0.62 ? true : target < 0.45 ? false : was));
     };
 
-    update();
+    // Per-frame lerp: current eases toward target so coarse wheel steps
+    // render as one continuous, buttery expansion instead of jumps.
+    const tick = () => {
+      current += (target - current) * 0.11;
+      if (Math.abs(target - current) < 0.0003) {
+        current = target;
+        running = false;
+      }
+      stage.style.setProperty("--p", ease(current).toFixed(4));
+      if (running) raf = requestAnimationFrame(tick);
+    };
+    const kick = () => {
+      if (!running) {
+        running = true;
+        raf = requestAnimationFrame(tick);
+      }
+    };
+    const onScroll = () => {
+      readTarget();
+      kick();
+    };
+
+    readTarget();
+    current = target;
+    stage.style.setProperty("--p", ease(current).toFixed(4));
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     return () => {
@@ -60,6 +83,15 @@ export default function HeroReveal({ image, children }) {
       if (raf) cancelAnimationFrame(raf);
     };
   }, []);
+
+  // While the map intro owns the screen, hide the global chrome (header +
+  // floating buttons). Dropping the class lets them animate in once we land
+  // in the real hero. Cleared on unmount so inner pages are never affected.
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.toggle("intro-lock", !revealed);
+    return () => root.classList.remove("intro-lock");
+  }, [revealed]);
 
   const bg = { backgroundImage: `url(${image})` };
 
@@ -74,6 +106,16 @@ export default function HeroReveal({ image, children }) {
 
         {/* darkening scrim for text legibility, only once revealed */}
         <div className="hero-scrim" aria-hidden="true" />
+
+        {/* Phase 1 — big attractive text over the map; leaves with the map */}
+        <div className="hero-intro" aria-hidden={revealed}>
+          <h2 className="hero-intro-title">
+            The World <em>Awaits</em>
+          </h2>
+          <span className="hero-intro-cue">
+            Scroll to explore<i aria-hidden="true" />
+          </span>
+        </div>
 
         {/* hero text */}
         <div className="container hero-inner hero-scene-content" aria-hidden={!revealed}>
