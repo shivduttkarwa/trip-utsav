@@ -6,20 +6,13 @@ import { useUI } from "../components/UIContext";
 import Icon from "../components/Icon";
 import Button from "../components/Button";
 import Reveal from "../components/Reveal";
-import RotatingWord from "../components/RotatingWord";
-import HeroReveal from "../components/HeroReveal";
+import HeroSlides from "../components/HeroSlides";
+import Cta from "../components/Cta";
 import SectionHead from "../components/SectionHead";
 import PackageCard from "../components/PackageCard";
 import Stat from "../components/Stat";
 import TestimonialSlider from "../components/TestimonialSlider";
 
-const HERO_SLIDES = [
-  IMG("photo-1476514525535-07fb3b4ae5f1", 2000), // misty forest road
-  IMG("photo-1464822759023-fed622ff2c3b", 2000), // snow mountain peaks
-  IMG("photo-1512343879784-a960bf40e7f2", 2000), // turquoise beach aerial
-  IMG("photo-1533105079780-92b9be482077", 2000), // maldives overwater villas
-  IMG("photo-1502602898657-3e91760cbb34", 2000), // paris golden hour
-];
 const WHYUS_IMG = IMG("photo-1488646953014-85cb44e25828", 1000);
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -60,92 +53,75 @@ export default function Home() {
 
   return (
     <>
-      {/* ---------- HERO (scroll-reveal world map) ---------- */}
-      <HeroReveal image={HERO_SLIDES[0]}>
-        <span className="eyebrow">Travel More, Celebrate Life</span>
-        <h1 className="display-1">
-          Chase{" "}
-          <RotatingWord words={["sunsets", "festivals", "horizons", "monsoons", "mountains"]} />
-          <br className="hero-h1-break" />not deadlines.
-        </h1>
-        <p>
-          From Himalayan passes to Maldivian lagoons — hand-crafted domestic and international
-          holidays, planned by real experts and backed by 24×7 on-trip support.
-        </p>
-        <div className="hero-actions">
-          <Button size="lg" icon="arrow" to="/packages">Explore Packages</Button>
-          <Button variant="white" size="lg" onClick={() => openEnquiry()}>Get Free Itinerary</Button>
-        </div>
-        <div className="hero-badges">
-          <span className="hero-badge"><Icon name="shield" /> 100% Customisable Trips</span>
-          <span className="hero-badge"><Icon name="star" /> 4.8★ Rated by 2,000+ Travellers</span>
-          <span className="hero-badge"><Icon name="headset" /> 24×7 On-trip Support</span>
-        </div>
-      </HeroReveal>
+      {/* ---------- HERO (cinematic slider) ---------- */}
+      <header className="hero">
+        <HeroSlides />
+        <div className="hero-foot">
+          {/* ---------- SEARCH CARD ---------- */}
+          <div className="container">
+            <form className="search-card" onSubmit={onSearch}>
+              <div className="search-field">
+                <label>Where to?</label>
+                <div className="control">
+                  <Icon name="pin" />
+                  <input
+                    type="text"
+                    placeholder="Bali, Kashmir, Europe…"
+                    value={search.q}
+                    onChange={(e) => setSearch({ ...search, q: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="search-field">
+                <label>Trip Type</label>
+                <div className="control">
+                  <Icon name="globe" />
+                  <select value={search.category} onChange={(e) => setSearch({ ...search, category: e.target.value })}>
+                    <option value="">Any</option>
+                    <option value="domestic">Domestic</option>
+                    <option value="international">International</option>
+                  </select>
+                </div>
+              </div>
+              <div className="search-field">
+                <label>Travel Month</label>
+                <div className="control">
+                  <Icon name="calendar" />
+                  <select value={search.month} onChange={(e) => setSearch({ ...search, month: e.target.value })}>
+                    <option value="">Flexible</option>
+                    {MONTHS.map((m) => <option key={m}>{m}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div className="search-field">
+                <label>Budget / Person</label>
+                <div className="control">
+                  <Icon name="wallet" />
+                  <select value={search.budget} onChange={(e) => setSearch({ ...search, budget: e.target.value })}>
+                    <option value="">Any budget</option>
+                    <option value="0-20000">Under ₹20k</option>
+                    <option value="20000-50000">₹20k – ₹50k</option>
+                    <option value="50000-100000">₹50k – ₹1L</option>
+                    <option value="100000-9999999">₹1L+</option>
+                  </select>
+                </div>
+              </div>
+              <Button size="lg" icon="search" type="submit">Search</Button>
+            </form>
+          </div>
 
-      {/* ---------- SEARCH CARD ---------- */}
-      <div className="container">
-        <form className="search-card" onSubmit={onSearch}>
-          <div className="search-field">
-            <label>Where to?</label>
-            <div className="control">
-              <Icon name="pin" />
-              <input
-                type="text"
-                placeholder="Bali, Kashmir, Europe…"
-                value={search.q}
-                onChange={(e) => setSearch({ ...search, q: e.target.value })}
-              />
+          {/* ---------- MARQUEE ---------- */}
+          <div className="hero-marquee">
+            <div className="marquee">
+              <div className="marquee-track">
+                {[...DESTINATIONS, ...DESTINATIONS].map((d, i) => (
+                  <span className="marquee-item" key={i}><Icon name="pin" /> {d.name}</span>
+                ))}
+              </div>
             </div>
-          </div>
-          <div className="search-field">
-            <label>Trip Type</label>
-            <div className="control">
-              <Icon name="globe" />
-              <select value={search.category} onChange={(e) => setSearch({ ...search, category: e.target.value })}>
-                <option value="">Any</option>
-                <option value="domestic">Domestic</option>
-                <option value="international">International</option>
-              </select>
-            </div>
-          </div>
-          <div className="search-field">
-            <label>Travel Month</label>
-            <div className="control">
-              <Icon name="calendar" />
-              <select value={search.month} onChange={(e) => setSearch({ ...search, month: e.target.value })}>
-                <option value="">Flexible</option>
-                {MONTHS.map((m) => <option key={m}>{m}</option>)}
-              </select>
-            </div>
-          </div>
-          <div className="search-field">
-            <label>Budget / Person</label>
-            <div className="control">
-              <Icon name="wallet" />
-              <select value={search.budget} onChange={(e) => setSearch({ ...search, budget: e.target.value })}>
-                <option value="">Any budget</option>
-                <option value="0-20000">Under ₹20k</option>
-                <option value="20000-50000">₹20k – ₹50k</option>
-                <option value="50000-100000">₹50k – ₹1L</option>
-                <option value="100000-9999999">₹1L+</option>
-              </select>
-            </div>
-          </div>
-          <Button size="lg" icon="search" type="submit">Search</Button>
-        </form>
-      </div>
-
-      {/* ---------- MARQUEE ---------- */}
-      <div className="section-tight">
-        <div className="marquee">
-          <div className="marquee-track">
-            {[...DESTINATIONS, ...DESTINATIONS].map((d, i) => (
-              <span className="marquee-item" key={i}><Icon name="pin" /> {d.name}</span>
-            ))}
           </div>
         </div>
-      </div>
+      </header>
 
       {/* ---------- FEATURED PACKAGES ---------- */}
       <section className="section bg-surface" id="featured">
@@ -211,6 +187,21 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ---------- CTA (video reveal band) ---------- */}
+      <Cta video="/cta-bg.mp4">
+        <span className="eyebrow">Anywhere You Dream</span>
+        <h2 className="display-2">
+          120+ Destinations.<br />One Trusted Partner.
+        </h2>
+        <p>
+          From a dot on the map to the trip of a lifetime — wherever you point,
+          we craft the journey around you.
+        </p>
+        <div className="hero-actions">
+          <Button size="lg" icon="arrow" to="/destinations">Explore Destinations</Button>
+        </div>
+      </Cta>
 
       {/* ---------- SERVICES PREVIEW ---------- */}
       <section className="section bg-surface">
