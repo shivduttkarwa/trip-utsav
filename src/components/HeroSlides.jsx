@@ -9,7 +9,7 @@ import { IMG } from "../data/packages";
 const SLIDES = [
   { pre: "Chase the", word: "Horizon", loc: "Ladakh, India", img: IMG("photo-1483728642387-6c3bdd6c93e5", 2200) },
   { pre: "Savour the", word: "Journey", loc: "Kerala Backwaters", img: IMG("photo-1602216056096-3b40cc0c9944", 2200) },
-  { pre: "Wander the", word: "Valleys", loc: "Pahalgam, Kashmir", img: IMG("photo-1566837945700-30057527ade0", 2200) },
+  { pre: "Wander the", word: "Valleys", loc: "Pahalgam, Kashmir", img: IMG("photo-1598091383021-15ddea10925d", 2200) },
   { pre: "Escape to", word: "Paradise", loc: "Maldives", img: IMG("photo-1514282401047-d79a71a590e8", 2200) },
   { pre: "Change your", word: "Perspective", loc: "Bali, Indonesia", img: IMG("photo-1537996194471-e657df975ab4", 2200) },
 ];
@@ -25,9 +25,11 @@ export default function HeroSlides() {
 
     const ctx = gsap.context(() => {
       const del = 3;
-      let i = 1;
+      const N = SLIDES.length;
 
-      const tl = gsap.timeline({ repeat: -1, yoyo: true, ease: "expo.out" });
+      // Forward-only loop so every slide always reveals in the same order
+      // (h2 → h1 → h3). No yoyo, which would reverse that order on the way back.
+      const tl = gsap.timeline({ repeat: -1 });
 
       // Slide 1's caption is shown; every other caption starts collapsed.
       gsap.set(["#hero-1 h2, #hero-1 h1, #hero-1 h3"], { clipPath: FULL });
@@ -40,16 +42,25 @@ export default function HeroSlides() {
         { clipPath: COLLAPSE }
       );
 
-      while (i < 5) {
-        tl.to(`#hero-${i} h2`, 0.9, { clipPath: COLLAPSE, delay: del })
-          .to(`#hero-${i} h1`, 0.9, { clipPath: COLLAPSE }, "-=0.3")
-          .to(`#hero-${i} h3`, 0.9, { clipPath: COLLAPSE }, "-=0.3")
-          .to(`#hero-${i} .hi-${i}`, 0.7, { clipPath: COLLAPSE }, "-=1")
-          .to(`#hero-${i + 1} h2`, 0.9, { clipPath: FULL })
-          .to(`#hero-${i + 1} h1`, 0.9, { clipPath: FULL }, "-=0.3")
-          .to(`#hero-${i + 1} h3`, 0.9, { clipPath: FULL }, "-=0.3");
-        i++;
-      }
+      // Wipe slide `cur` out to reveal slide `next` (whose image wipes in on top
+      // when it stacks higher — i.e. the loop-around back to slide 1).
+      const step = (cur, next) => {
+        tl.to(`#hero-${cur} h2`, 0.9, { clipPath: COLLAPSE, delay: del })
+          .to(`#hero-${cur} h1`, 0.9, { clipPath: COLLAPSE }, "-=0.3")
+          .to(`#hero-${cur} h3`, 0.9, { clipPath: COLLAPSE }, "-=0.3")
+          .to(
+            next > cur ? `#hero-${cur} .hi-${cur}` : `#hero-${next} .hi-${next}`,
+            0.7,
+            { clipPath: next > cur ? COLLAPSE : FULL },
+            "-=1"
+          )
+          .to(`#hero-${next} h2`, 0.9, { clipPath: FULL })
+          .to(`#hero-${next} h1`, 0.9, { clipPath: FULL }, "-=0.3")
+          .to(`#hero-${next} h3`, 0.9, { clipPath: FULL }, "-=0.3");
+      };
+
+      for (let i = 1; i < N; i++) step(i, i + 1); // 1→2 … 4→5
+      step(N, 1); // 5→1: slide 1 (top z) wipes back in, then GSAP resets under it
     }, root);
 
     return () => ctx.revert();

@@ -109,19 +109,19 @@ export default function Home() {
               <Button size="lg" icon="search" type="submit">Search</Button>
             </form>
           </div>
-
-          {/* ---------- MARQUEE ---------- */}
-          <div className="hero-marquee">
-            <div className="marquee">
-              <div className="marquee-track">
-                {[...DESTINATIONS, ...DESTINATIONS].map((d, i) => (
-                  <span className="marquee-item" key={i}><Icon name="pin" /> {d.name}</span>
-                ))}
-              </div>
-            </div>
-          </div>
         </div>
       </header>
+
+      {/* ---------- MARQUEE (below the hero) ---------- */}
+      <div className="hero-marquee">
+        <div className="marquee">
+          <div className="marquee-track">
+            {[...DESTINATIONS, ...DESTINATIONS].map((d, i) => (
+              <span className="marquee-item" key={i}><Icon name="pin" /> {d.name}</span>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* ---------- FEATURED PACKAGES ---------- */}
       <section className="section bg-surface" id="featured">

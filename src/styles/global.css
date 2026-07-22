@@ -65,7 +65,7 @@
 /* ---------- 2. RESET / BASE ---------- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; overflow-x: clip; }
 
 body {
   font-family: var(--font-body);
@@ -402,7 +402,7 @@ h3 { font-size: 1.4rem; letter-spacing: -0.012em; }
   line-height: 1.02;
   text-transform: uppercase;
   color: transparent;
-  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.92);
+  -webkit-text-stroke: 0.045em rgba(255, 255, 255, 0.92);
 }
 .hs-info h1 {
   font-family: var(--font-hero);
@@ -411,7 +411,12 @@ h3 { font-size: 1.4rem; letter-spacing: -0.012em; }
   line-height: 0.96;
   text-transform: uppercase;
   color: #fff;
-  text-shadow: 2px 4px 26px rgba(0, 0, 0, 0.4);
+  /* Subtle em-based 3D extrusion (scales with the font, so it stays light on
+     mobile) + a faint grounding blur — no heavy shadow cloud. */
+  text-shadow:
+    0.015em 0.015em 0 rgba(7, 22, 48, 0.4),
+    0.03em 0.03em 0 rgba(7, 22, 48, 0.26),
+    0.03em 0.05em 0.1em rgba(0, 0, 0, 0.2);
 }
 .hs-info h3 {
   color: #fff;
@@ -432,6 +437,16 @@ h3 { font-size: 1.4rem; letter-spacing: -0.012em; }
 }
 @media (prefers-reduced-motion: reduce) {
   .hs-image, .hs-info h1, .hs-info h2, .hs-info h3 { animation: none !important; clip-path: none !important; }
+}
+/* Mobile: lift the caption and cap the title so long words never bleed. */
+@media (max-width: 700px) {
+  .hs-info { top: 32%; left: 20px; max-width: calc(100% - 40px); }
+  .hs-info h1 { font-size: clamp(2.8rem, 15vw, 4.6rem); }
+  .hs-info h2 { font-size: clamp(1.6rem, 8vw, 3rem); }
+  .hs-info h3 { margin-top: 0.7em; font-size: 1.02rem; }
+  .marquee-item { font-size: 1.02rem; gap: 10px; }
+  .marquee-item svg { width: 18px; height: 18px; }
+  .marquee-track { gap: 44px; padding-right: 44px; }
 }
 
 /* Search card + marquee live at the bottom of the hero (no page-pulling margins) */
@@ -739,9 +754,22 @@ h3 { font-size: 1.4rem; letter-spacing: -0.012em; }
 .search-field .control { display: flex; align-items: center; gap: 10px; border: 1.5px solid var(--line); border-radius: var(--r-sm); padding: 12px 14px; transition: border-color 0.25s, box-shadow 0.25s; }
 .search-field .control:focus-within { border-color: var(--orange); box-shadow: 0 0 0 4px rgba(242, 107, 33, 0.12); }
 .search-field svg { width: 18px; height: 18px; color: var(--orange); flex: none; }
-.search-field input, .search-field select { border: 0; outline: 0; width: 100%; background: transparent; font-size: 0.95rem; color: var(--ink); }
+/* 16px keeps iOS Safari from auto-zooming the page on field focus */
+.search-field input, .search-field select { border: 0; outline: 0; width: 100%; background: transparent; font-size: 16px; color: var(--ink); }
 @media (max-width: 1024px) { .search-card { grid-template-columns: repeat(2, 1fr); } .search-card .btn { grid-column: 1 / -1; } }
-@media (max-width: 560px) { .search-card { grid-template-columns: 1fr; } }
+/* Phones: proper but tight 2-column search card — "Where to?" full width, the
+   filters two-up, Search full width. Kept short so the submit button clears
+   the on-screen keyboard when a field is focused. */
+@media (max-width: 640px) {
+  .search-card { grid-template-columns: 1fr 1fr; gap: 9px; padding: 13px; }
+  .search-card .search-field:first-child { grid-column: 1 / -1; }
+  .search-card .btn { grid-column: 1 / -1; }
+  .search-field label { font-size: 0.64rem; margin-bottom: 4px; }
+  .search-field .control { padding: 9px 11px; }
+  .search-card .btn { padding-top: 12px; padding-bottom: 12px; }
+  /* 16px minimum stops iOS Safari from auto-zooming on field focus */
+  input, select, textarea { font-size: 16px; }
+}
 
 /* Inner page hero */
 .page-hero {
@@ -826,12 +854,12 @@ h3 { font-size: 1.4rem; letter-spacing: -0.012em; }
 .stat-num .suffix { font-style: italic; color: var(--orange); }
 .stat-label { margin-top: 10px; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
 
-/* Marquee — in-flow band just below the search card, at the foot of the hero */
-.hero-marquee { position: relative; z-index: 4; margin-top: clamp(20px, 3vh, 34px); }
+/* Marquee — its own strip directly below the hero */
+.hero-marquee { padding: clamp(20px, 4vh, 34px) 0; background: #fff; border-block: 1px solid var(--line); overflow: hidden; }
 .marquee { overflow: hidden; white-space: nowrap; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
 .marquee-track { display: inline-flex; gap: 64px; padding-right: 64px; animation: marquee 30s linear infinite; }
 .marquee:hover .marquee-track { animation-play-state: paused; }
-.marquee-item { display: inline-flex; align-items: center; gap: 14px; font-family: var(--font-display); font-weight: 600; font-size: 1.26rem; color: rgba(255, 255, 255, 0.88); }
+.marquee-item { display: inline-flex; align-items: center; gap: 14px; font-family: var(--font-display); font-weight: 600; font-size: 1.26rem; color: var(--muted); }
 .marquee-item svg { width: 24px; height: 24px; color: var(--orange); }
 @keyframes marquee { to { transform: translateX(-50%); } }
 
