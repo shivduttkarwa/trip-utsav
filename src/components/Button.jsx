@@ -4,7 +4,7 @@ import "../styles/buttons.css";
 
 /**
  * Reusable button.
- * variant: primary | secondary | outline | ghost | white
+ * variant: primary | secondary | outline | ghost | white | glass (over media)
  * size: sm | md | lg
  * to → renders a router <Link>; href → renders <a>; else <button>
  * icon: name from the icon set (rendered after the label)

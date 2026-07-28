@@ -198,10 +198,19 @@
 /* ============================================================
    CTA — a background video peeks through a world map, then the
    map dissolves to reveal the full-bleed video and CTA content.
+
+   The whole band is ONE scrubbed timeline. JS writes a single
+   `--p` (0 → 1) onto .cta-stage while the stage is pinned; every
+   rule below slices its own window out of it with the
+   `(p − start) / span` pattern, clamped to 0…1. Nothing here is
+   time-based, so the section can never animate "past" the pin.
+
+     0.00–0.08 ENTER · 0.04–0.34 EXIT  · 0.08–0.42 OPEN
+     0.30–0.52 LIGHT · 0.36–0.88 COPY  · 0.88–1.00 HOLD (then unpin)
    ============================================================ */
 .cta {
   position: relative;
-  height: 175vh;                 /* scroll track: length of the reveal */
+  height: 280svh;                /* scroll track: 1 screen pinned + 1.8 of travel */
   background: #fff;
 }
 .cta-stage {
@@ -210,12 +219,24 @@
   height: 100svh;
   overflow: clip;
   background: #fff;
-  --p: 0;                        /* eased 0 → 1, driven from JS on scroll */
-  --reveal: var(--p);
-  --mask-w: calc(min(73.75rem, 90vw) + var(--reveal) * 93.75rem);
+  /* contains .cta-glow's `screen` blend to this stage — sticky with
+     z-index:auto does NOT make a stacking context on its own. */
+  isolation: isolate;
+  --p: 0;                        /* 0 → 1, written from JS on scroll */
+
+  /* ---- timeline slices ---------------------------------------- */
+  --t-exit:  clamp(0, calc((var(--p) - 0.04) / 0.30), 1);   /* intro leaves  */
+  --t-open:  clamp(0, calc((var(--p) - 0.08) / 0.34), 1);   /* map dissolves */
+  --t-light: clamp(0, calc((var(--p) - 0.30) / 0.22), 1);   /* scrim + bloom */
+
+  /* easeOutQuad on the map so it flies open, then settles */
+  --e-open: calc(1 - (1 - var(--t-open)) * (1 - var(--t-open)));
+
+  --mask-w: calc(min(73.75rem, 90vw) + var(--e-open) * 100rem);
 }
 
-/* full-bleed background video */
+/* full-bleed background video — eases out of a slight push-in as the
+   map opens, so the reveal lands on a settled frame. */
 .cta-video {
   position: absolute;
   inset: 0;
@@ -223,6 +244,9 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: saturate(1.08) contrast(1.02);
+  transform: scale(calc(1.08 - var(--e-open) * 0.08));
+  will-change: transform;
 }
 
 /* White cover with world-map-shaped holes: the video peeks through the
@@ -234,7 +258,7 @@
   inset: 0;
   z-index: 2;
   background: #fff;
-  opacity: clamp(0, calc(1 - var(--reveal) * 1.15), 1);
+  opacity: clamp(0, calc(1.06 - var(--t-open) * 1.18), 1);
   -webkit-mask-image: linear-gradient(#000, #000), url(/world.svg);
   -webkit-mask-position: center, center;
   -webkit-mask-size: cover, var(--mask-w) auto;
@@ -248,20 +272,42 @@
   will-change: opacity, mask-size;
 }
 
-/* darkening scrim for text legibility — only fades in with the reveal */
+/* Legibility wash. Deliberately NOT a flat dark sheet — a soft centre
+   vignette only where the copy sits, so the photography keeps its colour
+   at the edges. Peaks at 55% behind the headline, not 74% across the frame. */
 .cta-scrim {
   position: absolute;
   inset: 0;
   z-index: 3;
   pointer-events: none;
-  opacity: var(--reveal);
+  opacity: var(--t-light);
   background:
-    linear-gradient(105deg, rgba(7, 22, 48, 0.74) 0%, rgba(7, 22, 48, 0.42) 45%, rgba(7, 22, 48, 0.22) 74%),
-    linear-gradient(180deg, transparent 42%, rgba(7, 22, 48, 0.66) 100%);
+    radial-gradient(118% 84% at 50% 50%,
+      rgba(5, 17, 38, 0.55) 0%,
+      rgba(5, 17, 38, 0.32) 40%,
+      rgba(5, 17, 38, 0.08) 74%,
+      rgba(5, 17, 38, 0) 100%),
+    linear-gradient(180deg, rgba(5, 17, 38, 0.42) 0%, rgba(5, 17, 38, 0) 24%),
+    linear-gradient(0deg, rgba(5, 17, 38, 0.5) 0%, rgba(5, 17, 38, 0) 30%);
+}
+
+/* Warm brand bloom. `screen` blending ADDS light, which is what keeps the
+   band feeling rich rather than dark once the scrim is on. */
+.cta-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: calc(var(--t-light) * 0.92);
+  background:
+    radial-gradient(44rem 30rem at 50% 74%, rgba(224, 97, 58, 0.42), transparent 68%),
+    radial-gradient(38rem 26rem at 16% 18%, rgba(24, 110, 214, 0.32), transparent 70%),
+    radial-gradient(30rem 22rem at 88% 26%, rgba(255, 190, 140, 0.22), transparent 72%);
 }
 
 /* Phase 1 — big attractive intro text over the map; fades + lifts away
-   in lock-step with the map dissolve (driven by --reveal). */
+   just ahead of the map dissolve (driven by --t-exit). */
 .cta-intro {
   position: absolute;
   inset: 0;
@@ -273,8 +319,8 @@
   text-align: center;
   padding: 1.5rem;
   pointer-events: none;
-  opacity: clamp(0, calc(1 - var(--reveal) * 1.7), 1);
-  transform: translateY(calc(var(--reveal) * -2.25rem)) scale(calc(1 - var(--reveal) * 0.04));
+  opacity: clamp(0, calc(1.05 - var(--t-exit) * 1.35), 1);
+  transform: translateY(calc(var(--t-exit) * -3rem)) scale(calc(1 - var(--t-exit) * 0.06));
   will-change: opacity, transform;
 }
 .cta-intro-title {
@@ -327,49 +373,154 @@
   60%, 100% { transform: translateY(100%); }
 }
 
-/* revealed content — centered over the full-bleed photo */
+/* ---- Phase 2: revealed content, centred over the full-bleed video ---- */
 .cta-content {
   position: absolute;
   inset: 0;
   z-index: 4;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  max-width: none;
-  color: #fff;
-  opacity: 0;
-  pointer-events: none;
+  pointer-events: none;          /* flipped on by .is-live once readable */
 }
-.cta.is-revealed .cta-content {
-  opacity: 1;
-  pointer-events: auto;
-}
-.cta.is-revealed .cta-content > * {
-  animation: heroRise 0.85s var(--ease-out) both;
-}
-.cta.is-revealed .cta-content > *:nth-child(1) { animation-delay: 0.05s; }
-.cta.is-revealed .cta-content > *:nth-child(2) { animation-delay: 0.16s; }
-.cta.is-revealed .cta-content > *:nth-child(3) { animation-delay: 0.28s; }
-.cta.is-revealed .cta-content > *:nth-child(4) { animation-delay: 0.40s; }
-.cta.is-revealed .cta-content > *:nth-child(5) { animation-delay: 0.54s; }
-@keyframes heroRise {
-  from { opacity: 0; transform: translateY(2.125rem); filter: blur(0.375rem); }
-  to   { opacity: 1; transform: none; filter: blur(0); }
-}
-.cta-content > * { max-width: 40rem; }
-.cta-content .hero-badges { max-width: none; }
+.cta.is-live .cta-content { pointer-events: auto; }
 
-@media (max-width: 640px) {
-  .cta { height: 170vh; }
-  .cta-stage { --mask-w: calc(min(75rem, 96vw) + var(--reveal) * 68.75rem); }
+.cta-content-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+  color: #fff;
+}
+
+/* Each child slices its own window out of --p: start 0.36, then 0.07 apart,
+   0.17 long. The last of six lands at 0.87 — just inside the HOLD tail, so
+   everything is settled before the pin lets go. */
+.cta-content-inner > * {
+  --i: 0;
+  --start: calc(0.36 + var(--i) * 0.07);
+  --t: clamp(0, calc((var(--p) - var(--start)) / 0.17), 1);
+  /* easeOutCubic: 1 − (1 − t)³ */
+  --e: calc(1 - (1 - var(--t)) * (1 - var(--t)) * (1 - var(--t)));
+  max-width: 44rem;
+  opacity: var(--e);
+  transform: translate3d(0, calc((1 - var(--e)) * 2.75rem), 0) scale(calc(0.965 + var(--e) * 0.035));
+  will-change: opacity, transform;
+}
+.cta-content-inner > *:nth-child(2) { --i: 1; }
+.cta-content-inner > *:nth-child(3) { --i: 2; }
+.cta-content-inner > *:nth-child(4) { --i: 3; }
+.cta-content-inner > *:nth-child(5) { --i: 4; }
+.cta-content-inner > *:nth-child(6) { --i: 5; }
+
+/* eyebrow as a glass pill — reads on any frame of the video */
+.cta-content .eyebrow {
+  color: #fff;
+  padding: 0.5rem 1.125rem 0.5rem 0.9375rem;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.13);
+  border: 0.0625rem solid rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(0.625rem);
+  -webkit-backdrop-filter: blur(0.625rem);
+}
+.cta-content .eyebrow::before { width: 1.25rem; background: var(--orange); }
+
+/* Headline: the site's hand face is too light over photography, so the CTA
+   uses the hero face for the statement and keeps the hand face for accents. */
+.cta-title {
+  font-family: var(--font-hero);
+  font-weight: 800;
+  font-size: clamp(2.5rem, 5.4vw, 4.6rem);
+  line-height: 1.03;
+  letter-spacing: -0.025em;
+  color: #fff;
+  text-shadow: 0 0.0625rem 0.1875rem rgba(4, 14, 32, 0.4), 0 0.75rem 3rem rgba(4, 14, 32, 0.5);
+}
+.cta-title em {
+  font-family: var(--font-hand);
+  font-style: normal;
+  font-weight: 700;
+  color: #ffc8ac;
+  padding-right: 0.15em;
+}
+.cta-content p {
+  font-size: clamp(1.02rem, 1.4vw, 1.2rem);
+  line-height: 1.62;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 34rem;
+  margin: 0;
+  text-shadow: 0 0.0625rem 1.25rem rgba(4, 14, 32, 0.5);
+}
+.cta-actions {
+  display: flex;
+  gap: 0.875rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.25rem;
+}
+
+/* trust strip — quiet proof under the buttons */
+.cta-trust {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem 1.5rem;
+  max-width: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+}
+.cta-trust li { display: inline-flex; align-items: center; gap: 0.75rem; }
+.cta-trust li + li::before {
+  content: "";
+  width: 0.25rem;
+  height: 0.25rem;
+  border-radius: 50%;
+  background: var(--orange);
+  flex: none;
+}
+
+/* Progress rail — makes the pin read as intentional. Appears with the
+   reveal and fades out again over the HOLD tail, as the pin releases. */
+.cta-rail {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 6;
+  height: 0.1875rem;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.16);
+  opacity: clamp(0, calc(min(var(--p) / 0.12, (1 - var(--p)) / 0.08)), 1);
+}
+.cta-rail i {
+  display: block;
+  height: 100%;
+  width: calc(var(--p) * 100%);
+  background: var(--grad-orange);
+  box-shadow: 0 0 1.25rem rgba(224, 97, 58, 0.7);
+}
+
+@media (max-width: 900px) {
+  .cta { height: 240svh; }
+  .cta-stage { --mask-w: calc(min(75rem, 96vw) + var(--e-open) * 75rem); }
+  .cta-content-inner { gap: 1.125rem; }
+  .cta-actions { width: 100%; }
+  .cta-actions .btn { flex: 1 1 12rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .cta { height: auto; }
-  .cta-stage { position: relative; --p: 1; }
-  .cta.is-revealed .cta-content > * { animation: none; }
+  .cta-stage { position: relative; height: auto; min-height: 100svh; padding: 6rem 0; --p: 1; }
+  .cta-video { transform: none; }
+  .cta-intro { display: none; }
+  .cta-content { position: relative; inset: auto; }
+  .cta-content-inner > * { opacity: 1; transform: none; }
+  .cta-rail { display: none; }
 }
 
 /* Floating search card */
