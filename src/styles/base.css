@@ -67,7 +67,19 @@
 
 /* Root font-size = the single knob for scaling the whole UI (everything is in
    rem). Tweak this per breakpoint to shrink/grow the entire site proportionally. */
-html { font-size: 16px; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; overflow-x: clip; }
+/* NB: no overflow on <html> — root-element overflow propagates to the viewport
+   and breaks position:sticky (the CTA reveal). Horizontal bleed is clipped on
+   <body> instead (below), which is sticky-safe. */
+html { font-size: 16px; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+/* Root font-size scales the whole UI (everything is in rem). One ladder from
+   small phones up to ultra-wide screens. Base (16px) covers ~1025–1439px. */
+@media (max-width: 1024px) { html { font-size: 12px; } }   /* tablets       ~94% */
+@media (max-width: 640px)  { html { font-size: 14px; } }   /* phones        ~88% */
+@media (max-width: 380px)  { html { font-size: 13px; } }   /* small phones  ~81% */
+@media (min-width: 1440px) { html { font-size: 12px; } }   /* large desktop ~106% */
+@media (min-width: 1728px) { html { font-size: 18px; } }   /* xl desktop    ~113% */
+@media (min-width: 2200px) { html { font-size: 20px; } }   /* 2k / wide     ~125% */
+@media (min-width: 2800px) { html { font-size: 23px; } }   /* 4k / ultra    ~144% */
 
 body {
   font-family: var(--font-body);
@@ -75,10 +87,9 @@ body {
   line-height: 1.7;
   color: var(--body);
   background: var(--white);
-  /* `clip` (not `hidden`) so the body never becomes a scroll container —
-     otherwise nested position:sticky (the hero stage) fails to re-pin
-     after the first scroll. */
-  overflow-x: clip;
+  /* No overflow clip here — clipping on body/html breaks the CTA's
+     position:sticky reveal. Horizontal bleed is contained per-section
+     (e.g. .hero has overflow: clip). */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;

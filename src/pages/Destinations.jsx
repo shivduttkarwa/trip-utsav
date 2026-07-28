@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { DESTINATIONS } from "../data/destinations";
 import { FALLBACK_IMG, IMG } from "../data/packages";
-import Icon from "../components/Icon";
 import Reveal from "../components/Reveal";
 import SectionHead from "../components/SectionHead";
 import Button from "../components/Button";
+import DestinationCard from "../components/DestinationCard";
 import { useUI } from "../components/UIContext";
 
 const HERO = IMG("photo-1530521954074-e64f6810b32d", 2000);
@@ -64,14 +64,7 @@ export default function Destinations() {
           <div className="grid grid-4">
             {list.map((d, i) => (
               <Reveal key={d.name} delay={(i % 4) * 0.07}>
-                <Link className="dest-card" to={`/packages?search=${encodeURIComponent(d.query)}`}>
-                  <img src={d.image} alt={d.name} loading="lazy" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = FALLBACK_IMG; }} />
-                  <div className="dest-body">
-                    <h3>{d.name}</h3>
-                    <p>{d.country} · {d.blurb}</p>
-                    <span className="dest-cta">Explore trips <Icon name="arrow" /></span>
-                  </div>
-                </Link>
+                <DestinationCard dest={d} showCountry />
               </Reveal>
             ))}
           </div>

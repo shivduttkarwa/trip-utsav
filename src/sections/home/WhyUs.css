@@ -1,0 +1,23 @@
+/* Why-us layout + float-card positions (base .split-media / .float-card are
+   shared in styles/sections.css since About reuses them). */
+.whyus { align-items: center; gap: 3.75rem; }
+.whyus-title { margin: 0.875rem 0 1.125rem; }
+.float-card--bl { bottom: 1.625rem; left: -1.5rem; }
+.float-card--tr { top: 1.625rem; right: -1.125rem; animation-delay: 1.2s; }
+
+/* Check-list */
+.check-list { display: grid; gap: 1rem; }
+.check-list li { display: flex; gap: 0.875rem; align-items: flex-start; }
+.check-list .tick {
+  flex: none;
+  width: 1.625rem; height: 1.625rem;
+  border-radius: 50%;
+  background: var(--orange-soft);
+  color: var(--orange);
+  display: grid;
+  place-items: center;
+  margin-top: 0.125rem;
+}
+.check-list .tick svg { width: 0.875rem; height: 0.875rem; }
+.check-list strong { color: var(--ink); display: block; margin-bottom: 0.125rem; }
+.check-list p { font-size: 0.92rem; }

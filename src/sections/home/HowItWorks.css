@@ -1,0 +1,30 @@
+/* How it works — numbered step cards */
+.steps { counter-reset: step; }
+.step {
+  position: relative;
+  padding: 2rem 1.625rem 1.75rem;
+  border-radius: var(--r-lg);
+  background: #fff;
+  border: 0.0625rem solid var(--line);
+  transition: transform 0.4s var(--ease-out), box-shadow 0.4s, border-color 0.4s;
+}
+.step:hover { transform: translateY(-0.375rem); box-shadow: var(--shadow-md); border-color: transparent; }
+.step::before {
+  counter-increment: step;
+  content: counter(step, decimal-leading-zero);
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 2.6rem;
+  font-weight: 600;
+  background: var(--grad-orange);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  line-height: 1;
+  display: block;
+  margin-bottom: 1rem;
+  transition: transform 0.4s var(--ease-spring);
+}
+.step:hover::before { transform: translateY(-0.125rem) scale(1.04); }
+.step h3 { font-size: 1.12rem; margin-bottom: 0.5rem; }
+.step p { font-size: 0.93rem; }

@@ -4,6 +4,7 @@ import Icon from "../components/Icon";
 import Button from "../components/Button";
 import Reveal from "../components/Reveal";
 import SectionHead from "../components/SectionHead";
+import IconCard from "../components/IconCard";
 import Accordion from "../components/Accordion";
 import { useUI } from "../components/UIContext";
 
@@ -58,14 +59,13 @@ export default function Services() {
           <div className="grid grid-3">
             {SERVICES.map((s, i) => (
               <Reveal key={s.title} delay={(i % 3) * 0.09}>
-                <div className="icon-card">
-                  <div className="icon"><Icon name={s.icon} /></div>
-                  <h3>{s.title}</h3>
-                  <p>{s.text}</p>
-                  <button className="link-more" onClick={() => openEnquiry(s.title)}>
-                    Enquire <Icon name="arrow" />
-                  </button>
-                </div>
+                <IconCard
+                  icon={s.icon}
+                  title={s.title}
+                  text={s.text}
+                  onClick={() => openEnquiry(s.title)}
+                  linkLabel="Enquire"
+                />
               </Reveal>
             ))}
           </div>
