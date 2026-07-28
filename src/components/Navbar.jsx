@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { SITE } from "../data/site";
 import Icon from "./Icon";
+import "../styles/navbar.css";
 
 /* Destinations grouped by region — pills deep-link into the packages listing */
 const DEST_GROUPS = [

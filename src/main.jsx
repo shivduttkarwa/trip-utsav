@@ -2,7 +2,18 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
-import "./styles/global.css";
+
+/* Base tokens/reset/typography/layout first, then shared area styles in
+   cascade order. Component-specific styles (buttons, navbar, footer) are
+   colocated with their components. */
+import "./styles/base.css";
+import "./styles/hero.css";
+import "./styles/components.css";
+import "./styles/cards.css";
+import "./styles/sections.css";
+import "./styles/forms.css";
+import "./styles/misc.css";
+import "./styles/pages.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

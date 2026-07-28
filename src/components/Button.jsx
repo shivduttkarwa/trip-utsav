@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import Icon from "./Icon";
+import "../styles/buttons.css";
 
 /**
  * Reusable button.

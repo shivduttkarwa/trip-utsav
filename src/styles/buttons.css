@@ -1,0 +1,51 @@
+/* ---------- 5. BUTTONS (4 variants + sizes) ---------- */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 0.875rem 1.875rem;
+  border-radius: var(--r-pill);
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1;
+  white-space: nowrap;
+  transition: transform 0.35s var(--ease-spring), box-shadow 0.35s ease, background 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn svg { width: 1.0625rem; height: 1.0625rem; transition: transform 0.35s var(--ease-spring); flex: none; }
+.btn:hover svg { transform: translateX(0.3125rem); }
+.btn:active { transform: scale(0.96); }
+
+/* shine sweep */
+.btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.35) 50%, transparent 60%);
+  transform: translateX(-120%);
+  transition: transform 0.7s ease;
+}
+.btn:hover::after { transform: translateX(120%); }
+
+.btn-primary { background: var(--grad-orange); color: #fff; box-shadow: var(--shadow-orange); }
+.btn-primary:hover { transform: translateY(-0.1875rem); box-shadow: 0 1.125rem 2.25rem rgba(242, 107, 33, 0.45); }
+
+.btn-secondary { background: var(--blue); color: #fff; box-shadow: var(--shadow-blue); }
+.btn-secondary:hover { background: var(--blue-dark); transform: translateY(-0.1875rem); }
+
+.btn-outline { border: 0.125rem solid var(--blue); color: var(--blue); background: transparent; }
+.btn-outline:hover { background: var(--blue); color: #fff; transform: translateY(-0.1875rem); }
+
+.btn-ghost { color: var(--ink); font-weight: 600; padding: 0.875rem 1.25rem; background: transparent; }
+.btn-ghost:hover { color: var(--orange); background: var(--orange-soft); }
+
+.btn-white { background: #fff; color: var(--blue); box-shadow: var(--shadow-md); }
+.btn-white:hover { transform: translateY(-0.1875rem); color: var(--orange); }
+
+.btn-sm { padding: 0.625rem 1.25rem; font-size: 0.85rem; }
+.btn-lg { padding: 1.125rem 2.5rem; font-size: 1.02rem; }
+.btn-block { width: 100%; }

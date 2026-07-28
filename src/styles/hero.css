@@ -1,0 +1,427 @@
+/* ---------- 7. HERO ---------- */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: #fff;
+  overflow: clip;
+  padding: 0 0 clamp(1.375rem, 3.5vh, 2.5rem);
+}
+
+/* ===== Cinematic hero slider (ref GSAP mechanism: stacked slides wipe out) ===== */
+.hs { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.hs article { position: absolute; inset: 0; z-index: var(--i); }
+.hs-image {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+}
+.hs-info {
+  position: absolute;
+  left: clamp(1.375rem, 5vw, 5.25rem);
+  top: 44%;
+  transform: translateY(-50%);
+  z-index: 8;
+  max-width: 92%;
+}
+/* captions start collapsed; GSAP reveals slide 1 and drives the rest.
+   A little padding keeps tall glyphs off the clip-path edges (no top shave). */
+.hs-info h2, .hs-info h1, .hs-info h3 {
+  clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%);
+  padding: 0.14em 0.06em 0.08em 0;
+}
+.hs-info h2 {
+  font-family: var(--font-hero);
+  font-weight: 800;
+  font-size: clamp(1.8rem, 7vw, 4.4rem);
+  line-height: 1.02;
+  text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: 0.045em rgba(255, 255, 255, 0.92);
+}
+.hs-info h1 {
+  font-family: var(--font-hero);
+  font-weight: 800;
+  font-size: clamp(3.4rem, 12vw, 8rem);
+  line-height: 0.96;
+  text-transform: uppercase;
+  color: #fff;
+  /* Subtle em-based 3D extrusion (scales with the font, so it stays light on
+     mobile) + a faint grounding blur — no heavy shadow cloud. */
+  text-shadow:
+    0.015em 0.015em 0 rgba(7, 22, 48, 0.4),
+    0.03em 0.03em 0 rgba(7, 22, 48, 0.26),
+    0.03em 0.05em 0.1em rgba(0, 0, 0, 0.2);
+}
+.hs-info h3 {
+  color: #fff;
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  font-weight: 500;
+  margin-top: 1.1em;
+  letter-spacing: 0.01em;
+  text-shadow: 0 0.125rem 0.875rem rgba(0, 0, 0, 0.5);
+}
+/* legibility wash — darker at the foot so the search card reads */
+.hs::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(7, 22, 48, 0.3) 0%, rgba(7, 22, 48, 0.12) 38%, rgba(7, 22, 48, 0.7) 100%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hs-image, .hs-info h1, .hs-info h2, .hs-info h3 { animation: none !important; clip-path: none !important; }
+}
+/* Mobile: lift the caption and cap the title so long words never bleed. */
+@media (max-width: 700px) {
+  .hs-info { top: 32%; left: 1.25rem; max-width: calc(100% - 2.5rem); }
+  .hs-info h1 { font-size: clamp(2.8rem, 15vw, 4.6rem); }
+  .hs-info h2 { font-size: clamp(1.6rem, 8vw, 3rem); }
+  .hs-info h3 { margin-top: 0.7em; font-size: 1.02rem; }
+  .marquee-item { font-size: 1.02rem; gap: 0.625rem; }
+  .marquee-item svg { width: 1.125rem; height: 1.125rem; }
+  .marquee-track { gap: 2.75rem; padding-right: 2.75rem; }
+}
+
+/* Search card + marquee live at the bottom of the hero (no page-pulling margins) */
+.hero-foot { position: relative; z-index: 3; }
+.hero-media, .hero-media::after { position: absolute; inset: 0; }
+/* Single-image heroes (inner pages) — direct child only, so it never
+   touches the homepage slider's nested slide images. */
+.hero-media > img { width: 100%; height: 100%; object-fit: cover; animation: kenburns 22s ease-in-out infinite alternate; }
+/* Crossfading slideshow layers */
+.hero-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s var(--ease-out); }
+.hero-slide.is-active { opacity: 1; }
+.hero-slide img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.04); transition: transform 6s ease-out; }
+/* Slow ken-burns zoom kicks in whenever a slide becomes active */
+.hero-slide.is-active img { transform: scale(1.12) translate(-1.5%, -2%); }
+.hero-media::after {
+  content: "";
+  background:
+    radial-gradient(120% 80% at 15% 25%, rgba(7, 31, 66, 0.28), transparent 60%),
+    linear-gradient(105deg, rgba(7, 22, 48, 0.82) 0%, rgba(7, 22, 48, 0.42) 42%, rgba(7, 22, 48, 0.2) 70%),
+    linear-gradient(180deg, transparent 40%, rgba(7, 22, 48, 0.72) 100%);
+}
+@keyframes kenburns {
+  from { transform: scale(1) translate(0, 0); }
+  to { transform: scale(1.12) translate(-1.5%, -2%); }
+}
+
+.hero-inner { position: relative; z-index: 2; max-width: 53.75rem; }
+/* Homepage hero: anchor content to the left gutter, vertically centred,
+   capping the readable text width rather than centring the whole block. */
+.hero .hero-inner { max-width: none; }
+.hero .hero-inner > * { max-width: 37.5rem; }
+:is(.hero, .cta-content) .eyebrow { color: #ffd9bf; }
+:is(.hero, .cta-content) .eyebrow::before { background: var(--orange); }
+:is(.hero, .cta-content) h1 { font-family: var(--font-hero); color: #fff; margin: 1.25rem 0 1.375rem; text-shadow: 0 0.125rem 1.875rem rgba(4, 15, 34, 0.35); }
+:is(.hero, .cta-content) h1 em {
+  font-style: italic;
+  font-weight: 500;
+  color: #ffb27a;
+  position: relative;
+  display: inline-block;
+}
+@keyframes underline-grow { from { transform: scaleX(0); } }
+:is(.hero, .cta-content) p { font-size: clamp(1.04rem, 1.5vw, 1.22rem); line-height: 1.6; color: rgba(255, 255, 255, 0.9); max-width: 35rem; margin-bottom: 2.125rem; }
+.hero-h1-break { display: none; }
+@media (min-width: 700px) { .hero-h1-break { display: inline; } }
+
+/* Rotating headline word — width reserved by a hidden italic sizer */
+.rotator-wrap { position: relative; display: inline-block; vertical-align: top; }
+.rotator-sizer { visibility: hidden; font-style: italic; }
+:is(.hero, .cta-content) h1 .rotator { position: absolute; left: 0; top: 0; white-space: nowrap; will-change: transform, opacity, filter; }
+/* Underline stays put during swaps — only the words move. */
+:is(.hero, .cta-content) h1 .rotator::after { animation: none; }
+:is(.hero, .cta-content) h1 .rotator-in { animation: word-in 0.62s var(--ease-spring) both; }
+:is(.hero, .cta-content) h1 .rotator-out { animation: word-out 0.5s var(--ease-out) both; }
+@keyframes word-in {
+  0% { opacity: 0; transform: translateY(0.62em) scale(0.94); filter: blur(0.4375rem); }
+  55% { opacity: 1; filter: blur(0); }
+  100% { opacity: 1; transform: none; filter: blur(0); }
+}
+@keyframes word-out {
+  0% { opacity: 1; transform: none; filter: blur(0); }
+  100% { opacity: 0; transform: translateY(-0.6em) scale(0.98); filter: blur(0.4375rem); }
+}
+
+/* Cursor spotlight sweeping the hero image */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(22.5rem circle at var(--mx, 50%) var(--my, 30%), rgba(255, 255, 255, 0.12), transparent 68%);
+  mix-blend-mode: soft-light;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.hero:hover::before { opacity: 1; }
+.hero-actions { display: flex; gap: 0.875rem; flex-wrap: wrap; }
+
+.hero-badges { display: flex; gap: 1.625rem; margin-top: 3rem; flex-wrap: wrap; }
+.hero-badge { display: flex; align-items: center; gap: 0.6875rem; font-size: 0.9rem; color: rgba(255, 255, 255, 0.92); }
+.hero-badge svg { width: 2.125rem; height: 2.125rem; padding: 0.4375rem; border-radius: 50%; background: rgba(255, 255, 255, 0.14); backdrop-filter: blur(0.375rem); }
+
+.scroll-hint {
+  position: absolute;
+  bottom: 1.625rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  width: 1.625rem;
+  height: 2.625rem;
+  border: 0.125rem solid rgba(255, 255, 255, 0.55);
+  border-radius: 0.875rem;
+}
+.scroll-hint::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0.4375rem;
+  width: 0.25rem;
+  height: 0.5rem;
+  margin-left: -0.125rem;
+  border-radius: 0.1875rem;
+  background: #fff;
+  animation: scroll-dot 1.8s ease-in-out infinite;
+}
+@keyframes scroll-dot {
+  0% { opacity: 0; transform: translateY(0); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(0.875rem); }
+}
+
+/* ============================================================
+   CTA — a background video peeks through a world map, then the
+   map dissolves to reveal the full-bleed video and CTA content.
+   ============================================================ */
+.cta {
+  position: relative;
+  height: 175vh;                 /* scroll track: length of the reveal */
+  background: #fff;
+}
+.cta-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: clip;
+  background: #fff;
+  --p: 0;                        /* eased 0 → 1, driven from JS on scroll */
+  --reveal: var(--p);
+  --mask-w: calc(min(73.75rem, 90vw) + var(--reveal) * 93.75rem);
+}
+
+/* full-bleed background video */
+.cta-video {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* White cover with world-map-shaped holes: the video peeks through the
+   continents while the oceans stay white. mask-composite subtracts the map
+   from a fully-opaque layer, so white paints everywhere EXCEPT the map.
+   As it scrolls the holes grow (--mask-w) and the whole cover fades away. */
+.cta-cover {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: #fff;
+  opacity: clamp(0, calc(1 - var(--reveal) * 1.15), 1);
+  -webkit-mask-image: linear-gradient(#000, #000), url(/world.svg);
+  -webkit-mask-position: center, center;
+  -webkit-mask-size: cover, var(--mask-w) auto;
+  -webkit-mask-repeat: no-repeat, no-repeat;
+  -webkit-mask-composite: xor;
+  mask-image: linear-gradient(#000, #000), url(/world.svg);
+  mask-position: center, center;
+  mask-size: cover, var(--mask-w) auto;
+  mask-repeat: no-repeat, no-repeat;
+  mask-composite: exclude;
+  will-change: opacity, mask-size;
+}
+
+/* darkening scrim for text legibility — only fades in with the reveal */
+.cta-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: var(--reveal);
+  background:
+    linear-gradient(105deg, rgba(7, 22, 48, 0.74) 0%, rgba(7, 22, 48, 0.42) 45%, rgba(7, 22, 48, 0.22) 74%),
+    linear-gradient(180deg, transparent 42%, rgba(7, 22, 48, 0.66) 100%);
+}
+
+/* Phase 1 — big attractive intro text over the map; fades + lifts away
+   in lock-step with the map dissolve (driven by --reveal). */
+.cta-intro {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5rem;
+  pointer-events: none;
+  opacity: clamp(0, calc(1 - var(--reveal) * 1.7), 1);
+  transform: translateY(calc(var(--reveal) * -2.25rem)) scale(calc(1 - var(--reveal) * 0.04));
+  will-change: opacity, transform;
+}
+.cta-intro-title {
+  font-family: var(--font-hero);
+  margin: 0;
+  font-size: clamp(3rem, 11vw, 8.5rem);
+  font-weight: 800;
+  line-height: 0.96;
+  letter-spacing: -0.015em;
+  color: var(--blue-ink);
+  text-shadow: 0 0.0625rem 0 rgba(255, 255, 255, 0.5), 0 0.375rem 2.75rem rgba(255, 255, 255, 0.72);
+}
+.cta-intro-title em {
+  font-style: italic;
+  font-weight: 700;
+  color: var(--orange);
+}
+.cta-intro-cue {
+  position: absolute;
+  bottom: clamp(1.5rem, 6vh, 3.25rem);
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(7, 31, 66, 0.6);
+  text-shadow: 0 0.125rem 1.125rem rgba(255, 255, 255, 0.7);
+}
+.cta-intro-cue i {
+  width: 0.0625rem;
+  height: 2.5rem;
+  background: linear-gradient(rgba(7, 31, 66, 0.45), rgba(7, 31, 66, 0));
+  position: relative;
+  overflow: hidden;
+}
+.cta-intro-cue i::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--orange);
+  animation: cueRun 1.9s ease-in-out infinite;
+}
+@keyframes cueRun {
+  0% { transform: translateY(-100%); }
+  60%, 100% { transform: translateY(100%); }
+}
+
+/* revealed content — centered over the full-bleed photo */
+.cta-content {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  max-width: none;
+  color: #fff;
+  opacity: 0;
+  pointer-events: none;
+}
+.cta.is-revealed .cta-content {
+  opacity: 1;
+  pointer-events: auto;
+}
+.cta.is-revealed .cta-content > * {
+  animation: heroRise 0.85s var(--ease-out) both;
+}
+.cta.is-revealed .cta-content > *:nth-child(1) { animation-delay: 0.05s; }
+.cta.is-revealed .cta-content > *:nth-child(2) { animation-delay: 0.16s; }
+.cta.is-revealed .cta-content > *:nth-child(3) { animation-delay: 0.28s; }
+.cta.is-revealed .cta-content > *:nth-child(4) { animation-delay: 0.40s; }
+.cta.is-revealed .cta-content > *:nth-child(5) { animation-delay: 0.54s; }
+@keyframes heroRise {
+  from { opacity: 0; transform: translateY(2.125rem); filter: blur(0.375rem); }
+  to   { opacity: 1; transform: none; filter: blur(0); }
+}
+.cta-content > * { max-width: 40rem; }
+.cta-content .hero-badges { max-width: none; }
+
+@media (max-width: 640px) {
+  .cta { height: 170vh; }
+  .cta-stage { --mask-w: calc(min(75rem, 96vw) + var(--reveal) * 68.75rem); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta { height: auto; }
+  .cta-stage { position: relative; --p: 1; }
+  .cta.is-revealed .cta-content > * { animation: none; }
+}
+
+/* Floating search card */
+.search-card {
+  position: relative;
+  z-index: 5;
+  margin-top: 0;
+  background: #fff;
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 1.625rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr) auto;
+  gap: 1.125rem;
+  align-items: end;
+}
+.search-field label { display: block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4375rem; }
+.search-field .control { display: flex; align-items: center; gap: 0.625rem; border: 0.09375rem solid var(--line); border-radius: var(--r-sm); padding: 0.75rem 0.875rem; transition: border-color 0.25s, box-shadow 0.25s; }
+.search-field .control:focus-within { border-color: var(--orange); box-shadow: 0 0 0 0.25rem rgba(242, 107, 33, 0.12); }
+.search-field svg { width: 1.125rem; height: 1.125rem; color: var(--orange); flex: none; }
+/* 1rem keeps iOS Safari from auto-zooming the page on field focus */
+.search-field input, .search-field select { border: 0; outline: 0; width: 100%; background: transparent; font-size: 1rem; color: var(--ink); }
+@media (max-width: 1024px) { .search-card { grid-template-columns: repeat(2, 1fr); } .search-card .btn { grid-column: 1 / -1; } }
+/* Phones: proper but tight 2-column search card — "Where to?" full width, the
+   filters two-up, Search full width. Kept short so the submit button clears
+   the on-screen keyboard when a field is focused. */
+@media (max-width: 640px) {
+  .search-card { grid-template-columns: 1fr 1fr; gap: 0.5625rem; padding: 0.8125rem; }
+  .search-card .search-field:first-child { grid-column: 1 / -1; }
+  .search-card .btn { grid-column: 1 / -1; }
+  .search-field label { font-size: 0.64rem; margin-bottom: 0.25rem; }
+  .search-field .control { padding: 0.5625rem 0.6875rem; }
+  .search-card .btn { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+  /* 1rem minimum stops iOS Safari from auto-zooming on field focus */
+  input, select, textarea { font-size: 1rem; }
+}
+
+/* Inner page hero */
+.page-hero {
+  position: relative;
+  padding: clamp(5rem, 10vw, 8.125rem) 0;
+  color: #fff;
+  overflow: clip;
+  background: var(--grad-sunset);
+}
+.page-hero .hero-media img { animation-duration: 30s; }
+.page-hero h1 { color: #fff; margin: 0.875rem 0 0.625rem; }
+.page-hero p { color: rgba(255, 255, 255, 0.85); max-width: 35rem; }
+.page-hero .eyebrow { color: #ffd9bf; }
+.breadcrumb { display: flex; gap: 0.5rem; align-items: center; font-size: 0.85rem; color: rgba(255, 255, 255, 0.75); margin-bottom: 0.5rem; flex-wrap: wrap; }
+.breadcrumb a:hover { color: var(--orange); }
+.breadcrumb span { opacity: 0.6; }

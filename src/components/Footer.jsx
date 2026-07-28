@@ -3,6 +3,7 @@ import { SITE } from "../data/site";
 import { useUI } from "./UIContext";
 import Icon from "./Icon";
 import Button from "./Button";
+import "../styles/footer.css";
 
 const EXPLORE = [
   { to: "/packages?category=domestic", label: "Domestic Packages" },

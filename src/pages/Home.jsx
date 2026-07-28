@@ -229,15 +229,15 @@ export default function Home() {
 
       {/* ---------- WHY US ---------- */}
       <section className="section">
-        <div className="container grid grid-2" style={{ alignItems: "center", gap: "60px" }}>
+        <div className="container grid grid-2" style={{ alignItems: "center", gap: "3.75rem" }}>
           <Reveal variant="left">
             <div className="split-media">
               <img src={WHYUS_IMG} alt="Traveller planning a journey with a map" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = FALLBACK_IMG; }} />
-              <div className="float-card" style={{ bottom: "26px", left: "-24px" }}>
+              <div className="float-card" style={{ bottom: "1.625rem", left: "-1.5rem" }}>
                 <div className="icon"><Icon name="shield" /></div>
                 <div><strong>Zero Hidden Costs</strong><small>What you see is what you pay</small></div>
               </div>
-              <div className="float-card" style={{ top: "26px", right: "-18px", animationDelay: "1.2s" }}>
+              <div className="float-card" style={{ top: "1.625rem", right: "-1.125rem", animationDelay: "1.2s" }}>
                 <div className="icon"><Icon name="star" /></div>
                 <div><strong>4.8★ Rated</strong><small>2,000+ verified reviews</small></div>
               </div>
@@ -245,7 +245,7 @@ export default function Home() {
           </Reveal>
           <Reveal variant="right">
             <span className="eyebrow">Why Trip Utsav</span>
-            <h2 className="display-2" style={{ margin: "14px 0 18px" }}>
+            <h2 className="display-2" style={{ margin: "0.875rem 0 1.125rem" }}>
               We Don't Sell Tours.<br />We Craft <span className="text-grad">Celebrations.</span>
             </h2>
             <p className="lead mb-3">

@@ -1,0 +1,172 @@
+/* Fonts (Edu VIC WA NT Hand + Fraunces + Gothic A1 + Plus Jakarta Sans) are loaded via <link> in index.html */
+
+/* ============================================================
+   TRIP UTSAV — Design System
+   Travel More, Celebrate Life
+   ============================================================
+   1. Tokens        5. Buttons        9. Cards
+   2. Reset/Base    6. Navbar        10. Sections
+   3. Typography    7. Hero          11. Forms
+   4. Layout        8. Components    12. Footer / Utilities
+   ============================================================ */
+
+/* ---------- 1. TOKENS ---------- */
+:root {
+  /* Brand */
+  --blue: #0e4b9a;
+  --blue-dark: #0a3a78;
+  --blue-ink: #071f42;
+  --orange: #e0613a;
+  --orange-dark: #c24d28;
+  --orange-soft: #fbf0ea;
+  --blue-soft: #edf1f9;
+
+  /* Neutrals — warm, premium paper tones */
+  --ink: #131a2a;
+  --body: #545d70;
+  --muted: #8b93a5;
+  --line: #ebedf3;
+  --surface: #f6f6f2;
+  --surface-2: #f1f2f6;
+  --white: #ffffff;
+
+  /* Gradients */
+  --grad-brand: linear-gradient(120deg, var(--blue) 0%, #1565c8 55%, var(--orange) 130%);
+  --grad-orange: linear-gradient(120deg, #ec7a4c, var(--orange-dark));
+  --grad-sunset: linear-gradient(135deg, #0e4b9a 0%, #6a3d9e 55%, #e0613a 110%);
+
+  /* Type */
+  --font-heading: "Fraunces", "Georgia", "Times New Roman", serif;
+  --font-hand: "Edu VIC WA NT Hand", "Segoe Print", "Bradley Hand", cursive;
+  --font-hero: "Gothic A1", "Segoe UI", sans-serif;
+  --font-display: "Plus Jakarta Sans", "Segoe UI", sans-serif;
+  --font-body: "Plus Jakarta Sans", "Segoe UI", sans-serif;
+
+  /* Shape & shadow — soft, layered, premium */
+  --r-sm: 0.75rem;
+  --r-md: 1.125rem;
+  --r-lg: 1.625rem;
+  --r-pill: 6.25rem;
+  --shadow-sm: 0 0.0625rem 0.125rem rgba(16, 24, 43, 0.04), 0 0.25rem 0.875rem rgba(16, 24, 43, 0.05);
+  --shadow-md: 0 0.375rem 1rem rgba(16, 24, 43, 0.06), 0 1.125rem 2.75rem rgba(16, 24, 43, 0.08);
+  --shadow-lg: 0 0.75rem 1.75rem rgba(16, 24, 43, 0.08), 0 2.25rem 5rem rgba(16, 24, 43, 0.13);
+  --shadow-orange: 0 0.625rem 1.625rem rgba(242, 103, 31, 0.32);
+  --shadow-blue: 0 0.625rem 1.625rem rgba(14, 75, 154, 0.28);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur: 0.45s;
+
+  --nav-h: 4.875rem;
+  --container: 76.25rem;
+}
+
+/* ---------- 2. RESET / BASE ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Root font-size = the single knob for scaling the whole UI (everything is in
+   rem). Tweak this per breakpoint to shrink/grow the entire site proportionally. */
+html { font-size: 16px; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; overflow-x: clip; }
+
+body {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--body);
+  background: var(--white);
+  /* `clip` (not `hidden`) so the body never becomes a scroll container —
+     otherwise nested position:sticky (the hero stage) fails to re-pin
+     after the first scroll. */
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+img { max-width: 100%; display: block; }
+/* Icons render as inline SVG with no intrinsic size — default to 1em so any
+   unstyled icon stays glyph-sized; explicit per-context rules override this. */
+svg { width: 1em; height: 1em; vertical-align: middle; }
+a { text-decoration: none; color: inherit; }
+ul, ol { list-style: none; }
+button { font: inherit; border: 0; background: none; cursor: pointer; }
+input, select, textarea { font: inherit; color: inherit; }
+
+::selection { background: var(--orange); color: #fff; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  html { scroll-behavior: auto; }
+}
+
+/* ---------- 3. TYPOGRAPHY ---------- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--ink);
+  line-height: 1.14;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-optical-sizing: auto;
+}
+/* Handwriting display face is reserved for h1 and h2. */
+h1, h2 { font-family: var(--font-hand); }
+
+.display-1 { font-size: clamp(2.9rem, 6vw, 5rem); line-height: 1.02; letter-spacing: -0.028em; }
+.display-2 { font-size: clamp(2.1rem, 4vw, 3.3rem); line-height: 1.06; letter-spacing: -0.02em; }
+h2 { letter-spacing: -0.018em; }
+h3 { font-size: 1.4rem; letter-spacing: -0.012em; }
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--orange);
+}
+.eyebrow::before {
+  content: "";
+  width: 1.75rem;
+  height: 0.125rem;
+  background: currentColor;
+  border-radius: 0.125rem;
+}
+
+.lead { font-size: 1.14rem; line-height: 1.65; color: var(--body); }
+.text-grad {
+  background: var(--grad-orange);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- 4. LAYOUT ---------- */
+.container { width: min(var(--container), 92%); margin-inline: auto; }
+.section { padding: clamp(4.375rem, 9vw, 6.875rem) 0; }
+.section-tight { padding: clamp(2.75rem, 6vw, 4.375rem) 0; }
+.section-head { max-width: 40rem; margin-bottom: clamp(2.25rem, 5vw, 3.5rem); }
+.section-head h2 { margin: 0.875rem 0 0.75rem; }
+.section-head.center { margin-inline: auto; text-align: center; }
+.section-head.center .eyebrow::after { content: ""; width: 2.125rem; height: 0.125rem; background: var(--orange); border-radius: 0.125rem; }
+.section-head.split { max-width: none; display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
+.section-head.split > div { max-width: 38.75rem; }
+
+.grid { display: grid; gap: 1.625rem; }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+@media (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+}
+
+.bg-surface { background: var(--surface); }
+.bg-ink { background: var(--blue-ink); }
