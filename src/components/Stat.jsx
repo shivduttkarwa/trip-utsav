@@ -17,7 +17,11 @@ export default function Stat({ value, suffix = "+", label, decimals = 0 }) {
         const tick = (now) => {
           const t = Math.min((now - start) / dur, 1);
           const eased = 1 - Math.pow(1 - t, 3);
-          setDisplay((value * eased).toFixed(decimals));
+          /* Grouped, so 25000 reads as 25,000 rather than a run of digits. */
+          setDisplay((value * eased).toLocaleString("en-IN", {
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals,
+          }));
           if (t < 1) requestAnimationFrame(tick);
         };
         requestAnimationFrame(tick);
