@@ -16,6 +16,9 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
+/* Keep disabled during the testing phase; switch to true for launch. */
+const ENABLE_PRELOADER = false;
+
 /* Jump to top on every route change (browser back/forward keeps native behaviour) */
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -30,7 +33,7 @@ function ScrollToTop() {
 export default function App() {
   return (
     <UIProvider>
-      <Preloader />
+      {ENABLE_PRELOADER && <Preloader />}
       <ScrollToTop />
       <MagicFX />
       <Navbar />

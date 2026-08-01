@@ -72,16 +72,14 @@
 .hs-cap.is-active > :nth-child(2) { transition-delay: 0.18s; }
 .hs-cap.is-active > :nth-child(3) { transition-delay: 0.28s; }
 
-/* Caption typography — one voice, not three.
+/* Caption typography — Comic Neue italic over Archivo.
  *
- * The old setting put a hand-script lead over a 900-weight condensed uppercase
- * word: two loud, unrelated faces competing in the same eyeline, which is what
- * made it read as generic stock-hero. This is a single family, Fraunces, in one
- * italic and one roman size — the travel-magazine convention. Fraunces carries
- * an `opsz` axis, so at display sizes the browser automatically swaps to the
- * high-contrast cut with fine hairlines; that contrast is where the elegance
- * comes from, and it is why the word is set in sentence case rather than caps
- * (all-caps flattens the ascender/descender rhythm the face is built around).
+ * The pairing works because the two faces are doing opposite jobs: a light
+ * informal script carrying the phrase, then a wide neutral grotesque carrying
+ * the noun. Neither is pushed to its heaviest — the earlier setting used a
+ * 900-weight condensed word under the script, and two shouting faces in one
+ * eyeline is what made it read as generic stock-hero. Contrast here comes from
+ * scale and from tone, not from weight.
  *
  * Order is location → lead → word: the small tracked line on top gives the
  * block a lid to hang from. */
@@ -107,27 +105,32 @@
   background: var(--orange);
   flex: none;
 }
-/* Lead-in — the brand's hand face in a warm cream, sitting light against the
-   mass of the word below. NB `word-spacing`: Edu VIC Hand ships a very narrow
-   space glyph, so "Chase the" sets as "Chasethe" at display size without it,
-   and the script's descenders and tail swashes need real room under the
-   baseline — hence the bottom padding, with a negative margin taking the
-   spare space back so the gap to the word doesn't open up. */
+/* Lead-in — the script face sitting light against the mass of the word below,
+   in the same white so the two lines read as one statement rather than as an
+   accent plus a headline. Italic: Comic Neue's upright is close enough to the
+   roman below that the pairing needs the slant to separate. The Edu VIC metric
+   hacks that used to live here (word-spacing for its hairline space glyph,
+   bottom padding for its swash descenders) are gone — Comic Neue is normally
+   proportioned. */
 .hs-cap .hs-lead {
   display: block;
   font-family: var(--font-hand);
-  font-weight: 600;
+  font-style: italic;
+  /* Comic Neue ships 300/400/700 only — no variable axis. A computed 560 would
+     round back up to 700 and change nothing, so 400 is the real step down. */
+  font-weight: 400;
   /* Display sizes are capped in rem far above the vw term on purpose. The root
      ladder in base.css drops to 12px at >=1440px, so a snug rem cap makes the
      headline SHRINK on wider screens — 98px at 1400, 73px at 1440. Keeping the
      cap out of reach lets vw govern smoothly across every desktop width. */
-  font-size: clamp(1.6rem, 3.5vw, 4.5rem);
+  font-size: clamp(2rem, 4.375vw, 5.625rem);
   line-height: 1.14;
-  letter-spacing: 0.005em;
-  word-spacing: 0.2em;
-  color: #ffdcc6;
-  padding: 0 0 0.18em 0.04em;
-  margin: 0 0 -0.16em -0.05em;           /* -0.05em = optical align w/ the word */
+  /* em, so it tracks the size. Keep changes here at 0.01em or coarser — at this
+     display size 0.002em works out to a tenth of a pixel and looks like the
+     property is being ignored. */
+  letter-spacing: -0.022em;
+  color: #fff;
+  margin: 0 0 0.06em -0.03em;            /* -0.03em = optical align w/ the word */
   text-shadow:
     0 0.03em 0.055em rgba(5, 17, 38, 0.75),
     0 0.06em 0.24em rgba(5, 17, 38, 0.45);
@@ -243,7 +246,7 @@
   .hs-cap { top: 34%; left: 1.25rem; max-width: calc(100% - 2.5rem); }
   .hs-cap .hs-loc { margin-bottom: 0.875rem; font-size: 0.64rem; letter-spacing: 0.24em; gap: 0.625rem; }
   .hs-cap .hs-loc::before { width: 1.375rem; }
-  .hs-cap .hs-lead { font-size: clamp(1.4rem, 6.4vw, 2.4rem); }
+  .hs-cap .hs-lead { font-size: clamp(1.75rem, 8vw, 3rem); }
   .hs-cap .hs-word { font-size: clamp(2rem, 9.4vw, 3.4rem); }
   /* narrow frame: the caption spans it, so shade evenly rather than from one edge */
   .hs-scrim {

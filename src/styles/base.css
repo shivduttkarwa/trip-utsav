@@ -1,4 +1,4 @@
-/* Fonts (Edu VIC WA NT Hand + Fraunces + Gothic A1 + Plus Jakarta Sans) are loaded via <link> in index.html */
+/* Fonts (Archivo + Comic Neue + Fraunces + Gothic A1 + Plus Jakarta Sans) are loaded via <link> in index.html */
 
 /* ============================================================
    TRIP UTSAV — Design System
@@ -37,7 +37,7 @@
 
   /* Type */
   --font-heading: "Fraunces", "Georgia", "Times New Roman", serif;
-  --font-hand: "Edu VIC WA NT Hand", "Segoe Print", "Bradley Hand", cursive;
+  --font-hand: "Comic Neue", "Segoe Print", "Bradley Hand", cursive;
   /* Hero statement words. Archivo rather than Archivo Black: the Black cut is a
      single-weight family, so it cannot be lightened — this is the same
      superfamily as a variable face, where ~900 IS Archivo Black and 500 is half
