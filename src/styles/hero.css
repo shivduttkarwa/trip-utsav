@@ -10,135 +10,252 @@
   padding: 0 0 clamp(1.375rem, 3.5vh, 2.5rem);
 }
 
-/* ===== Cinematic hero slider (ref GSAP mechanism: stacked slides wipe out) ===== */
+/* ===== Hero slider — crossfade =====
+   Everything cross-dissolves on opacity. Nothing is clipped, so there is never
+   a hard edge travelling across the frame and never two washes stacked
+   mid-transition. Type rules are scoped `.hs-cap .hs-*` rather than by element:
+   `:is(.hero, .cta-content) h1` further down is (0,1,1) and would otherwise win
+   the margin and text-shadow off a bare `.hs-word`. */
 .hs { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
-.hs article { position: absolute; inset: 0; z-index: var(--i); }
-.hs-image {
+
+.hs-slide {
   position: absolute;
   inset: 0;
-  background-size: cover;
-  background-position: center;
-  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  opacity: 0;
+  transition: opacity 1.15s var(--ease-out);
 }
-.hs-info {
+.hs-slide.is-active { opacity: 1; }
+.hs-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Drift runs on a far longer channel than the fade, so the incoming frame is
+     already in motion before it finishes resolving. */
+  transform: scale(1.015);
+  transition: transform 9s linear;
+}
+.hs-slide.is-active img { transform: scale(1.08); }
+
+/* One wash for the whole stack — it belongs to the slider, not to each slide. */
+.hs-scrim {
   position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(96deg,
+      rgba(5, 17, 38, 0.62) 0%,
+      rgba(5, 17, 38, 0.34) 24%,
+      rgba(5, 17, 38, 0.12) 44%,
+      rgba(5, 17, 38, 0) 62%),
+    linear-gradient(180deg, rgba(5, 17, 38, 0.28) 0%, rgba(5, 17, 38, 0) 22%, rgba(5, 17, 38, 0) 46%, rgba(5, 17, 38, 0.8) 100%);
+}
+
+/* ---- Captions: stacked on one anchor, cross-dissolving ---- */
+.hs-cap {
+  position: absolute;
+  z-index: 3;
   left: clamp(1.375rem, 5vw, 5.25rem);
   top: 44%;
   transform: translateY(-50%);
-  z-index: 8;
-  max-width: 92%;
+  max-width: min(72rem, calc(100% - 2.75rem));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s var(--ease-out);
 }
-/* captions start collapsed; GSAP reveals slide 1 and drives the rest.
-   A little padding keeps tall glyphs off the clip-path edges (no top shave). */
-.hs-info h2, .hs-info h1, .hs-info h3 {
-  clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%);
-  padding: 0.14em 0.06em 0.08em 0;
+.hs-cap.is-active { opacity: 1; }
+/* Lines ride in on a stagger while the parent owns the fade, so a leaving
+   caption never double-fades against its own children. */
+.hs-cap > * { transform: translateY(0.9rem); transition: transform 0.95s var(--ease-out); }
+.hs-cap.is-active > * { transform: none; }
+.hs-cap.is-active > :nth-child(1) { transition-delay: 0.1s; }
+.hs-cap.is-active > :nth-child(2) { transition-delay: 0.18s; }
+.hs-cap.is-active > :nth-child(3) { transition-delay: 0.28s; }
+
+/* Caption typography — one voice, not three.
+ *
+ * The old setting put a hand-script lead over a 900-weight condensed uppercase
+ * word: two loud, unrelated faces competing in the same eyeline, which is what
+ * made it read as generic stock-hero. This is a single family, Fraunces, in one
+ * italic and one roman size — the travel-magazine convention. Fraunces carries
+ * an `opsz` axis, so at display sizes the browser automatically swaps to the
+ * high-contrast cut with fine hairlines; that contrast is where the elegance
+ * comes from, and it is why the word is set in sentence case rather than caps
+ * (all-caps flattens the ascender/descender rhythm the face is built around).
+ *
+ * Order is location → lead → word: the small tracked line on top gives the
+ * block a lid to hang from. */
+.hs-cap .hs-loc {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  margin-bottom: 1.35rem;
+  font-family: var(--font-display);
+  font-size: clamp(0.68rem, 0.85vw, 0.78rem);
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.86);
+  text-shadow: 0 0.06em 0.25em rgba(5, 17, 38, 0.6);
 }
-/* Lead-in — the brand's hand face in a warm cream. NB `word-spacing`: Edu VIC
-   Hand ships a very narrow space glyph, so "Savour the" sets as "Savourthe"
-   at display size without it. */
-.hs-info h2 {
+/* A hairline, not a bar. The old 3px glowing slab was the heaviest thing in the
+   composition after the headline. */
+.hs-cap .hs-loc::before {
+  content: "";
+  width: 2.5rem;
+  height: 0.0625rem;
+  background: var(--orange);
+  flex: none;
+}
+/* Lead-in — the brand's hand face in a warm cream, sitting light against the
+   mass of the word below. NB `word-spacing`: Edu VIC Hand ships a very narrow
+   space glyph, so "Chase the" sets as "Chasethe" at display size without it,
+   and the script's descenders and tail swashes need real room under the
+   baseline — hence the bottom padding, with a negative margin taking the
+   spare space back so the gap to the word doesn't open up. */
+.hs-cap .hs-lead {
+  display: block;
   font-family: var(--font-hand);
   font-weight: 600;
-  font-size: clamp(1.75rem, 4.7vw, 3.25rem);
-  /* line-height 1 + a 0.06em bottom pad clipped the script's descenders and
-     tail swashes against the clip-path box. The hand face needs real room
-     under the baseline; the negative margin takes the extra space back so the
-     gap to the H1 doesn't grow. */
-  line-height: 1.16;
+  /* Display sizes are capped in rem far above the vw term on purpose. The root
+     ladder in base.css drops to 12px at >=1440px, so a snug rem cap makes the
+     headline SHRINK on wider screens — 98px at 1400, 73px at 1440. Keeping the
+     cap out of reach lets vw govern smoothly across every desktop width. */
+  font-size: clamp(1.6rem, 3.5vw, 4.5rem);
+  line-height: 1.14;
   letter-spacing: 0.005em;
   word-spacing: 0.2em;
-  text-transform: none;
   color: #ffdcc6;
-  -webkit-text-stroke: 0;
-  padding: 0.22em 0.16em 0.34em 0.04em;
-  margin: 0 0 -0.2em -0.04em;            /* -0.04em left = optical align w/ H1 */
+  padding: 0 0 0.18em 0.04em;
+  margin: 0 0 -0.16em -0.05em;           /* -0.05em = optical align w/ the word */
   text-shadow:
     0 0.03em 0.055em rgba(5, 17, 38, 0.75),
     0 0.06em 0.24em rgba(5, 17, 38, 0.45);
 }
-/* Statement word. No extrusion — offset copies of the glyph read as a grey
-   ghost at this size, which is what made it look muddy. Crisp white, weight
-   900, negative tracking: the letters close into one solid mass, and a solid
-   mass of white holds against a busy frame far better than any shadow trick. */
-.hs-info h1 {
-  font-family: var(--font-hero);
-  font-weight: 900;
-  font-size: clamp(2.8rem, 9.8vw, 6.6rem);
-  line-height: 0.9;
-  letter-spacing: -0.028em;
+/* Statement word in Archivo — contrast against the script above comes from
+   scale, not from piling on weight. 500 is half of the ~900 that Archivo Black
+   would give. Sized off the longest word in the set ("Perspective", 11
+   characters) rather than off the frame: a single word has no break
+   opportunity, so anything larger overflows the caption instead of wrapping. */
+.hs-cap .hs-word {
+  font-family: var(--font-statement);
+  font-weight: 500;
+  font-size: clamp(2.2rem, 6.6vw, 9rem);
+  line-height: 0.95;
+  letter-spacing: -0.025em;
   text-transform: uppercase;
   color: #fff;
+  margin: 0;
   text-shadow:
-    0 0.008em 0.022em rgba(5, 17, 38, 0.55),
-    0 0.035em 0.1em rgba(5, 17, 38, 0.38);
+    0 0.01em 0.03em rgba(5, 17, 38, 0.5),
+    0 0.04em 0.16em rgba(5, 17, 38, 0.32);
 }
-/* Location — borrows the site's .eyebrow language (tracked caps + orange rule)
-   so the hero speaks the same type system as every section below it. */
-.hs-info h3 {
-  font-family: var(--font-body);
+
+/* ---- Controls: pagination rail left, counter + arrows right ----
+   In flow above .hero-foot, inside a .container, so it aligns to the same
+   gutter as the search card at every breakpoint. */
+.hs-ui {
+  position: relative;
+  z-index: 4;
+  flex: none;
+  margin-bottom: clamp(0.875rem, 2.4vh, 1.75rem);
+}
+.hs-ui .container {
   display: flex;
   align-items: center;
-  gap: 0.875rem;
-  color: #fff;
-  font-size: clamp(0.78rem, 1.1vw, 0.92rem);
-  font-weight: 700;
-  margin-top: 1.7em;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  text-shadow: 0 0.06em 0.2em rgba(5, 17, 38, 0.7);
+  justify-content: space-between;
+  gap: 1.25rem;
 }
-.hs-info h3::before {
-  content: "";
-  width: 2.75rem;
+
+.hs-dots { display: flex; align-items: center; gap: 0.625rem; }
+.hs-dot {
+  position: relative;
+  width: 1.625rem;
   height: 0.1875rem;
+  padding: 0;
+  border: 0;
   border-radius: 0.125rem;
-  background: var(--orange);
-  box-shadow: 0 0 0.75rem rgba(224, 97, 58, 0.65);
-  flex: none;
+  background: rgba(255, 255, 255, 0.45);
+  /* The rail can land on a bright frame (open water, sky), where flat white at
+     low alpha disappears. A contact shadow holds it on any slide. */
+  box-shadow: 0 0.0625rem 0.1875rem rgba(5, 17, 38, 0.45);
+  cursor: pointer;
+  overflow: hidden;
+  transition: width 0.55s var(--ease-out), background 0.35s ease;
 }
-/* Legibility wash — belongs to the IMAGE, not to the slider root.
- *
- * It used to be `.hs::after { z-index: 9 }`. But .hs is a stacking context and
- * the slides are <article z-index: 1…5> inside it, so 9 put the wash above
- * every article — i.e. painted directly over the captions, dimming the type it
- * was supposed to be helping. That is why the headline read grey no matter how
- * white we made it, and why darkening the wash only ever made it worse.
- *
- * As a child of .hs-image it sits below .hs-info (z-index 8) and, because
- * .hs-image is the clip-path'd element, each slide's wash wipes with its own
- * image — so two slides mid-transition never stack two washes.
- *
- * Anchored to the frame EDGE and clear by 58%: reads as cinematic side-light,
- * not as a stain floating mid-picture. The right half stays untouched. */
-.hs-image::after {
-  content: "";
+/* The bar is 3px tall; this gives it a real touch target without moving it. */
+.hs-dot::before { content: ""; position: absolute; inset: -0.75rem -0.25rem; }
+.hs-dot:hover { background: rgba(255, 255, 255, 0.75); }
+.hs-dot.is-active { width: 4.25rem; background: rgba(255, 255, 255, 0.34); }
+/* The fill runs the autoplay interval, so the rail doubles as the timer. */
+.hs-dot i {
   position: absolute;
   inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(96deg,
-      rgba(5, 17, 38, 0.58) 0%,
-      rgba(5, 17, 38, 0.3) 22%,
-      rgba(5, 17, 38, 0.1) 40%,
-      rgba(5, 17, 38, 0) 58%),
-    linear-gradient(180deg, rgba(5, 17, 38, 0.24) 0%, rgba(5, 17, 38, 0) 20%, rgba(5, 17, 38, 0) 54%, rgba(5, 17, 38, 0.7) 100%);
+  display: block;
+  border-radius: inherit;
+  background: var(--orange);
+  transform-origin: left center;
+  animation: hs-fill linear forwards;
 }
+/* Frozen in place, not reset — the JS timer banks its remaining time to match. */
+.hs-ui:hover .hs-dot i,
+.hs-ui:focus-within .hs-dot i { animation-play-state: paused; }
+@keyframes hs-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+.hs-nav { display: flex; align-items: center; gap: 0.75rem; }
+.hs-count {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.55);
+  margin-right: 0.25rem;
+}
+.hs-count b { color: #fff; }
+.hs-arrow {
+  width: 2.625rem;
+  height: 2.625rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 0.0625rem solid rgba(255, 255, 255, 0.34);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(0.5rem);
+  -webkit-backdrop-filter: blur(0.5rem);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s var(--ease-out);
+}
+.hs-arrow svg { width: 1.0625rem; height: 1.0625rem; }
+.hs-arrow:hover { background: rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.6); }
+.hs-arrow:active { transform: scale(0.93); }
+.hs-dot:focus-visible,
+.hs-arrow:focus-visible { outline: 0.125rem solid var(--orange); outline-offset: 0.25rem; }
+
 @media (prefers-reduced-motion: reduce) {
-  .hs-image, .hs-info h1, .hs-info h2, .hs-info h3 { animation: none !important; clip-path: none !important; }
+  .hs-slide, .hs-cap { transition-duration: 0.2s; }
+  .hs-slide img, .hs-slide.is-active img { transform: none; transition: none; }
+  .hs-cap > * { transform: none; transition: none; }
 }
 /* Mobile: lift the caption and cap the title so long words never bleed. */
 @media (max-width: 700px) {
-  .hs-info { top: 32%; left: 1.25rem; max-width: calc(100% - 2.5rem); }
-  .hs-info h1 { font-size: clamp(2.4rem, 12.4vw, 3.9rem); }
-  .hs-info h2 { font-size: clamp(1.55rem, 7.2vw, 2.7rem); }
-  .hs-info h3 { margin-top: 1.2em; font-size: 0.74rem; letter-spacing: 0.2em; gap: 0.625rem; }
-  .hs-info h3::before { width: 1.5rem; }
+  .hs-cap { top: 34%; left: 1.25rem; max-width: calc(100% - 2.5rem); }
+  .hs-cap .hs-loc { margin-bottom: 0.875rem; font-size: 0.64rem; letter-spacing: 0.24em; gap: 0.625rem; }
+  .hs-cap .hs-loc::before { width: 1.375rem; }
+  .hs-cap .hs-lead { font-size: clamp(1.4rem, 6.4vw, 2.4rem); }
+  .hs-cap .hs-word { font-size: clamp(2rem, 9.4vw, 3.4rem); }
   /* narrow frame: the caption spans it, so shade evenly rather than from one edge */
-  .hs-image::after {
+  .hs-scrim {
     background:
-      linear-gradient(180deg, rgba(5, 17, 38, 0.4) 0%, rgba(5, 17, 38, 0.22) 30%, rgba(5, 17, 38, 0.18) 52%, rgba(5, 17, 38, 0.72) 100%);
+      linear-gradient(180deg, rgba(5, 17, 38, 0.42) 0%, rgba(5, 17, 38, 0.22) 30%, rgba(5, 17, 38, 0.18) 52%, rgba(5, 17, 38, 0.8) 100%);
   }
+  .hs-ui .container { gap: 0.75rem; }
+  .hs-count { display: none; }
+  .hs-dot { width: 1.25rem; }
+  .hs-dot.is-active { width: 2.75rem; }
+  .hs-arrow { width: 2.25rem; height: 2.25rem; }
+  .hs-arrow svg { width: 0.9375rem; height: 0.9375rem; }
 }
 
 /* Search card + marquee live at the bottom of the hero (no page-pulling margins) */

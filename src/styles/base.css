@@ -38,6 +38,12 @@
   /* Type */
   --font-heading: "Fraunces", "Georgia", "Times New Roman", serif;
   --font-hand: "Edu VIC WA NT Hand", "Segoe Print", "Bradley Hand", cursive;
+  /* Hero statement words. Archivo rather than Archivo Black: the Black cut is a
+     single-weight family, so it cannot be lightened — this is the same
+     superfamily as a variable face, where ~900 IS Archivo Black and 500 is half
+     of it. Wide grotesque, so size it against the longest word in the set
+     rather than against the frame. */
+  --font-statement: "Archivo", "Helvetica Neue", "Gothic A1", sans-serif;
   --font-hero: "Gothic A1", "Segoe UI", sans-serif;
   --font-display: "Plus Jakarta Sans", "Segoe UI", sans-serif;
   --font-body: "Plus Jakarta Sans", "Segoe UI", sans-serif;

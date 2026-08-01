@@ -175,7 +175,13 @@ export function Preloader() {
       p += (target - p) * 0.16;
       if (target === 100 && p > 99.4) p = 100;
       paint(p);
-      if (p >= 100) { setPhase("out"); return; }
+      if (p >= 100) {
+        setPhase("out");
+        /* The hero slider holds its first slide until this fires, so the page
+           is revealed at the start of the rotation rather than part-way in. */
+        window.dispatchEvent(new Event("tu:reveal"));
+        return;
+      }
       raf = requestAnimationFrame(tick);
     };
 
