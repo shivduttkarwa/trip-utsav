@@ -92,14 +92,13 @@
   white-space: nowrap;
   transition: color 0.25s ease, background-color 0.25s ease;
 }
-/* Hover is a soft pill rather than a travelling underline — it survives six
-   adjacent items without the bar looking like it is constantly redrawing. */
+/* Colour only — no fill, no rule. The chevron rides on currentColor, so it
+   turns with the label. */
 .desktop-nav-link:hover,
 .desktop-nav-link:focus-visible,
-.desktop-nav-link.is-open { background-color: rgba(7, 31, 66, 0.06); }
+.desktop-nav-link.is-open { color: var(--orange-dark); }
 .desktop-nav-link.is-current { font-weight: 600; }
-/* The current page is marked by a dot below the pill, not a 3px slab welded to
-   the bottom edge of the bar. */
+/* Current page keeps a dot under the label. */
 .desktop-nav-link::after {
   content: "";
   position: absolute;
