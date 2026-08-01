@@ -34,45 +34,95 @@
   clip-path: polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%);
   padding: 0.14em 0.06em 0.08em 0;
 }
+/* Lead-in — the brand's hand face in a warm cream. NB `word-spacing`: Edu VIC
+   Hand ships a very narrow space glyph, so "Savour the" sets as "Savourthe"
+   at display size without it. */
 .hs-info h2 {
-  font-family: var(--font-hero);
-  font-weight: 800;
-  font-size: clamp(1.8rem, 7vw, 4.4rem);
-  line-height: 1.02;
-  text-transform: uppercase;
-  color: transparent;
-  -webkit-text-stroke: 0.045em rgba(255, 255, 255, 0.92);
+  font-family: var(--font-hand);
+  font-weight: 600;
+  font-size: clamp(1.75rem, 4.7vw, 3.25rem);
+  /* line-height 1 + a 0.06em bottom pad clipped the script's descenders and
+     tail swashes against the clip-path box. The hand face needs real room
+     under the baseline; the negative margin takes the extra space back so the
+     gap to the H1 doesn't grow. */
+  line-height: 1.16;
+  letter-spacing: 0.005em;
+  word-spacing: 0.2em;
+  text-transform: none;
+  color: #ffdcc6;
+  -webkit-text-stroke: 0;
+  padding: 0.22em 0.16em 0.34em 0.04em;
+  margin: 0 0 -0.2em -0.04em;            /* -0.04em left = optical align w/ H1 */
+  text-shadow:
+    0 0.03em 0.055em rgba(5, 17, 38, 0.75),
+    0 0.06em 0.24em rgba(5, 17, 38, 0.45);
 }
+/* Statement word. No extrusion — offset copies of the glyph read as a grey
+   ghost at this size, which is what made it look muddy. Crisp white, weight
+   900, negative tracking: the letters close into one solid mass, and a solid
+   mass of white holds against a busy frame far better than any shadow trick. */
 .hs-info h1 {
   font-family: var(--font-hero);
-  font-weight: 800;
-  font-size: clamp(3.4rem, 12vw, 8rem);
-  line-height: 0.96;
+  font-weight: 900;
+  font-size: clamp(2.8rem, 9.8vw, 6.6rem);
+  line-height: 0.9;
+  letter-spacing: -0.028em;
   text-transform: uppercase;
   color: #fff;
-  /* Subtle em-based 3D extrusion (scales with the font, so it stays light on
-     mobile) + a faint grounding blur — no heavy shadow cloud. */
   text-shadow:
-    0.015em 0.015em 0 rgba(7, 22, 48, 0.4),
-    0.03em 0.03em 0 rgba(7, 22, 48, 0.26),
-    0.03em 0.05em 0.1em rgba(0, 0, 0, 0.2);
+    0 0.008em 0.022em rgba(5, 17, 38, 0.55),
+    0 0.035em 0.1em rgba(5, 17, 38, 0.38);
 }
+/* Location — borrows the site's .eyebrow language (tracked caps + orange rule)
+   so the hero speaks the same type system as every section below it. */
 .hs-info h3 {
+  font-family: var(--font-body);
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
   color: #fff;
-  font-size: clamp(1rem, 2vw, 1.5rem);
-  font-weight: 500;
-  margin-top: 1.1em;
-  letter-spacing: 0.01em;
-  text-shadow: 0 0.125rem 0.875rem rgba(0, 0, 0, 0.5);
+  font-size: clamp(0.78rem, 1.1vw, 0.92rem);
+  font-weight: 700;
+  margin-top: 1.7em;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  text-shadow: 0 0.06em 0.2em rgba(5, 17, 38, 0.7);
 }
-/* legibility wash — darker at the foot so the search card reads */
-.hs::after {
+.hs-info h3::before {
+  content: "";
+  width: 2.75rem;
+  height: 0.1875rem;
+  border-radius: 0.125rem;
+  background: var(--orange);
+  box-shadow: 0 0 0.75rem rgba(224, 97, 58, 0.65);
+  flex: none;
+}
+/* Legibility wash — belongs to the IMAGE, not to the slider root.
+ *
+ * It used to be `.hs::after { z-index: 9 }`. But .hs is a stacking context and
+ * the slides are <article z-index: 1…5> inside it, so 9 put the wash above
+ * every article — i.e. painted directly over the captions, dimming the type it
+ * was supposed to be helping. That is why the headline read grey no matter how
+ * white we made it, and why darkening the wash only ever made it worse.
+ *
+ * As a child of .hs-image it sits below .hs-info (z-index 8) and, because
+ * .hs-image is the clip-path'd element, each slide's wash wipes with its own
+ * image — so two slides mid-transition never stack two washes.
+ *
+ * Anchored to the frame EDGE and clear by 58%: reads as cinematic side-light,
+ * not as a stain floating mid-picture. The right half stays untouched. */
+.hs-image::after {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 9;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(7, 22, 48, 0.3) 0%, rgba(7, 22, 48, 0.12) 38%, rgba(7, 22, 48, 0.7) 100%);
+  background:
+    linear-gradient(96deg,
+      rgba(5, 17, 38, 0.58) 0%,
+      rgba(5, 17, 38, 0.3) 22%,
+      rgba(5, 17, 38, 0.1) 40%,
+      rgba(5, 17, 38, 0) 58%),
+    linear-gradient(180deg, rgba(5, 17, 38, 0.24) 0%, rgba(5, 17, 38, 0) 20%, rgba(5, 17, 38, 0) 54%, rgba(5, 17, 38, 0.7) 100%);
 }
 @media (prefers-reduced-motion: reduce) {
   .hs-image, .hs-info h1, .hs-info h2, .hs-info h3 { animation: none !important; clip-path: none !important; }
@@ -80,9 +130,15 @@
 /* Mobile: lift the caption and cap the title so long words never bleed. */
 @media (max-width: 700px) {
   .hs-info { top: 32%; left: 1.25rem; max-width: calc(100% - 2.5rem); }
-  .hs-info h1 { font-size: clamp(2.8rem, 15vw, 4.6rem); }
-  .hs-info h2 { font-size: clamp(1.6rem, 8vw, 3rem); }
-  .hs-info h3 { margin-top: 0.7em; font-size: 1.02rem; }
+  .hs-info h1 { font-size: clamp(2.4rem, 12.4vw, 3.9rem); }
+  .hs-info h2 { font-size: clamp(1.55rem, 7.2vw, 2.7rem); }
+  .hs-info h3 { margin-top: 1.2em; font-size: 0.74rem; letter-spacing: 0.2em; gap: 0.625rem; }
+  .hs-info h3::before { width: 1.5rem; }
+  /* narrow frame: the caption spans it, so shade evenly rather than from one edge */
+  .hs-image::after {
+    background:
+      linear-gradient(180deg, rgba(5, 17, 38, 0.4) 0%, rgba(5, 17, 38, 0.22) 30%, rgba(5, 17, 38, 0.18) 52%, rgba(5, 17, 38, 0.72) 100%);
+  }
 }
 
 /* Search card + marquee live at the bottom of the hero (no page-pulling margins) */
@@ -272,9 +328,10 @@
   will-change: opacity, mask-size;
 }
 
-/* Legibility wash. Deliberately NOT a flat dark sheet — a soft centre
-   vignette only where the copy sits, so the photography keeps its colour
-   at the edges. Peaks at 55% behind the headline, not 74% across the frame. */
+/* Legibility wash — an even veil, not a centre vignette. A soft radial behind
+   the copy reads as a grey blob sitting on the frame; a flat 180° pass at
+   ~20% through the middle disappears as an effect while still lifting the
+   type. Edges take the weight. The tight text-shadows below do the rest. */
 .cta-scrim {
   position: absolute;
   inset: 0;
@@ -282,13 +339,11 @@
   pointer-events: none;
   opacity: var(--t-light);
   background:
-    radial-gradient(118% 84% at 50% 50%,
-      rgba(5, 17, 38, 0.55) 0%,
-      rgba(5, 17, 38, 0.32) 40%,
-      rgba(5, 17, 38, 0.08) 74%,
-      rgba(5, 17, 38, 0) 100%),
-    linear-gradient(180deg, rgba(5, 17, 38, 0.42) 0%, rgba(5, 17, 38, 0) 24%),
-    linear-gradient(0deg, rgba(5, 17, 38, 0.5) 0%, rgba(5, 17, 38, 0) 30%);
+    linear-gradient(180deg,
+      rgba(5, 17, 38, 0.42) 0%,
+      rgba(5, 17, 38, 0.2) 24%,
+      rgba(5, 17, 38, 0.22) 60%,
+      rgba(5, 17, 38, 0.56) 100%);
 }
 
 /* Warm brand bloom. `screen` blending ADDS light, which is what keeps the
@@ -435,7 +490,8 @@
   line-height: 1.03;
   letter-spacing: -0.025em;
   color: #fff;
-  text-shadow: 0 0.0625rem 0.1875rem rgba(4, 14, 32, 0.4), 0 0.75rem 3rem rgba(4, 14, 32, 0.5);
+  /* tight contact shadow — legibility without tinting the video behind it */
+  text-shadow: 0 0.012em 0.03em rgba(5, 17, 38, 0.55), 0 0.02em 0.11em rgba(5, 17, 38, 0.35);
 }
 .cta-title em {
   font-family: var(--font-hand);
@@ -450,7 +506,7 @@
   color: rgba(255, 255, 255, 0.9);
   max-width: 34rem;
   margin: 0;
-  text-shadow: 0 0.0625rem 1.25rem rgba(4, 14, 32, 0.5);
+  text-shadow: 0 0.03em 0.08em rgba(5, 17, 38, 0.6), 0 0.05em 0.3em rgba(5, 17, 38, 0.35);
 }
 .cta-actions {
   display: flex;

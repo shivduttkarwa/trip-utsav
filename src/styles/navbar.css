@@ -32,8 +32,26 @@
 }
 .navbar .container { display: flex; align-items: center; justify-content: space-between; gap: 1.25rem; }
 
-.brand { display: flex; align-items: center; gap: 0.625rem; flex: none; z-index: 2; }
-.brand img { height: 2.75rem; width: auto; }
+/* position:relative so the z-index actually applies — nothing may sit over the
+   home link and swallow the click. */
+.brand { display: flex; align-items: center; gap: 0.625rem; flex: none; position: relative; z-index: 2; }
+.brand img { height: 2.75rem; width: auto; transition: filter 0.35s ease, transform 0.35s var(--ease-out); }
+/* hover affordance — without it the logo doesn't read as a link */
+.brand:hover img { transform: scale(1.04); }
+.brand:focus-visible { outline: 0.125rem solid var(--orange); outline-offset: 0.375rem; border-radius: 0.375rem; }
+
+/* Over a hero the bar is transparent, and the colour logo — dark blue wordmark,
+   grey tagline — disappears into bright photography. Flip it to solid white
+   with a contact shadow: brightness(0) crushes every fill to black, invert(1)
+   lifts them to white, so this holds for whatever logo.svg is replaced with
+   (it's still a placeholder) without needing a second asset to maintain.
+   Excluded while scrolled (bar goes white) or with the menu open (light panel). */
+.navbar:not(.scrolled):not(.menu-open) .brand img {
+  filter:
+    brightness(0) invert(1)
+    drop-shadow(0 0.0625rem 0.125rem rgba(5, 17, 38, 0.55))
+    drop-shadow(0 0.25rem 0.75rem rgba(5, 17, 38, 0.45));
+}
 
 /* Hamburger */
 .nav-burger {

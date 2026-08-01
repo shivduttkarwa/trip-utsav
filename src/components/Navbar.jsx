@@ -12,8 +12,14 @@ const DEST_GROUPS = [
   { region: "Europe", items: ["Europe"] },
 ];
 
+/* Pages whose first element sits behind the transparent bar. Anywhere else
+   (e.g. 404) the bar has to be solid from the top, or the white logo and
+   burger land on white. */
+const HERO_SELECTOR = ".hero, .page-hero, .detail-hero";
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [noHero, setNoHero] = useState(false);
   const [open, setOpen] = useState(false);
   const location = useLocation();
 
@@ -27,6 +33,11 @@ export default function Navbar() {
   /* close the overlay on every route change */
   useEffect(() => setOpen(false), [location.pathname]);
 
+  /* after the route's markup is committed, see if anything dark is behind us */
+  useEffect(() => {
+    setNoHero(!document.querySelector(HERO_SELECTOR));
+  }, [location.pathname]);
+
   /* lock body scroll while the overlay is open */
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -37,9 +48,18 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={`navbar${scrolled ? " scrolled" : ""}${open ? " menu-open" : ""}`}>
+      <nav className={`navbar${scrolled || noHero ? " scrolled" : ""}${open ? " menu-open" : ""}`}>
         <div className="container">
-          <Link className="brand" to="/" aria-label="Trip Utsav home" onClick={close}>
+          <Link
+            className="brand"
+            to="/"
+            aria-label="Trip Utsav home"
+            onClick={() => {
+              close();
+              /* already home — the route won't change, so scroll instead */
+              if (location.pathname === "/") window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          >
             <img src="/logo.svg" alt="Trip Utsav — Travel More, Celebrate Life" />
           </Link>
           <button
