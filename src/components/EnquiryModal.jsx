@@ -1,8 +1,20 @@
 import { useEffect, useState } from "react";
 import { useUI } from "./UIContext";
 import Button from "./Button";
+import Select from "./Select";
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+/* Value === label for these: the native <option>s carried no value attribute,
+   so the submitted string was the visible text. Kept identical so nothing
+   downstream of the form has to change. */
+const asOptions = (labels) => labels.map((l) => ({ value: l, label: l }));
+const MONTH_OPTIONS = [{ value: "", label: "Flexible" }, ...asOptions(MONTHS)];
+const PAX_OPTIONS = asOptions(["1", "2", "3–4", "5–8", "Group (9+)"]);
+const BUDGET_OPTIONS = [
+  { value: "", label: "Not sure yet" },
+  ...asOptions(["Under ₹20,000", "₹20,000 – ₹50,000", "₹50,000 – ₹1,00,000", "₹1,00,000+"]),
+];
 
 const EMPTY = { name: "", phone: "", email: "", destination: "", month: "", pax: "2", budget: "", message: "" };
 
@@ -25,10 +37,13 @@ export default function EnquiryModal() {
     return () => document.removeEventListener("keydown", onKey);
   }, [closeEnquiry]);
 
-  const set = (key) => (e) => {
-    setForm((f) => ({ ...f, [key]: e.target.value }));
+  /* Custom <Select> hands back a raw value, native inputs hand back an event —
+     one setter, two adapters, so both clear the field's error the same way. */
+  const setVal = (key) => (value) => {
+    setForm((f) => ({ ...f, [key]: value }));
     setErrors((er) => ({ ...er, [key]: false }));
   };
+  const set = (key) => (e) => setVal(key)(e.target.value);
 
   const submit = (e) => {
     e.preventDefault();
@@ -83,26 +98,15 @@ export default function EnquiryModal() {
           </div>
           <div className="field">
             <label>Travel Month</label>
-            <select value={form.month} onChange={set("month")}>
-              <option value="">Flexible</option>
-              {MONTHS.map((m) => <option key={m}>{m}</option>)}
-            </select>
+            <Select ariaLabel="Travel month" options={MONTH_OPTIONS} value={form.month} onChange={setVal("month")} />
           </div>
           <div className="field">
             <label>Travellers</label>
-            <select value={form.pax} onChange={set("pax")}>
-              {["1", "2", "3–4", "5–8", "Group (9+)"].map((p) => <option key={p}>{p}</option>)}
-            </select>
+            <Select ariaLabel="Travellers" options={PAX_OPTIONS} value={form.pax} onChange={setVal("pax")} />
           </div>
           <div className="field">
             <label>Budget (per person)</label>
-            <select value={form.budget} onChange={set("budget")}>
-              <option value="">Not sure yet</option>
-              <option>Under ₹20,000</option>
-              <option>₹20,000 – ₹50,000</option>
-              <option>₹50,000 – ₹1,00,000</option>
-              <option>₹1,00,000+</option>
-            </select>
+            <Select ariaLabel="Budget per person" options={BUDGET_OPTIONS} value={form.budget} onChange={setVal("budget")} />
           </div>
           <div className="field full">
             <label>Anything else?</label>

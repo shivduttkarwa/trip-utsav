@@ -7,6 +7,15 @@ import Icon from "../components/Icon";
 import Button from "../components/Button";
 import Reveal from "../components/Reveal";
 import SectionHead from "../components/SectionHead";
+import Select from "../components/Select";
+
+/* Value === label: the native <option>s had no value attribute, so the
+   submitted string was the visible text. */
+const SUBJECTS = [
+  { value: "", label: "General enquiry" },
+  ...["New trip enquiry", "Existing booking", "Visa assistance", "Group / corporate travel", "Feedback"]
+    .map((l) => ({ value: l, label: l })),
+];
 
 const HERO = IMG("photo-1521295121783-8a321d551ad2", 2000);
 
@@ -23,10 +32,13 @@ export default function Contact() {
   const [form, setForm] = useState(EMPTY);
   const [errors, setErrors] = useState({});
 
-  const set = (key) => (e) => {
-    setForm((f) => ({ ...f, [key]: e.target.value }));
+  /* Custom <Select> hands back a raw value, native inputs hand back an event —
+     one setter, two adapters, so both clear the field's error the same way. */
+  const setVal = (key) => (value) => {
+    setForm((f) => ({ ...f, [key]: value }));
     setErrors((er) => ({ ...er, [key]: false }));
   };
+  const set = (key) => (e) => setVal(key)(e.target.value);
 
   const submit = (e) => {
     e.preventDefault();
@@ -101,14 +113,7 @@ export default function Contact() {
               </div>
               <div className="field">
                 <label>Subject</label>
-                <select value={form.subject} onChange={set("subject")}>
-                  <option value="">General enquiry</option>
-                  <option>New trip enquiry</option>
-                  <option>Existing booking</option>
-                  <option>Visa assistance</option>
-                  <option>Group / corporate travel</option>
-                  <option>Feedback</option>
-                </select>
+                <Select ariaLabel="Subject" options={SUBJECTS} value={form.subject} onChange={setVal("subject")} />
               </div>
               <div className={`field full${errors.message ? " error" : ""}`}>
                 <label>Message <span className="req">*</span></label>

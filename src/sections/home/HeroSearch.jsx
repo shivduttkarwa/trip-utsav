@@ -2,9 +2,24 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Icon from "../../components/Icon";
 import Button from "../../components/Button";
+import Select from "../../components/Select";
 import HeroSlides from "../../components/HeroSlides";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+const TRIP_TYPES = [
+  { value: "", label: "Any" },
+  { value: "domestic", label: "Domestic" },
+  { value: "international", label: "International" },
+];
+const MONTH_OPTIONS = [{ value: "", label: "Flexible" }, ...MONTHS.map((m) => ({ value: m, label: m }))];
+const BUDGET_OPTIONS = [
+  { value: "", label: "Any budget" },
+  { value: "0-20000", label: "Under ₹20k" },
+  { value: "20000-50000", label: "₹20k – ₹50k" },
+  { value: "50000-100000", label: "₹50k – ₹1L" },
+  { value: "100000-9999999", label: "₹1L+" },
+];
 
 /* Homepage hero: cinematic slider + the floating search card. */
 export default function HeroSearch() {
@@ -42,34 +57,39 @@ export default function HeroSearch() {
               <label>Trip Type</label>
               <div className="control">
                 <Icon name="globe" />
-                <select value={search.category} onChange={(e) => setSearch({ ...search, category: e.target.value })}>
-                  <option value="">Any</option>
-                  <option value="domestic">Domestic</option>
-                  <option value="international">International</option>
-                </select>
+                <Select
+                  variant="bare"
+                  ariaLabel="Trip type"
+                  options={TRIP_TYPES}
+                  value={search.category}
+                  onChange={(v) => setSearch({ ...search, category: v })}
+                />
               </div>
             </div>
             <div className="search-field">
               <label>Travel Month</label>
               <div className="control">
                 <Icon name="calendar" />
-                <select value={search.month} onChange={(e) => setSearch({ ...search, month: e.target.value })}>
-                  <option value="">Flexible</option>
-                  {MONTHS.map((m) => <option key={m}>{m}</option>)}
-                </select>
+                <Select
+                  variant="bare"
+                  ariaLabel="Travel month"
+                  options={MONTH_OPTIONS}
+                  value={search.month}
+                  onChange={(v) => setSearch({ ...search, month: v })}
+                />
               </div>
             </div>
             <div className="search-field">
               <label>Budget / Person</label>
               <div className="control">
                 <Icon name="wallet" />
-                <select value={search.budget} onChange={(e) => setSearch({ ...search, budget: e.target.value })}>
-                  <option value="">Any budget</option>
-                  <option value="0-20000">Under ₹20k</option>
-                  <option value="20000-50000">₹20k – ₹50k</option>
-                  <option value="50000-100000">₹50k – ₹1L</option>
-                  <option value="100000-9999999">₹1L+</option>
-                </select>
+                <Select
+                  variant="bare"
+                  ariaLabel="Budget per person"
+                  options={BUDGET_OPTIONS}
+                  value={search.budget}
+                  onChange={(v) => setSearch({ ...search, budget: v })}
+                />
               </div>
             </div>
             <Button size="lg" icon="search" type="submit">Search</Button>

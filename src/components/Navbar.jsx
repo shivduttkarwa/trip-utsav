@@ -276,20 +276,27 @@ export default function Navbar() {
               >
                 Home
               </Link>
+              {/* Links, not buttons: hover/focus still opens the panel, but a
+                  click now goes to the section's own landing page rather than
+                  just toggling the panel shut. */}
               {DESKTOP_MENUS.map((menu) => (
-                <button
+                <Link
                   key={menu.id}
-                  type="button"
-                  className={`desktop-nav-link desktop-nav-trigger${desktopPanel === menu.id ? " is-open" : ""}`}
+                  to={menu.cta.to}
+                  className={
+                    `desktop-nav-link desktop-nav-trigger` +
+                    `${desktopPanel === menu.id ? " is-open" : ""}` +
+                    `${location.pathname === menu.cta.to ? " is-current" : ""}`
+                  }
                   aria-expanded={desktopPanel === menu.id}
                   aria-controls={`mega-${menu.id}`}
                   onMouseEnter={() => showDesktopPanel(menu.id)}
                   onFocus={() => showDesktopPanel(menu.id)}
-                  onClick={() => setDesktopPanel((current) => current === menu.id ? null : menu.id)}
+                  onClick={closeDesktopPanel}
                 >
                   {menu.label}
                   <span className="desktop-nav-chevron" aria-hidden="true" />
-                </button>
+                </Link>
               ))}
               <Link
                 className={`desktop-nav-link${location.pathname === "/contact" ? " is-current" : ""}`}

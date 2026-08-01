@@ -5,6 +5,7 @@ import Icon from "../components/Icon";
 import Button from "../components/Button";
 import Reveal from "../components/Reveal";
 import PackageCard from "../components/PackageCard";
+import Select from "../components/Select";
 import { useUI } from "../components/UIContext";
 
 const HERO = IMG("photo-1500835556837-99ac94a94552", 2000);
@@ -121,15 +122,9 @@ export default function Packages() {
               </button>
             ))}
           </div>
-          <select className="filter-select" value={budget} onChange={(e) => setParam("budget", e.target.value)} aria-label="Budget">
-            {BUDGETS.map((b) => <option key={b.value} value={b.value}>{b.label}</option>)}
-          </select>
-          <select className="filter-select" value={duration} onChange={(e) => setParam("duration", e.target.value)} aria-label="Duration">
-            {DURATIONS.map((d) => <option key={d.value} value={d.value}>{d.label}</option>)}
-          </select>
-          <select className="filter-select" value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Sort">
-            {SORTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
-          </select>
+          <Select variant="pill" ariaLabel="Budget" options={BUDGETS} value={budget} onChange={(v) => setParam("budget", v)} />
+          <Select variant="pill" ariaLabel="Duration" options={DURATIONS} value={duration} onChange={(v) => setParam("duration", v)} />
+          <Select variant="pill" ariaLabel="Sort" options={SORTS} value={sort} onChange={setSort} />
         </div>
       </div>
 
