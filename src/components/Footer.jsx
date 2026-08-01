@@ -55,7 +55,7 @@ export default function Footer() {
       <div className="footer-main">
         <div className="container footer-grid">
           <div className="footer-brand">
-            <img src="/logo.svg" alt="Trip Utsav" />
+            <img src="/Trip Utsav logo.png" alt="Trip Utsav — Travel More, Celebrate Life" />
             <p>
               Travel More, Celebrate Life. We craft journeys across India and the world — from
               weekend escapes to grand honeymoons — with the care of a friend and the precision

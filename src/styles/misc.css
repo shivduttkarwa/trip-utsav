@@ -13,10 +13,15 @@
 
 /* Curtain panels. Each carries the SAME backdrop at 300% width, anchored
    left/center/right, so the three tile back into one seamless scene — no
-   visible seams until they split on exit. */
-.pl-panels { position: absolute; inset: 0; display: flex; }
+   visible seams until they split on exit. Panels are 1px wider than their
+   third and overlap: at viewport widths that aren't divisible by 3, flex
+   rounding otherwise leaves a hairline of the live page showing through. */
+.pl-panels { position: absolute; inset: 0; }
 .pl-panels i {
-  flex: 1 1 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: calc(33.34% + 0.0625rem);
   background-image:
     radial-gradient(75% 55% at 50% 4%, rgba(21, 101, 200, 0.55) 0%, transparent 62%),
     radial-gradient(60% 55% at 88% 96%, rgba(224, 97, 58, 0.34) 0%, transparent 62%),
@@ -38,7 +43,7 @@
 .pl-content {
   position: relative;
   z-index: 2;
-  width: min(48rem, 92vw);
+  width: min(53rem, 94vw);
   text-align: center;
   transition: opacity 0.45s ease, transform 0.6s var(--ease-out);
 }
@@ -79,10 +84,10 @@
   opacity: 0;
   animation: pl-fade 1s var(--ease-out) 0.42s forwards;
 }
-.pl-land path {
-  fill: rgba(255, 255, 255, 0.055);
-  stroke: rgba(255, 255, 255, 0.14);
-  stroke-width: 0.9;
+.pl-land {
+  fill: rgba(255, 255, 255, 0.06);
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 0.8;
   stroke-linejoin: round;
 }
 .pl-equator { stroke: rgba(255, 255, 255, 0.09); stroke-width: 1; stroke-dasharray: 2 12; }

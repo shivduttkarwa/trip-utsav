@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useUI } from "./UIContext";
 import { SITE } from "../data/site";
+import { WORLD_LAND } from "./worldMap";
 import Icon from "./Icon";
 
 /* Toast, WhatsApp float, back-to-top and the one-time preloader */
@@ -66,35 +67,6 @@ const PL_LEGS = [
   "M714,171 Q684,150 654,180",
   "M654,180 Q580,116 506,114",
   "M506,114 Q400,86 295,137",
-];
-
-const PL_LAND = [
-  /* North America */
-  "M33,67 69,50 153,53 236,42 283,47 325,86 322,122 296,150 275,181 262,178 231,180 250,190 258,205 244,208 208,194 181,167 156,139 153,111 125,89 83,83 42,97Z",
-  /* Greenland */
-  "M339,56 361,28 431,22 444,56 400,86 361,78Z",
-  /* South America */
-  "M292,220 328,222 356,236 403,264 394,286 383,314 367,328 353,347 328,361 311,403 297,375 303,333 289,292 275,258 283,228Z",
-  /* Africa */
-  "M472,153 528,147 592,164 619,217 642,219 614,261 611,306 569,344 550,342 533,292 525,250 511,236 492,236 453,208 456,181Z",
-  /* Eurasia */
-  "M475,142 494,117 514,103 522,89 550,56 583,56 667,56 722,47 806,44 889,50 972,61 950,89 889,97 853,144 839,167 800,200 789,244 772,222 747,189 717,228 694,189 667,181 661,194 625,214 597,172 600,150 564,144 542,139 500,133Z",
-  /* British Isles */
-  "M486,111 494,89 503,100 497,114Z",
-  /* Japan */
-  "M858,161 878,142 892,131 897,136 880,150 864,166Z",
-  /* Madagascar */
-  "M622,286 639,294 631,319 619,306Z",
-  /* Australia */
-  "M817,311 861,283 903,292 925,328 914,356 883,347 819,344Z",
-  /* New Zealand */
-  "M967,375 975,358 983,352 979,364 972,381Z",
-  /* Sumatra, Borneo, Java, New Guinea, Philippines */
-  "M764,236 789,258 782,265 757,243Z",
-  "M797,240 819,242 816,258 797,256Z",
-  "M783,269 819,272 819,278 783,275Z",
-  "M836,256 875,268 871,278 833,266Z",
-  "M819,200 830,196 833,214 825,222Z",
 ];
 
 /* Material "flight" glyph — drawn nose-up in a 24 box, rotated to +x below. */
@@ -236,9 +208,7 @@ export function Preloader() {
             </linearGradient>
           </defs>
 
-          <g className="pl-land">
-            {PL_LAND.map((d, i) => <path key={i} d={d} />)}
-          </g>
+          <path className="pl-land" d={WORLD_LAND} />
           <path className="pl-equator" d="M0,250 H1000" />
 
           {PL_LEGS.map((d, i) => (

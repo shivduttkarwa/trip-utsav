@@ -60,7 +60,7 @@ export default function Navbar() {
               if (location.pathname === "/") window.scrollTo({ top: 0, behavior: "smooth" });
             }}
           >
-            <img src="/logo.svg" alt="Trip Utsav — Travel More, Celebrate Life" />
+            <img src="/Trip Utsav logo.png" alt="Trip Utsav — Travel More, Celebrate Life" />
           </Link>
           <button
             className={`nav-burger${open ? " active" : ""}`}
