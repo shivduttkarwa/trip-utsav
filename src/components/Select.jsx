@@ -51,12 +51,28 @@ export default function Select({
     const below = window.innerHeight - b.bottom;
     const drop = below >= Math.min(MAX_POP, options.length * 42 + 12) || below >= b.top;
     setPos({
+      /* minWidth, not width: a pill trigger is only as wide as its own label,
+         and forcing the list to match wrapped "Price: low -> high" onto three
+         lines. The list sizes to its content and merely starts at the trigger's
+         width; the effect below pulls it back if that runs off-screen. */
       left: b.left,
-      width: b.width,
+      minWidth: b.width,
+      maxWidth: Math.min(352, window.innerWidth - 16),
       ...(drop ? { top: b.bottom + 6 } : { bottom: window.innerHeight - b.top + 6 }),
       maxHeight: Math.min(MAX_POP, (drop ? below : b.top) - 16),
     });
   }, [options.length]);
+
+  /* Content-sized lists can extend past the right edge, so nudge back once the
+     real width is known. Guarded on a >1px delta so it settles in one pass. */
+  useLayoutEffect(() => {
+    if (!open || !pos) return;
+    const el = popRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const over = r.right - (window.innerWidth - 8);
+    if (over > 1) setPos((p) => ({ ...p, left: Math.max(8, p.left - over) }));
+  }, [open, pos]);
 
   useLayoutEffect(() => {
     if (!open) return;

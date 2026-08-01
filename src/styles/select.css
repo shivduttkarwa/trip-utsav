@@ -76,6 +76,9 @@
 .tu-select-pop {
   position: fixed;
   z-index: 3000;          /* over .filter-bar (500) and the modal (forms.css) */
+  /* Sized to the longest option rather than to the trigger — JS supplies
+     min-width (the trigger) and max-width (the viewport). */
+  width: max-content;
   margin: 0;
   padding: 0.375rem;
   list-style: none;
@@ -101,9 +104,12 @@
   font-size: 0.92rem;
   line-height: 1.3;
   color: var(--body);
+  white-space: nowrap;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
+/* Only bites when max-width clamps a very long label. */
+.tu-select-opt > span { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 /* Pointer and keyboard share one highlight — the list is driven by `active`
    either way, so hovering and arrowing can never disagree about the target. */
 .tu-select-opt.is-active { background: var(--orange-soft); color: var(--ink); }
