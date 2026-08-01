@@ -1,17 +1,16 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { IMG } from "../data/packages";
 
 /* Cinematic hero slider — a faithful port of the reference GSAP slider.
    Slides are stacked by z-index (slide 1 on top). A looping, yoyo-ing timeline
    wipes the current top slide's caption + image OUT to the left (clip-path
    collapse), revealing the slide beneath, then wipes the next caption IN. */
 const SLIDES = [
-  { pre: "Chase the", word: "Horizon", loc: "Ladakh, India", img: IMG("photo-1483728642387-6c3bdd6c93e5", 2200) },
-  { pre: "Savour the", word: "Journey", loc: "Kerala Backwaters", img: IMG("photo-1602216056096-3b40cc0c9944", 2200) },
-  { pre: "Wander the", word: "Valleys", loc: "Pahalgam, Kashmir", img: IMG("photo-1598091383021-15ddea10925d", 2200) },
-  { pre: "Escape to", word: "Paradise", loc: "Maldives", img: IMG("photo-1514282401047-d79a71a590e8", 2200) },
-  { pre: "Change your", word: "Perspective", loc: "Bali, Indonesia", img: IMG("photo-1537996194471-e657df975ab4", 2200) },
+  { pre: "Chase the", word: "Horizon", loc: "Ladakh, India", img: "/images/hero/hero-ladakh-4k.webp" },
+  { pre: "Savour the", word: "Journey", loc: "Kerala Backwaters", img: "/images/hero/hero-kerala-4k.webp" },
+  { pre: "Wander the", word: "Valleys", loc: "Pahalgam, Kashmir", img: "/images/hero/hero-kashmir-4k.webp" },
+  { pre: "Escape to", word: "Paradise", loc: "Maldives", img: "/images/hero/hero-maldives-4k.webp" },
+  { pre: "Change your", word: "Perspective", loc: "Bali, Indonesia", img: "/images/hero/hero-bali-4k.webp" },
 ];
 
 const FULL = "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)";

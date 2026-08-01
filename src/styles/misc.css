@@ -38,7 +38,7 @@
 .pl-content {
   position: relative;
   z-index: 2;
-  width: min(31.25rem, 86vw);
+  width: min(48rem, 92vw);
   text-align: center;
   transition: opacity 0.45s ease, transform 0.6s var(--ease-out);
 }
@@ -68,47 +68,62 @@
 }
 .pl-word em { font-style: italic; color: #ffb27a; }
 
-/* ---- Route map ---- */
+/* ---- World map + route ---- */
 .pl-map {
   display: block;
   width: 100%;
   height: auto;
-  margin: 0.5rem auto 0;
+  max-height: 46vh;
+  margin: 0.75rem auto 0;
   overflow: visible;
   opacity: 0;
-  animation: pl-fade 0.9s var(--ease-out) 0.42s forwards;
+  animation: pl-fade 1s var(--ease-out) 0.42s forwards;
 }
-.pl-arc { stroke: rgba(255, 255, 255, 0.28); stroke-width: 1.6; }
+.pl-land path {
+  fill: rgba(255, 255, 255, 0.055);
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 0.9;
+  stroke-linejoin: round;
+}
+.pl-equator { stroke: rgba(255, 255, 255, 0.09); stroke-width: 1; stroke-dasharray: 2 12; }
+
+.pl-route { stroke: rgba(255, 255, 255, 0.26); stroke-width: 1.7; }
 .pl-trail {
   stroke: url(#plTrail);
-  stroke-width: 2.4;
-  filter: drop-shadow(0 0 0.375rem rgba(255, 160, 105, 0.55));
+  stroke-width: 2.6;
+  filter: drop-shadow(0 0 0.375rem rgba(255, 160, 105, 0.5));
 }
-.pl-node { fill: #fff; }
-.pl-node-end { fill: #ffb27a; }
-.pl-pin { fill: none; stroke: var(--orange); stroke-width: 1.6; opacity: 0.9; }
-.pl-ping {
+
+/* Stops light up as the plane touches down on each one. */
+.pl-ring { fill: none; stroke: rgba(255, 255, 255, 0.28); stroke-width: 1.4; transition: stroke 0.4s ease; }
+.pl-dot { fill: rgba(255, 255, 255, 0.42); transition: fill 0.4s ease; }
+.pl-pulse {
   fill: none;
-  stroke: rgba(255, 255, 255, 0.5);
-  stroke-width: 1.4;
-  /* fill-box keeps the pulse centred on the dot at any viewBox scale */
+  stroke: #ffb27a;
+  stroke-width: 1.6;
+  opacity: 0;
+  /* fill-box keeps the pulse centred on its own dot at any viewBox scale */
   transform-box: fill-box;
   transform-origin: center;
-  animation: pl-ping 2.2s var(--ease-out) infinite;
 }
+.pl-stop.on .pl-ring { stroke: var(--orange); }
+.pl-stop.on .pl-dot { fill: #fff; }
+.pl-stop.on .pl-pulse { animation: pl-ping 1.2s var(--ease-out); }
 .pl-code {
   font-family: var(--font-display);
-  font-size: 0.8125rem;
+  /* px here = SVG user units, so the codes scale with the map, not the root */
+  font-size: 19px;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-anchor: middle;
-  fill: rgba(255, 255, 255, 0.5);
+  fill: rgba(255, 255, 255, 0.32);
+  transition: fill 0.4s ease;
 }
-/* Keyed on the destination name, so each swap replays the board-flip. */
-.pl-code-end { fill: #ffc79f; animation: pl-flip 0.5s var(--ease-out); }
+.pl-stop.on .pl-code { fill: #ffc79f; }
+
 .pl-plane {
   fill: #fff;
-  filter: drop-shadow(0 0 0.5rem rgba(255, 178, 122, 0.85));
+  filter: drop-shadow(0 0 0.5rem rgba(255, 178, 122, 0.9));
 }
 
 /* ---- Percentage row ---- */
@@ -139,17 +154,13 @@
 @keyframes pl-fade { to { opacity: 1; } }
 @keyframes pl-rise { from { opacity: 0; transform: translateY(0.875rem); } to { opacity: 1; transform: none; } }
 @keyframes pl-ping {
-  0% { transform: scale(0.6); opacity: 0.9; }
-  70%, 100% { transform: scale(3.4); opacity: 0; }
-}
-@keyframes pl-flip {
-  from { opacity: 0; transform: translateY(-0.375rem); }
-  to { opacity: 1; transform: none; }
+  0% { transform: scale(0.5); opacity: 0.9; }
+  70%, 100% { transform: scale(3.6); opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .pl-kicker, .pl-word, .pl-map, .pl-meta { opacity: 1; animation: none; }
-  .pl-ping, .pl-code-end { animation: none; }
+  .pl-stop.on .pl-pulse { animation: none; }
   .pl-panels i { transition-duration: 0.35s; transition-delay: 0s !important; }
   .pl-content { transition-duration: 0.25s; }
 }
