@@ -51,34 +51,49 @@ export function FloatingButtons() {
    x = (lon + 180) × 2.7778 and y = (90 − lat) × 2.7778. Every stop below sits
    at its real coordinates; the coastlines are deliberately low-poly. */
 
-const PL_RUN = 5000;       // ms the journey takes at full length
-const PL_DWELL = 0.085;    // share of the timeline spent parked at each stop
+const PL_RUN = 5600;       // ms the journey takes at full length
 
+/* `dy` staggers the code labels off each other — DEL and DXB are only 60 user
+   units apart, so on a phone-width map their labels would collide side by side. */
 const PL_STOPS = [
-  { code: "DEL", city: "Delhi", x: 714, y: 171 },
-  { code: "DXB", city: "Dubai", x: 654, y: 180 },
-  { code: "CDG", city: "Paris", x: 506, y: 114 },
-  { code: "JFK", city: "New York", x: 295, y: 137 },
+  { code: "DEL", city: "Delhi", x: 714, y: 171, dy: 30 },
+  { code: "DXB", city: "Dubai", x: 654, y: 180, dy: -17 },
+  { code: "CDG", city: "Paris", x: 506, y: 114, dy: 30 },
+  { code: "JFK", city: "New York", x: 295, y: 137, dy: 30 },
 ];
 
-/* One quadratic per leg, bulging north like a great circle. Kept as separate
-   paths (not one `d`) so each leg can be measured, drawn and timed on its own. */
-const PL_LEGS = [
-  "M714,171 Q684,150 654,180",
-  "M654,180 Q580,116 506,114",
-  "M506,114 Q400,86 295,137",
-];
+/* One continuous curve through all four stops, bowed north like a great circle.
+   Per-leg paths were what made the plane snap round at each stop: separate
+   curves meet at a corner, so the tangent jumps instantly. Here each stop's
+   outgoing control point is colinear with its incoming one — same direction,
+   so the heading is continuous through the junction and the plane banks
+   through Dubai and Paris instead of pivoting on the spot. Edit with care:
+   move a control point and you break the tangent match at that stop. */
+const PL_ROUTE =
+  "M714,171 C692.2,167.7 673.3,190.6 654,180" +   // Delhi → Dubai
+  " C606.7,154 559.6,120.4 506,114" +             // Dubai → Paris
+  " C435.5,105.6 363.4,117.8 295,137";            // Paris → New York
 
-/* Material "flight" glyph — drawn nose-up in a 24 box, rotated to +x below. */
+/* Airliner in plan view, nose at +x and centred on the origin, so the rAF loop
+   can place it with a bare translate + rotate. Swept tapered wings, tailplane
+   and a tapered nose — reads as an aircraft rather than a generic arrow. */
 const PL_PLANE =
-  "M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z";
+  "M20,0C19,-1.2 17,-2 14,-2.2L5,-2.6L3,-2.8L-7,-16L-10.5,-16.3L-4.5,-3.4" +
+  "L-12.5,-3L-13.5,-3.2L-18.5,-7.6L-20.5,-7.6L-18,-3L-20.5,-1.6L-21,0" +
+  "L-20.5,1.6L-18,3L-20.5,7.6L-18.5,7.6L-13.5,3.2L-12.5,3L-4.5,3.4" +
+  "L-10.5,16.3L-7,16L3,2.8L5,2.6L14,2.2C17,2 19,1.2 20,0Z";
 
 const easeIO = (u) => (u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2);
 
 export function Preloader() {
   const [phase, setPhase] = useState("in");   // in → out → done
-  const baseRefs = useRef([]);   // geometry source (no pathLength on these)
-  const trailRefs = useRef([]);
+  /* The map fills the viewport width either way, so the plane needs to be
+     drawn bigger in user units on a narrow one to stay readable. */
+  const [planeScale] = useState(() =>
+    window.matchMedia("(max-width: 700px)").matches ? 1.25 : 0.72
+  );
+  const baseRef = useRef(null);   // geometry source (no pathLength on it)
+  const trailRef = useRef(null);
   const stopRefs = useRef([]);
   const planeRef = useRef(null);
   const pctRef = useRef(null);
@@ -89,65 +104,59 @@ export function Preloader() {
      plane two pixels is waste. */
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const bases = baseRefs.current.filter(Boolean);
-    if (!bases.length) return;
+    const base = baseRef.current;
+    const trail = trailRef.current;
+    if (!base) return;
 
-    const lens = bases.map((p) => p.getTotalLength());
-    const total = lens.reduce((a, b) => a + b, 0);
-    const frac = lens.map((l) => l / total);
-    const stopAt = lens.map((_, i) => lens.slice(0, i).reduce((a, b) => a + b, 0));
-    stopAt.push(total);
+    const total = base.getTotalLength();
 
-    /* Timeline → distance. Flying time is split across legs by length, with a
-       flat PL_DWELL hold at every intermediate stop; each leg eases in and out
-       so the plane takes off and lands rather than sliding at constant speed. */
-    const flyW = 1 - PL_DWELL * (lens.length - 1);
-    const journey = (t) => {
-      let acc = 0;
-      let d = 0;
-      for (let i = 0; i < lens.length; i++) {
-        const w = flyW * frac[i];
-        if (t < acc + w) return d + frac[i] * easeIO((t - acc) / w);
-        acc += w;
-        d += frac[i];
-        if (i < lens.length - 1) {
-          if (t < acc + PL_DWELL) return d;
-          acc += PL_DWELL;
-        }
-      }
-      return 1;
-    };
+    /* Where each stop falls along the route, found by walking the path once and
+       keeping the nearest sample to each city. Sub-segment lengths aren't
+       exposed by the SVG API, and this survives any later edit to PL_ROUTE. */
+    const stopAt = PL_STOPS.map(() => 0);
+    const near = PL_STOPS.map(() => Infinity);
+    for (let s = 0; s <= total; s += 0.5) {
+      const q = base.getPointAtLength(s);
+      PL_STOPS.forEach((st, j) => {
+        const d = (q.x - st.x) ** 2 + (q.y - st.y) ** 2;
+        if (d < near[j]) { near[j] = d; stopAt[j] = s; }
+      });
+    }
 
+    /* Timeline → distance. One unbroken flight: the plane never parks, it just
+       eases away from Delhi and settles into New York. Mixing linear with
+       ease-in-out keeps those ends soft without making the middle a sprint. */
+    const journey = (t) => 0.45 * t + 0.55 * easeIO(t);
+
+    let legLabel = "";
     const paint = (p) => {
       if (pctRef.current) pctRef.current.textContent = String(Math.round(p)).padStart(2, "0");
 
       const flown = journey(p / 100) * total;
-      let rest = flown;
-      let placed = false;
+      if (trail) trail.style.strokeDashoffset = String(1 - flown / total);
 
-      lens.forEach((l, i) => {
-        const drawn = Math.max(0, Math.min(l, rest));
-        const trail = trailRefs.current[i];
-        if (trail) trail.style.strokeDashoffset = String(1 - drawn / l);
-
-        if (!placed && (drawn < l || i === lens.length - 1)) {
-          placed = true;
-          if (planeRef.current) {
-            const a = bases[i].getPointAtLength(drawn);
-            const b = bases[i].getPointAtLength(Math.min(l, drawn + 1));
-            const deg = (Math.atan2(b.y - a.y, b.x - a.x) * 180) / Math.PI;
-            planeRef.current.setAttribute("transform", `translate(${a.x} ${a.y}) rotate(${deg})`);
-          }
-          if (legRef.current) {
-            legRef.current.textContent = `${PL_STOPS[i].city} → ${PL_STOPS[i + 1].city}`;
-          }
-        }
-        rest -= l;
-      });
+      if (planeRef.current) {
+        const at = base.getPointAtLength(flown);
+        /* Heading is sampled either side of the plane, never forward-only: at
+           the end of the route `flown + 1` clamps back onto `flown`, and
+           atan2(0, 0) is 0 — which would snap the nose round to due east. */
+        const back = base.getPointAtLength(Math.max(0, flown - 0.75));
+        const fwd = base.getPointAtLength(Math.min(total, flown + 0.75));
+        const deg = (Math.atan2(fwd.y - back.y, fwd.x - back.x) * 180) / Math.PI;
+        planeRef.current.setAttribute("transform", `translate(${at.x} ${at.y}) rotate(${deg})`);
+      }
 
       stopRefs.current.forEach((el, j) => {
-        if (el) el.classList.toggle("on", flown >= stopAt[j] - 0.01);
+        if (el) el.classList.toggle("on", flown >= stopAt[j] - 0.5);
       });
+
+      let i = 0;
+      while (i < PL_STOPS.length - 2 && flown >= stopAt[i + 1]) i++;
+      const label = `${PL_STOPS[i].city} → ${PL_STOPS[i + 1].city}`;
+      if (label !== legLabel && legRef.current) {
+        legLabel = label;
+        legRef.current.textContent = label;
+      }
     };
 
     const RUN = reduce ? 700 : PL_RUN;
@@ -196,55 +205,50 @@ export function Preloader() {
       <div className="pl-panels" aria-hidden="true"><i /><i /><i /></div>
 
       <div className="pl-content">
-        <span className="pl-kicker">Travel More, Celebrate Life</span>
-        <div className="pl-word">Trip <em>Utsav</em></div>
+        <img className="pl-logo" src="/trip-utsav-logo.svg" alt="Trip Utsav" />
 
         <svg className="pl-map" viewBox="0 18 1000 404" fill="none" aria-hidden="true">
           <defs>
+            {/* Tuned for the light backdrop: the trail fades out behind the
+                plane rather than glowing, so it reads as ink on paper. */}
             <linearGradient id="plTrail" x1="0" y1="1" x2="1" y2="0">
-              <stop offset="0%" stopColor="#ffd8b6" stopOpacity="0.3" />
-              <stop offset="55%" stopColor="#ffb27a" />
-              <stop offset="100%" stopColor="#e0613a" />
+              <stop offset="0%" stopColor="#c24d28" />
+              <stop offset="55%" stopColor="#e0613a" />
+              <stop offset="100%" stopColor="#e0613a" stopOpacity="0.3" />
             </linearGradient>
           </defs>
 
           <path className="pl-land" d={WORLD_LAND} />
           <path className="pl-equator" d="M0,250 H1000" />
 
-          {PL_LEGS.map((d, i) => (
-            <path
-              key={`b${i}`}
-              ref={(el) => (baseRefs.current[i] = el)}
-              className="pl-route"
-              d={d}
-              strokeDasharray="0.5 7"
-              strokeLinecap="round"
-            />
-          ))}
-          {PL_LEGS.map((d, i) => (
-            <path
-              key={`t${i}`}
-              ref={(el) => (trailRefs.current[i] = el)}
-              className="pl-trail"
-              d={d}
-              pathLength="1"
-              strokeDasharray="1"
-              strokeDashoffset="1"
-              strokeLinecap="round"
-            />
-          ))}
+          <path
+            ref={baseRef}
+            className="pl-route"
+            d={PL_ROUTE}
+            strokeDasharray="0.5 7"
+            strokeLinecap="round"
+          />
+          <path
+            ref={trailRef}
+            className="pl-trail"
+            d={PL_ROUTE}
+            pathLength="1"
+            strokeDasharray="1"
+            strokeDashoffset="1"
+            strokeLinecap="round"
+          />
 
           {PL_STOPS.map((s, i) => (
             <g key={s.code} ref={(el) => (stopRefs.current[i] = el)} className="pl-stop">
               <circle className="pl-pulse" cx={s.x} cy={s.y} r="7" />
               <circle className="pl-ring" cx={s.x} cy={s.y} r="7" />
               <circle className="pl-dot" cx={s.x} cy={s.y} r="2.6" />
-              <text className="pl-code" x={s.x} y={s.y + 27}>{s.code}</text>
+              <text className="pl-code" x={s.x} y={s.y + s.dy}>{s.code}</text>
             </g>
           ))}
 
           <g ref={planeRef} className="pl-plane">
-            <g transform="rotate(90) scale(1.15) translate(-11.5 -12)">
+            <g transform={`scale(${planeScale})`}>
               <path d={PL_PLANE} />
             </g>
           </g>

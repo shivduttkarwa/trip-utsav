@@ -23,18 +23,18 @@
   bottom: 0;
   width: calc(33.34% + 0.0625rem);
   background-image:
-    radial-gradient(75% 55% at 50% 4%, rgba(21, 101, 200, 0.55) 0%, transparent 62%),
-    radial-gradient(60% 55% at 88% 96%, rgba(224, 97, 58, 0.34) 0%, transparent 62%),
-    radial-gradient(48% 45% at 8% 88%, rgba(106, 61, 158, 0.3) 0%, transparent 65%),
-    linear-gradient(175deg, #082448 0%, var(--blue-ink) 45%, #04142c 100%);
+    radial-gradient(75% 55% at 50% 4%, rgba(14, 75, 154, 0.13) 0%, transparent 62%),
+    radial-gradient(60% 55% at 88% 96%, rgba(224, 97, 58, 0.16) 0%, transparent 62%),
+    radial-gradient(48% 45% at 8% 88%, rgba(106, 61, 158, 0.09) 0%, transparent 65%),
+    linear-gradient(175deg, #ffffff 0%, var(--surface) 48%, #e9ecf4 100%);
   background-size: 300% 100%;
   background-repeat: no-repeat;
   transition: transform 1s var(--ease-out);
   will-change: transform;
 }
-.pl-panels i:nth-child(1) { background-position: left center; }
-.pl-panels i:nth-child(2) { background-position: center center; }
-.pl-panels i:nth-child(3) { background-position: right center; }
+.pl-panels i:nth-child(1) { left: 0; background-position: left center; }
+.pl-panels i:nth-child(2) { left: 33.33%; background-position: center center; }
+.pl-panels i:nth-child(3) { left: 66.66%; background-position: right center; }
 .pl.out .pl-panels i { transform: translateY(-101%); }
 .pl.out .pl-panels i:nth-child(1) { transition-delay: 0.3s; }
 .pl.out .pl-panels i:nth-child(2) { transition-delay: 0.38s; }
@@ -49,29 +49,17 @@
 }
 .pl.out .pl-content { opacity: 0; transform: translateY(-1.75rem); }
 
-.pl-kicker {
+/* No filter here, unlike the navbar: the whole loader is light precisely so the
+   logo can sit in its own brand blue and orange. Height is fixed so the map
+   below never shifts while the image decodes. */
+.pl-logo {
   display: block;
-  font-family: var(--font-hand);
-  font-size: 1.0625rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  word-spacing: 0.16em;
-  color: #ffdcc6;
+  height: 5.25rem;
+  width: auto;
+  margin: 0 auto;
   opacity: 0;
-  animation: pl-fade 0.8s var(--ease-out) 0.1s forwards;
+  animation: pl-rise 1s var(--ease-out) 0.15s forwards;
 }
-.pl-word {
-  font-family: var(--font-heading);
-  font-weight: 500;
-  font-size: clamp(2.4rem, 6vw, 3.5rem);
-  letter-spacing: -0.025em;
-  line-height: 1.05;
-  color: #fff;
-  margin-top: 0.125rem;
-  opacity: 0;
-  animation: pl-rise 1s var(--ease-out) 0.2s forwards;
-}
-.pl-word em { font-style: italic; color: #ffb27a; }
 
 /* ---- World map + route ---- */
 .pl-map {
@@ -84,27 +72,30 @@
   opacity: 0;
   animation: pl-fade 1s var(--ease-out) 0.42s forwards;
 }
+/* Everything on the map is ink-on-paper now. The blue-ink tints (rather than
+   flat greys) keep the land from reading as a dead screenshot against the
+   warm backdrop. */
 .pl-land {
-  fill: rgba(255, 255, 255, 0.06);
-  stroke: rgba(255, 255, 255, 0.2);
+  fill: rgba(14, 75, 154, 0.07);
+  stroke: rgba(19, 26, 42, 0.22);
   stroke-width: 0.8;
   stroke-linejoin: round;
 }
-.pl-equator { stroke: rgba(255, 255, 255, 0.09); stroke-width: 1; stroke-dasharray: 2 12; }
+.pl-equator { stroke: rgba(19, 26, 42, 0.12); stroke-width: 1; stroke-dasharray: 2 12; }
 
-.pl-route { stroke: rgba(255, 255, 255, 0.26); stroke-width: 1.7; }
+.pl-route { stroke: rgba(19, 26, 42, 0.28); stroke-width: 1.7; }
 .pl-trail {
   stroke: url(#plTrail);
   stroke-width: 2.6;
-  filter: drop-shadow(0 0 0.375rem rgba(255, 160, 105, 0.5));
+  filter: drop-shadow(0 0.0625rem 0.25rem rgba(194, 77, 40, 0.35));
 }
 
 /* Stops light up as the plane touches down on each one. */
-.pl-ring { fill: none; stroke: rgba(255, 255, 255, 0.28); stroke-width: 1.4; transition: stroke 0.4s ease; }
-.pl-dot { fill: rgba(255, 255, 255, 0.42); transition: fill 0.4s ease; }
+.pl-ring { fill: none; stroke: rgba(19, 26, 42, 0.24); stroke-width: 1.4; transition: stroke 0.4s ease; }
+.pl-dot { fill: rgba(19, 26, 42, 0.34); transition: fill 0.4s ease; }
 .pl-pulse {
   fill: none;
-  stroke: #ffb27a;
+  stroke: var(--orange);
   stroke-width: 1.6;
   opacity: 0;
   /* fill-box keeps the pulse centred on its own dot at any viewBox scale */
@@ -112,7 +103,7 @@
   transform-origin: center;
 }
 .pl-stop.on .pl-ring { stroke: var(--orange); }
-.pl-stop.on .pl-dot { fill: #fff; }
+.pl-stop.on .pl-dot { fill: var(--blue); }
 .pl-stop.on .pl-pulse { animation: pl-ping 1.2s var(--ease-out); }
 .pl-code {
   font-family: var(--font-display);
@@ -121,14 +112,15 @@
   font-weight: 700;
   letter-spacing: 0.14em;
   text-anchor: middle;
-  fill: rgba(255, 255, 255, 0.32);
+  fill: rgba(19, 26, 42, 0.42);
   transition: fill 0.4s ease;
 }
-.pl-stop.on .pl-code { fill: #ffc79f; }
+.pl-stop.on .pl-code { fill: var(--orange-dark); }
 
+/* Brand blue against the orange trail — a white plane would vanish here. */
 .pl-plane {
-  fill: #fff;
-  filter: drop-shadow(0 0 0.5rem rgba(255, 178, 122, 0.9));
+  fill: var(--blue);
+  filter: drop-shadow(0 0.09375rem 0.1875rem rgba(7, 31, 66, 0.35));
 }
 
 /* ---- Percentage row ---- */
@@ -139,17 +131,17 @@
   gap: 1rem;
   margin-top: 0.75rem;
   padding-top: 0.875rem;
-  border-top: 0.0625rem solid rgba(255, 255, 255, 0.14);
+  border-top: 0.0625rem solid rgba(19, 26, 42, 0.12);
   font-family: var(--font-display);
   font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.42);
+  color: var(--muted);
   opacity: 0;
   animation: pl-fade 0.9s var(--ease-out) 0.56s forwards;
 }
-.pl-pct { color: #fff; letter-spacing: 0.1em; }
+.pl-pct { color: var(--ink); letter-spacing: 0.1em; }
 .pl-pct b {
   font-size: 1rem;
   font-weight: 700;
@@ -163,8 +155,22 @@
   70%, 100% { transform: scale(3.6); opacity: 0; }
 }
 
+/* The map is width-constrained by the viewport, so on a phone every stroke and
+   label has to grow in user units to survive the smaller render scale. */
+@media (max-width: 700px) {
+  .pl-land { stroke-width: 1.6; }
+  .pl-equator { display: none; }
+  .pl-route { stroke-width: 3.2; }
+  .pl-trail { stroke-width: 5; }
+  /* `r` as a CSS property: modern browsers honour it, older ones fall back to
+     the attribute — which is the desktop size, so nothing breaks either way. */
+  .pl-ring, .pl-pulse { r: 11; stroke-width: 2.6; }
+  .pl-dot { r: 4; }
+  .pl-code { font-size: 36px; letter-spacing: 0.08em; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .pl-kicker, .pl-word, .pl-map, .pl-meta { opacity: 1; animation: none; }
+  .pl-logo, .pl-map, .pl-meta { opacity: 1; animation: none; }
   .pl-stop.on .pl-pulse { animation: none; }
   .pl-panels i { transition-duration: 0.35s; transition-delay: 0s !important; }
   .pl-content { transition-duration: 0.25s; }
