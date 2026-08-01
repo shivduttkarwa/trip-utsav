@@ -1,14 +1,19 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Icon from "./Icon";
 
-/* Hero slider — a crossfade, not a wipe.
+/* Hero slider.
  *
- * Slides and captions are both stacked and cross-dissolve on opacity alone.
- * The previous build animated a clip-path across each layer, which meant every
- * mid-transition frame showed a hard vertical edge and two stacked legibility
- * washes. Here the only other motion is a very slow scale drift on the live
- * image, on a much longer channel than the fade so an incoming slide is already
- * moving before it is fully opaque.
+ * Transition model: every layer has three poses — a rest pose it waits in, an
+ * `is-in` pose, and an `is-out` pose — and only ONE slide is ever marked
+ * `is-out`. Rest is deliberately untransitioned, so the four slides that aren't
+ * involved snap silently while the two that are play against each other. That
+ * is what makes the exit readable: the outgoing caption leaves in the direction
+ * of travel while the incoming one arrives from the opposite side, instead of
+ * both dissolving in place.
+ *
+ * `--dir` (+1 forward, -1 back) is published on the root and every transform
+ * multiplies by it, so the whole composition moves with the button you pressed.
+ * The statement word is split per character to stagger against it.
  *
  * Returns a fragment: the absolutely-positioned backdrop plus an in-flow
  * control bar. .hero is a flex column justified to the end, so the bar lands
@@ -24,16 +29,28 @@ const SLIDES = [
 ];
 
 const HS_INTERVAL = 6000;
+/* Long enough to cover the slowest exit, after which the outgoing layer is
+   released back to rest so its next entrance starts from the full push-in. */
+const HS_SETTLE = 1800;
 
 export default function HeroSlides() {
-  const [active, setActive] = useState(0);
+  const [nav, setNav] = useState({ active: 0, prev: -1, dir: 1 });
+  const { active, prev, dir } = nav;
   const [paused, setPaused] = useState(false);
   const [still] = useState(
     () => window.matchMedia("(prefers-reduced-motion: reduce)").matches
   );
   const N = SLIDES.length;
 
-  const go = useCallback((i) => setActive(((i % N) + N) % N), [N]);
+  /* `d` is passed explicitly by the arrows and by autoplay so that wrapping
+     from the last slide to the first still reads as travelling forward. */
+  const go = useCallback((i, d) => {
+    setNav((cur) => {
+      const n = ((i % N) + N) % N;
+      if (n === cur.active) return cur;
+      return { active: n, prev: cur.active, dir: d ?? (n > cur.active ? 1 : -1) };
+    });
+  }, [N]);
 
   /* Don't rotate underneath the preloader — otherwise the hero is revealed
      already on slide 2 or 3, with the progress rail part-filled. Checked in an
@@ -58,19 +75,47 @@ export default function HeroSlides() {
   useEffect(() => {
     if (still || paused || !armed) return;
     since.current = performance.now();
-    const t = setTimeout(() => setActive((v) => (v + 1) % N), left.current);
+    const t = setTimeout(() => go(active + 1, 1), left.current);
     return () => {
       clearTimeout(t);
       left.current = Math.max(0, left.current - (performance.now() - since.current));
     };
-  }, [active, paused, still, armed, N]);
+  }, [active, paused, still, armed, go]);
+
+  /* Decode the neighbouring frames during the current slide's dwell.
+     `loading="lazy"` buys nothing here — all five slides are full-viewport at
+     the top of the page, so they intersect and fetch regardless. The cost is
+     the DECODE: these are ~1.3 MB 4K stills, and decoding one at swap time
+     blocked the main thread for ~290 ms, which swallowed the first third of
+     the crossfade. Decoding ahead moves that off the transition. */
+  const imgRefs = useRef([]);
+  useEffect(() => {
+    for (const i of [(active + 1) % N, (active - 1 + N) % N]) {
+      imgRefs.current[i]?.decode?.().catch(() => {});
+    }
+  }, [active, N]);
+
+  // Release the outgoing layer once its exit has finished playing.
+  useEffect(() => {
+    if (prev < 0) return;
+    const t = setTimeout(() => setNav((cur) => ({ ...cur, prev: -1 })), HS_SETTLE);
+    return () => clearTimeout(t);
+  }, [prev, active]);
+
+  const pose = (i) => (i === active ? " is-in" : i === prev ? " is-out" : "");
 
   return (
     <>
-      <div className="hs">
+      <div className="hs" style={{ "--dir": dir }}>
         {SLIDES.map((s, i) => (
-          <div className={`hs-slide${i === active ? " is-active" : ""}`} key={s.img} aria-hidden="true">
-            <img src={s.img} alt="" loading={i === 0 ? "eager" : "lazy"} decoding="async" />
+          <div className={`hs-slide${pose(i)}`} key={s.img} aria-hidden="true">
+            <img
+              ref={(el) => (imgRefs.current[i] = el)}
+              src={s.img}
+              alt=""
+              loading={i === 0 ? "eager" : "lazy"}
+              decoding="async"
+            />
           </div>
         ))}
 
@@ -79,10 +124,18 @@ export default function HeroSlides() {
         {/* Only the live caption is exposed — otherwise every slide's heading
             would be announced, and the page would report five h1s. */}
         {SLIDES.map((s, i) => (
-          <div className={`hs-cap${i === active ? " is-active" : ""}`} key={s.word} aria-hidden={i !== active}>
-            <span className="hs-loc">{s.loc}</span>
-            <span className="hs-lead">{s.pre}</span>
-            <h1 className="hs-word">{s.word}</h1>
+          <div className={`hs-cap${pose(i)}`} key={s.word} aria-hidden={i !== active}>
+            <span className="hs-loc hs-anim" style={{ "--d": "0s" }}>{s.loc}</span>
+            <span className="hs-lead hs-anim" style={{ "--d": "0.09s" }}>{s.pre}</span>
+            {/* Split per character to stagger; aria-label keeps it one word to
+                anything reading the page. */}
+            <h1 className="hs-word" aria-label={s.word}>
+              {[...s.word].map((ch, k) => (
+                <span className="hs-anim" key={k} aria-hidden="true" style={{ "--d": `${(0.17 + k * 0.028).toFixed(3)}s` }}>
+                  {ch}
+                </span>
+              ))}
+            </h1>
           </div>
         ))}
       </div>
@@ -117,10 +170,10 @@ export default function HeroSlides() {
             <span className="hs-count">
               <b>{String(active + 1).padStart(2, "0")}</b> / {String(N).padStart(2, "0")}
             </span>
-            <button type="button" className="hs-arrow" onClick={() => go(active - 1)} aria-label="Previous slide">
+            <button type="button" className="hs-arrow" onClick={() => go(active - 1, -1)} aria-label="Previous slide">
               <Icon name="arrowLeft" />
             </button>
-            <button type="button" className="hs-arrow" onClick={() => go(active + 1)} aria-label="Next slide">
+            <button type="button" className="hs-arrow" onClick={() => go(active + 1, 1)} aria-label="Next slide">
               <Icon name="arrow" />
             </button>
           </div>

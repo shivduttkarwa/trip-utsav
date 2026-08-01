@@ -20,20 +20,23 @@
   height: var(--nav-h);
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(1rem);
-  -webkit-backdrop-filter: blur(1rem);
-  box-shadow: 0 0.25rem 1.25rem rgba(5, 17, 38, 0.1);
-  transition: background 0.35s ease, box-shadow 0.35s ease, height 0.35s ease;
+  /* Solid white, no blur. A translucent bar tints every label with whatever
+     photograph is behind it, so the nav's contrast changes slide to slide;
+     opaque keeps it constant and crisp. A hairline carries the separation that
+     the old drop shadow was overdoing, and there is no backdrop-filter to pay
+     for since nothing shows through. */
+  background: #fff;
+  border-bottom: 0.0625rem solid rgba(19, 26, 42, 0.08);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease, height 0.4s var(--ease-out);
 }
 .navbar.scrolled {
   height: 4rem;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(1rem);
-  -webkit-backdrop-filter: blur(1rem);
-  box-shadow: var(--shadow-md);
+  border-bottom-color: rgba(19, 26, 42, 0.06);
+  box-shadow: 0 0.125rem 1rem rgba(5, 17, 38, 0.06);
 }
-.navbar .container { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1.25rem; }
+/* No justify-content: the nav centres itself with an auto margin between the
+   brand and the CTA, both of which are flex: none. */
+.navbar .container { height: 100%; display: flex; align-items: center; gap: 1.5rem; }
 
 /* position:relative so the z-index actually applies — nothing may sit over the
    home link and swallow the click. */
@@ -45,7 +48,8 @@
   position: relative;
   z-index: 2;
 }
-.brand img { height: 3.1625rem; width: auto; transition: filter 0.35s ease, transform 0.35s var(--ease-out); }
+.brand img { height: 2.75rem; width: auto; transition: height 0.4s var(--ease-out), transform 0.35s var(--ease-out); }
+.navbar.scrolled .brand img { height: 2.35rem; }
 /* hover affordance — without it the logo doesn't read as a link */
 .brand:hover img { transform: scale(1.04); }
 .brand:focus-visible { outline: 0.125rem solid var(--orange); outline-offset: 0.375rem; border-radius: 0.375rem; }
@@ -53,7 +57,7 @@
 /* Desktop navigation + fluid multi-panel mega menu */
 .desktop-nav-wrap {
   height: 100%;
-  margin-left: auto;
+  margin: 0 auto;                        /* centres the nav between brand + CTA */
   display: flex;
   align-items: stretch;
 }
@@ -63,72 +67,88 @@
   align-items: center;
   gap: 0.125rem;
 }
+/* Labels were 700 with negative tracking, which read as squeezed and shouty for
+   six items in a row. 500 at normal tracking gives the row air; the weight goes
+   up only on the page you are actually on. */
 .desktop-nav-link {
   position: relative;
-  height: 100%;
+  height: 2.25rem;
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0 0.68rem;
+  gap: 0.35rem;
+  padding: 0 0.875rem;
   border: 0;
+  border-radius: var(--r-pill);
   background: none;
+  /* Full-strength ink, not a muted tint — on an opaque white bar the labels
+     should be as crisp as body copy. The hover pill carries the affordance, so
+     the colour does not need to be held back to leave it somewhere to go. */
   color: var(--blue-ink);
   font: inherit;
-  font-size: 0.88rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
-  transition: color 0.25s ease;
+  transition: color 0.25s ease, background-color 0.25s ease;
 }
+/* Hover is a soft pill rather than a travelling underline — it survives six
+   adjacent items without the bar looking like it is constantly redrawing. */
+.desktop-nav-link:hover,
+.desktop-nav-link:focus-visible,
+.desktop-nav-link.is-open { background-color: rgba(7, 31, 66, 0.06); }
+.desktop-nav-link.is-current { font-weight: 600; }
+/* The current page is marked by a dot below the pill, not a 3px slab welded to
+   the bottom edge of the bar. */
 .desktop-nav-link::after {
   content: "";
   position: absolute;
   left: 50%;
-  right: 50%;
-  bottom: 0;
-  height: 0.1875rem;
-  border-radius: 0.1875rem 0.1875rem 0 0;
+  bottom: -0.3rem;
+  width: 0.25rem;
+  height: 0.25rem;
+  border-radius: 50%;
   background: var(--orange);
-  transition: left 0.4s var(--ease-out), right 0.4s var(--ease-out);
-}
-.desktop-nav-link:hover,
-.desktop-nav-link:focus-visible,
-.desktop-nav-link.is-open,
-.desktop-nav-link.is-current { color: var(--orange); }
-.desktop-nav-link:hover::after,
-.desktop-nav-link:focus-visible::after,
-.desktop-nav-link.is-open::after,
-.desktop-nav-link.is-current::after { left: 0.68rem; right: 0.68rem; }
-.desktop-nav-link:focus-visible,
-.desktop-nav-cta:focus-visible { outline: 0.125rem solid var(--orange); outline-offset: -0.25rem; border-radius: 0.5rem; }
-.desktop-nav-chevron {
-  width: 0.4rem;
-  height: 0.4rem;
-  border-right: 0.1rem solid currentColor;
-  border-bottom: 0.1rem solid currentColor;
-  transform: translateY(-0.12rem) rotate(45deg);
+  transform: translateX(-50%) scale(0);
   transition: transform 0.35s var(--ease-spring);
 }
-.desktop-nav-trigger.is-open .desktop-nav-chevron { transform: translateY(0.08rem) rotate(225deg); }
+.desktop-nav-link.is-current::after { transform: translateX(-50%) scale(1); }
+.desktop-nav-link:focus-visible,
+.desktop-nav-cta:focus-visible { outline: 0.125rem solid var(--orange); outline-offset: 0.125rem; }
+.desktop-nav-chevron {
+  width: 0.34rem;
+  height: 0.34rem;
+  border-right: 0.075rem solid currentColor;
+  border-bottom: 0.075rem solid currentColor;
+  opacity: 0.62;
+  transform: translateY(-0.1rem) rotate(45deg);
+  transition: transform 0.35s var(--ease-out), opacity 0.25s ease;
+}
+.desktop-nav-trigger:hover .desktop-nav-chevron { opacity: 1; }
+.desktop-nav-trigger.is-open .desktop-nav-chevron { opacity: 1; transform: translateY(0.06rem) rotate(225deg); }
+
+/* Solid ink. The blue-to-purple brand ramp under an orange glow was the single
+   most dated element in the bar — a gradient doing the job a shape should. */
 .desktop-nav-cta {
-  min-height: 2.625rem;
-  margin-left: 0.65rem;
-  padding: 0 1.05rem;
+  flex: none;
+  min-height: 2.5rem;
+  padding: 0 1.15rem;
   border-radius: var(--r-pill);
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.5rem;
   color: #fff;
-  background: var(--grad-brand);
-  box-shadow: 0 0.45rem 1.2rem rgba(242, 107, 33, 0.2);
-  font-size: 0.84rem;
-  font-weight: 800;
+  background: var(--blue-ink);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   white-space: nowrap;
-  transition: transform 0.35s var(--ease-spring), box-shadow 0.35s ease;
+  transition: background-color 0.3s ease, transform 0.3s var(--ease-out);
 }
-.desktop-nav-cta:hover { transform: translateY(-0.125rem); box-shadow: var(--shadow-orange); }
-.desktop-nav-cta svg { width: 0.95rem; height: 0.95rem; }
+.desktop-nav-cta:hover { background: var(--blue); transform: translateY(-0.0625rem); }
+.desktop-nav-cta svg { width: 0.875rem; height: 0.875rem; transition: transform 0.3s var(--ease-out); }
+.desktop-nav-cta:hover svg { transform: translateX(0.1875rem); }
 
 .mega-layer {
   position: absolute;
@@ -414,10 +434,14 @@
 .menu-contact svg { width: 1.125rem; height: 1.125rem; color: var(--orange); flex: none; }
 
 @media (max-width: 1020px) {
-  .desktop-nav-wrap { display: none; }
+  /* The CTA now sits outside .desktop-nav-wrap so the nav can centre, so it
+     needs hiding here in its own right — the burger menu carries it instead. */
+  .desktop-nav-wrap, .desktop-nav-cta { display: none; }
   .nav-burger { display: flex; }
   .menu-overlay { display: block; }
+  .navbar .container { justify-content: space-between; }
   .brand img { height: 2.8rem; }
+  .navbar.scrolled .brand img { height: 2.5rem; }
 }
 
 @media (max-width: 860px) {

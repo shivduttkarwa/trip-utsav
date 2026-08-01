@@ -300,9 +300,6 @@ export default function Navbar() {
               >
                 Contact
               </Link>
-              <Link className="desktop-nav-cta" to="/contact" onMouseEnter={closeDesktopPanel} onFocus={closeDesktopPanel} onClick={closeDesktopPanel}>
-                Plan my trip <Icon name="arrow" />
-              </Link>
             </div>
 
             <div className={`mega-layer${desktopPanel ? " has-open" : ""}`}>
@@ -349,6 +346,18 @@ export default function Navbar() {
               ))}
             </div>
           </div>
+
+          {/* Outside .desktop-nav-wrap so the nav can centre between the brand
+              and this, rather than the whole group hugging the right edge. */}
+          <Link
+            className="desktop-nav-cta"
+            to="/contact"
+            onMouseEnter={closeDesktopPanel}
+            onFocus={closeDesktopPanel}
+            onClick={closeDesktopPanel}
+          >
+            Plan my trip <Icon name="arrow" />
+          </Link>
 
           <button
             className={`nav-burger${open ? " active" : ""}`}

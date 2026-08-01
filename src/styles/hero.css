@@ -22,19 +22,18 @@
   position: absolute;
   inset: 0;
   opacity: 0;
-  transition: opacity 1.15s var(--ease-out);
+  transition: none;
 }
-.hs-slide.is-active { opacity: 1; }
-.hs-slide img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  /* Drift runs on a far longer channel than the fade, so the incoming frame is
-     already in motion before it finishes resolving. */
-  transform: scale(1.015);
-  transition: transform 9s linear;
-}
-.hs-slide.is-active img { transform: scale(1.08); }
+.hs-slide.is-in { opacity: 1; transition: opacity 1.05s var(--ease-fade); }
+.hs-slide.is-out { opacity: 0; transition: opacity 1.05s var(--ease-fade); }
+.hs-slide img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.14); }
+/* A push-in on a very front-loaded curve: most of the 1.14 -> 1 travel is spent
+   in the first second, then it creeps for the rest of the slide. One transition
+   does the job of a settle plus a ken-burns drift, and because the outgoing
+   slide keeps going PAST 1 rather than rewinding to rest, the two layers never
+   visibly move in opposite directions mid-crossfade. */
+.hs-slide.is-in img { transform: scale(1); transition: transform 7.5s cubic-bezier(0.16, 1, 0.3, 1); }
+.hs-slide.is-out img { transform: scale(0.965); transition: transform 1.4s var(--ease-out); }
 
 /* One wash for the whole stack — it belongs to the slider, not to each slide. */
 .hs-scrim {
@@ -59,18 +58,50 @@
   top: 44%;
   transform: translateY(-50%);
   max-width: min(72rem, calc(100% - 2.75rem));
-  opacity: 0;
   pointer-events: none;
-  transition: opacity 0.8s var(--ease-out);
 }
-.hs-cap.is-active { opacity: 1; }
-/* Lines ride in on a stagger while the parent owns the fade, so a leaving
-   caption never double-fades against its own children. */
-.hs-cap > * { transform: translateY(0.9rem); transition: transform 0.95s var(--ease-out); }
-.hs-cap.is-active > * { transform: none; }
-.hs-cap.is-active > :nth-child(1) { transition-delay: 0.1s; }
-.hs-cap.is-active > :nth-child(2) { transition-delay: 0.18s; }
-.hs-cap.is-active > :nth-child(3) { transition-delay: 0.28s; }
+
+/* The animated unit — location line, lead line, and each character of the word.
+ *
+ * Rest is the "from" pose AND is untransitioned on purpose: a caption that is
+ * neither entering nor leaving snaps here silently, so only the two captions
+ * actually swapping ever animate. Adding .is-in or .is-out supplies both the
+ * target pose and the transition, which is what starts the run.
+ *
+ * Blur is what dates or modernises this: fading type in flat reads as a
+ * slideshow, resolving it out of defocus reads as film. Kept small (0.4rem) —
+ * it is animated on up to eleven characters at once, and blur is the one
+ * property here that is not free. */
+.hs-anim {
+  opacity: 0;
+  transform: translateY(calc(var(--dir, 1) * 0.5em));
+  filter: blur(0.4rem);
+  transition: none;
+}
+.hs-cap.is-in .hs-anim {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+  transition:
+    opacity 0.72s var(--ease-fade),
+    transform 0.95s var(--ease-out),
+    filter 0.72s var(--ease-fade);
+  transition-delay: var(--d, 0s);
+}
+/* Leaves the way it was heading, and faster than it arrived — an exit that
+   takes as long as the entrance makes the swap feel sluggish. The stagger is
+   compressed to 30% so the line goes as a body rather than unravelling. */
+.hs-cap.is-out .hs-anim {
+  opacity: 0;
+  transform: translateY(calc(var(--dir, 1) * -0.42em));
+  filter: blur(0.35rem);
+  transition:
+    opacity 0.42s var(--ease-fade),
+    transform 0.6s var(--ease-out),
+    filter 0.42s var(--ease-fade);
+  transition-delay: calc(var(--d, 0s) * 0.3);
+}
+.hs-cap .hs-word span { display: inline-block; }
 
 /* Caption typography — Comic Neue italic over Archivo.
  *
@@ -100,11 +131,14 @@
    composition after the headline. */
 .hs-cap .hs-loc::before {
   content: "";
-  width: 2.5rem;
+  width: 0;
   height: 0.0625rem;
   background: var(--orange);
   flex: none;
+  transition: none;
 }
+/* Draws itself out from the gutter as the caption lands. */
+.hs-cap.is-in .hs-loc::before { width: 2.5rem; transition: width 0.9s var(--ease-out) 0.14s; }
 /* Lead-in — the script face sitting light against the mass of the word below,
    in the same white so the two lines read as one statement rather than as an
    accent plus a headline. Italic: Comic Neue's upright is close enough to the
@@ -236,10 +270,14 @@
 .hs-dot:focus-visible,
 .hs-arrow:focus-visible { outline: 0.125rem solid var(--orange); outline-offset: 0.25rem; }
 
+/* No travel, no defocus, no push-in — just a short dissolve. */
 @media (prefers-reduced-motion: reduce) {
-  .hs-slide, .hs-cap { transition-duration: 0.2s; }
-  .hs-slide img, .hs-slide.is-active img { transform: none; transition: none; }
-  .hs-cap > * { transform: none; transition: none; }
+  .hs-slide.is-in, .hs-slide.is-out { transition-duration: 0.25s; }
+  .hs-slide img, .hs-slide.is-in img, .hs-slide.is-out img { transform: none; transition: none; }
+  .hs-cap .hs-anim { transform: none; filter: none; }
+  .hs-cap.is-in .hs-anim { transition: opacity 0.25s ease; transition-delay: 0s; }
+  .hs-cap.is-out .hs-anim { transform: none; filter: none; transition: opacity 0.25s ease; transition-delay: 0s; }
+  .hs-cap.is-in .hs-loc::before { transition: none; }
 }
 /* Mobile: lift the caption and cap the title so long words never bleed. */
 @media (max-width: 700px) {
