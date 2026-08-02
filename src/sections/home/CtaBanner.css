@@ -1,26 +1,88 @@
-/* Closing CTA banner */
-.cta-banner-section { padding-bottom: 5.625rem; }
-.cta-banner {
+/* Closing CTA — full-bleed photograph at full viewport height */
+
+.cta-full {
   position: relative;
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  background:
-    radial-gradient(90% 120% at 85% 15%, rgba(224, 97, 58, 0.5), transparent 55%),
-    radial-gradient(80% 120% at 10% 90%, rgba(21, 101, 200, 0.45), transparent 55%),
-    var(--blue-ink);
-  color: #fff;
-  padding: clamp(3rem, 6vw, 5.5rem);
-  text-align: center;
   isolation: isolate;
+  /* svh, not vh: on mobile vh is the tallest the viewport ever gets, so the
+     section runs under the browser chrome and the buttons sit off-screen until
+     the bar retracts. */
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: clamp(3.5rem, 8vh, 6rem) 0;
+  overflow: hidden;
+  color: #fff;
+  text-align: center;
+  background: var(--blue-ink);
 }
-.cta-banner::before, .cta-banner::after {
+
+.cta-full-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Holds the horizon and the lit ridge in frame as the section gets shorter —
+     centred, the crop drifts down into the road and loses the mountains. */
+  object-position: 58% 42%;
+}
+
+/* Two scrims doing separate jobs: the radial gives the copy something to sit
+   on, the linear weights the foot so the buttons stay legible over the bright
+   road and the section hands off to the footer.
+
+   They multiply where they overlap, so the centre is darker than either value
+   suggests — these are deliberately light, and the legibility is carried by the
+   text-shadows below instead. A scrim heavy enough to do that job on its own
+   flattens the photograph, which is the only reason the section exists. */
+.cta-full::after {
   content: "";
   position: absolute;
-  border-radius: 50%;
+  inset: 0;
   z-index: -1;
-  filter: blur(0.125rem);
+  background:
+    radial-gradient(70% 58% at 50% 46%, rgba(4, 14, 32, 0.34) 0%, rgba(4, 14, 32, 0.14) 60%, transparent 100%),
+    linear-gradient(180deg, rgba(4, 14, 32, 0.24) 0%, rgba(4, 14, 32, 0.04) 40%, rgba(4, 14, 32, 0.46) 100%);
 }
-.cta-banner::before { width: 18.75rem; height: 18.75rem; border: 2.5rem solid rgba(255, 255, 255, 0.07); top: -8.125rem; left: -6.875rem; }
-.cta-banner::after { width: 15rem; height: 15rem; border: 2.125rem solid rgba(255, 255, 255, 0.08); bottom: -6.875rem; right: -5rem; }
-.cta-banner h2 { color: #fff; max-width: 38.75rem; margin: 0 auto 0.875rem; }
-.cta-banner p { color: rgba(255, 255, 255, 0.85); max-width: 32.5rem; margin: 0 auto 1.875rem; }
+
+.cta-full-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.cta-full .badge { margin-bottom: 1.25rem; }
+
+/* Two shadows per block: a tight contact shadow that separates the glyph from
+   whatever is directly behind it, and a wide soft one that pools under the line
+   as a local scrim. Together they hold the copy over a bright sky or a lit
+   ridge without darkening a single pixel that is not near a letter. */
+.cta-full h2 {
+  max-width: 20ch;
+  margin: 0 auto 1rem;
+  color: #fff;
+  text-shadow: 0 0.015em 0.04em rgba(4, 14, 32, 0.62), 0 0.04em 0.3em rgba(4, 14, 32, 0.5);
+}
+
+.cta-full p {
+  max-width: 34rem;
+  margin: 0 auto 2rem;
+  font-size: clamp(1.02rem, 1.4vw, 1.18rem);
+  color: #fff;
+  text-shadow: 0 0.03em 0.09em rgba(4, 14, 32, 0.7), 0 0.06em 0.45em rgba(4, 14, 32, 0.5);
+}
+
+.cta-full-actions {
+  display: flex;
+  gap: 0.875rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+@media (max-width: 640px) {
+  /* Portrait crops far tighter than 16:9, so the frame is pulled back towards
+     the ridge or the section fills with nothing but water. */
+  .cta-full-bg { object-position: 66% 40%; }
+  .cta-full-actions { width: 100%; }
+  .cta-full-actions .btn { flex: 1 1 12rem; }
+}

@@ -1,0 +1,350 @@
+/* Reviews as postcards, in a full-bleed scroll-snap slider */
+
+/* The track reaches past the container to the viewport edges with a negative
+   margin; clipping the inline axis here stops that becoming horizontal page
+   scroll. `clip` rather than `hidden` — hidden on one axis forces the other to
+   scroll, which would cut the cards' shadows off top and bottom. */
+.notes-section { overflow-x: clip; }
+
+.cards {
+  --gap: clamp(1.25rem, 2.4vw, 2rem);
+  /* How far the row dissolves into each margin. Scales with the viewport but
+     stays short enough on a phone that it never eats the first card. */
+  --fade: clamp(1rem, 4vw, 8rem);
+
+  display: flex;
+  gap: var(--gap);
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+
+  /* Out to the viewport edges, then padded back to exactly the container edge.
+     Both halves resolve against the same 100vw, so a card still measures half
+     the container and lines up under the heading — the row simply carries on
+     into the margins on either side. */
+  margin-inline: calc(50% - 50vw);
+  padding-inline: calc(50vw - 50%);
+  scroll-padding-inline: calc(50vw - 50%);
+  /* Room for the cards' shadows: the cross axis clips the moment this one
+     scrolls. */
+  padding-block: 0.75rem 1.5rem;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 var(--fade), #000 calc(100% - var(--fade)), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 var(--fade), #000 calc(100% - var(--fade)), transparent 100%);
+}
+.cards::-webkit-scrollbar { display: none; }
+
+/* Drag state. Snap has to come off for the duration — with it on, every
+   scrollLeft written during the drag is yanked back to the nearest card and the
+   row judders instead of following the cursor. Restoring it on release is what
+   makes the row settle. scroll-behavior likewise: smooth would animate towards
+   each frame's value rather than land on it. */
+.cards { cursor: grab; }
+.cards.is-dragging { cursor: grabbing; scroll-snap-type: none; scroll-behavior: auto; user-select: none; }
+/* A card must not turn over while the row is being thrown. */
+.cards.is-dragging .pc { pointer-events: none; }
+
+.pc-wrap {
+  flex: 0 0 calc((100% - var(--gap)) / 2);
+  scroll-snap-align: start;
+}
+
+/* Cards past the first screenful never intersect the viewport, so their reveal
+   would fire as each is scrolled to — an entrance replayed as a swipe effect.
+   Only the visible ones animate. */
+.cards > .reveal:nth-child(n + 3) {
+  opacity: 1;
+  transform: none;
+  transition: none;
+  will-change: auto;
+}
+
+/* ---- The card ---- */
+.pc {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  perspective: 1600px;
+}
+.pc-inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.pc:hover .pc-inner,
+.pc.is-flipped .pc-inner { transform: rotateY(180deg); }
+
+.pc-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 0.375rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(19, 26, 42, 0.14), 0 0.0625rem 0.125rem rgba(19, 26, 42, 0.1);
+  /* Without this both faces paint at once and the back shows through the
+     front, mirrored. */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* ---- Written side ---- */
+.pc-msg {
+  display: grid;
+  grid-template-columns: 1.08fr 0.92fr;
+  gap: clamp(1rem, 2vw, 1.75rem);
+  padding: clamp(1.25rem, 2.2vw, 1.9rem);
+  background-color: #faf7f1;
+  /* Faint laid-paper grain — a flat cream panel reads as a beige div. */
+  background-image: repeating-linear-gradient(90deg, rgba(19, 26, 42, 0.016) 0 0.0625rem, transparent 0.0625rem 0.375rem);
+}
+/* The divider a postcard is printed with. */
+.pc-msg::after {
+  content: "";
+  position: absolute;
+  top: 12%;
+  bottom: 12%;
+  left: 54%;
+  width: 0.0625rem;
+  background: rgba(19, 26, 42, 0.16);
+}
+
+.pc-left { display: flex; flex-direction: column; min-width: 0; }
+.pc-left blockquote {
+  margin: 0;
+  font-family: var(--font-hand);
+  font-size: clamp(0.95rem, 1.15vw, 1.06rem);
+  line-height: 1.62;
+  color: #24303f;
+  text-wrap: pretty;
+}
+/* Pushed to the foot so signatures sit on one line across the row however long
+   the messages run. */
+.pc-sign { margin-top: auto; padding-top: 1rem; }
+.pc-sign strong {
+  display: block;
+  font-family: var(--font-hand);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--blue);
+}
+.pc-sign span {
+  display: block;
+  margin-top: 0.1rem;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.pc-right { display: flex; flex-direction: column; align-items: flex-end; min-width: 0; }
+
+/* Stamp and postmark share a stacking context so the mark can be struck across
+   the stamp's corner rather than beside it. */
+.pc-post { position: relative; align-self: flex-end; }
+.pc-stamp {
+  display: block;
+  width: clamp(3.1rem, 5vw, 4rem);
+  aspect-ratio: 4 / 5;
+  background-size: cover;
+  background-position: center;
+  /* The white margin every stamp has, with the perforation dashed inside it. */
+  border: 0.28rem solid #fff;
+  outline: 0.0625rem dashed rgba(19, 26, 42, 0.3);
+  outline-offset: -0.28rem;
+  box-shadow: 0 0.0625rem 0.1875rem rgba(19, 26, 42, 0.22);
+  transform: rotate(3deg);
+}
+.pc-mark {
+  position: absolute;
+  left: -1.35rem;
+  bottom: -0.45rem;
+  display: grid;
+  place-items: center;
+  width: 3.05rem;
+  height: 3.05rem;
+  border-radius: 50%;
+  border: 0.125rem solid rgba(194, 77, 40, 0.62);
+  font-family: var(--font-display);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: rgba(194, 77, 40, 0.75);
+  transform: rotate(-14deg);
+  pointer-events: none;
+}
+/* The cancellation bars running out of the mark. */
+.pc-mark::after {
+  content: "";
+  position: absolute;
+  right: calc(100% + 0.2rem);
+  top: 50%;
+  width: 2.4rem;
+  height: 0.5rem;
+  transform: translateY(-50%);
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(194, 77, 40, 0.55) 0 0.0625rem,
+    transparent 0.0625rem 0.1875rem
+  );
+}
+
+.pc-stars {
+  margin-top: 0.9rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  color: var(--orange);
+}
+
+/* The ruled address block. */
+.pc-lines {
+  width: 100%;
+  height: 3.1rem;
+  margin-top: 0.65rem;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0 0.9rem,
+    rgba(19, 26, 42, 0.15) 0.9rem 0.96875rem
+  );
+}
+
+.pc-turn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: auto;
+  padding: 0.5rem 0 0;
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0.8;
+  transition: color 0.25s ease, opacity 0.25s ease;
+}
+.pc-turn:hover { color: var(--blue); opacity: 1; }
+.pc-turn svg { width: 0.7rem; height: 0.7rem; }
+.pc-turn:focus-visible { outline: 0.125rem solid var(--orange); outline-offset: 0.25rem; border-radius: 0.25rem; }
+
+/* On the picture side it sits over the photograph, so it carries its own
+   contrast rather than borrowing the card's. */
+.pc-turn--back {
+  position: absolute;
+  z-index: 1;
+  right: clamp(1rem, 1.8vw, 1.5rem);
+  bottom: clamp(1rem, 1.8vw, 1.5rem);
+  margin: 0;
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.16);
+  border: 0.0625rem solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(0.5rem);
+  -webkit-backdrop-filter: blur(0.5rem);
+  color: #fff;
+  opacity: 1;
+}
+.pc-turn--back:hover { color: #fff; background: rgba(255, 255, 255, 0.28); }
+
+/* ---- Picture side ---- */
+.pc-pic { transform: rotateY(180deg); }
+.pc-pic img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* Weighted to the foot, where the lettering sits. */
+.pc-pic::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(4, 14, 32, 0.05) 0%, rgba(4, 14, 32, 0.36) 55%, rgba(4, 14, 32, 0.8) 100%);
+}
+.pc-place {
+  position: absolute;
+  z-index: 1;
+  left: clamp(1.25rem, 2.2vw, 1.9rem);
+  bottom: clamp(2.2rem, 3.6vw, 3rem);
+  font-family: var(--font-statement);
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: #fff;
+}
+.pc-wish {
+  position: absolute;
+  z-index: 1;
+  left: clamp(1.25rem, 2.2vw, 1.9rem);
+  bottom: clamp(1rem, 1.8vw, 1.5rem);
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* ---- Arrows ---- */
+.notes-nav {
+  display: flex;
+  justify-content: center;
+  gap: 0.625rem;
+  margin-top: 1.25rem;
+}
+/* Scoped to this section: .slider-btn is shared with the About page, which has
+   no disabled state to style. The hover rule has to be cancelled explicitly —
+   :hover still matches a disabled button, so without this the arrow would go
+   orange and lift under the cursor while doing nothing. */
+.notes-nav .slider-btn:disabled { opacity: 0.32; cursor: default; }
+.notes-nav .slider-btn:disabled:hover {
+  background: #fff;
+  border-color: var(--line);
+  color: var(--ink);
+  transform: none;
+  box-shadow: none;
+}
+
+/* One card up, with the next one's edge showing — that peek is what says there
+   is more to the side. */
+@media (max-width: 900px) {
+  .pc-wrap { flex-basis: 88%; }
+  .cards > .reveal:nth-child(n + 2) {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+}
+
+/* Touch: no hover flip at all. :hover latches after a tap and would leave a
+   card turned until something else was touched, so it is cancelled outright and
+   the control is the only thing that turns the card — a tap anywhere else does
+   nothing, which is what stops the row flipping cards as it is swiped. */
+@media (hover: none) {
+  .pc:hover .pc-inner { transform: none; }
+  .pc.is-flipped .pc-inner { transform: rotateY(180deg); }
+
+  /* Only the face in view takes taps. backface-visibility hides the far side
+     but does not reliably stop it being hit, so the control behind the card
+     could otherwise be pressed through the front. */
+  .pc-pic { pointer-events: none; }
+  .pc.is-flipped .pc-pic { pointer-events: auto; }
+  .pc.is-flipped .pc-msg { pointer-events: none; }
+
+  /* The prompt is the mechanism now, so it reads as one. */
+  .pc-turn { opacity: 1; color: var(--blue); }
+  .pc-turn--back { color: #fff; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pc-inner { transition-duration: 0.01ms; }
+  .cards { scroll-behavior: auto; }
+}
