@@ -189,5 +189,66 @@ h3 { font-size: 1.4rem; letter-spacing: -0.012em; }
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
 }
 
+/* Mobile carousel, added to a .grid that would otherwise stack. Six or eight
+   cards in a single column is a very long scroll on a phone, so the row becomes
+   a swipeable track instead.
+
+   Scroll-snap rather than a carousel library: native momentum and rubber-band
+   on iOS, no JS to keep in sync with the DOM, and where snap is unsupported it
+   degrades to an ordinary horizontal scroller rather than to nothing.
+
+   Must come after the .grid rules — same specificity, so order decides which
+   display wins. */
+@media (max-width: 640px) {
+  .swipe-m {
+    display: flex;
+    gap: 0.875rem;
+    /* Breaks out of .container (92% wide) to the full viewport, so cards run to
+       the screen edge; the padding puts the gutter back for the first and last,
+       and scroll-padding makes them snap to it rather than to the edge. */
+    margin-inline: calc(50% - 50vw);
+    padding-inline: 4vw;
+    scroll-padding-inline: 4vw;
+
+    /* Scrolling one axis makes the other one clip: overflow-y cannot stay
+       `visible` next to an overflow-x of `auto`, so the spec promotes it. Left
+       implicit it gave the track a second, vertical scroll of its own — the
+       cards drifting up and down under a finger — and cut them off at the box
+       edge. Pinned to hidden, with block padding so nothing sits against the
+       clip that is now there for good. */
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-block: 0.25rem 1rem;
+
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .swipe-m::-webkit-scrollbar { display: none; }
+
+  /* The remainder is the next card peeking in — that peek is the only thing
+     telling the user there is more to the side. */
+  .swipe-m > * {
+    flex: 0 0 var(--swipe-w, 80%);
+    scroll-snap-align: start;
+  }
+  /* For shorter tiles, where 80% would waste the width. */
+  .swipe-m--sm { --swipe-w: 64%; }
+
+  /* Only the cards already on screen animate in.
+     The first two are within the viewport when the section is scrolled to, so
+     they reveal as part of arriving at the section — which is the point of the
+     animation. Everything from the third on is off to the right, where the
+     observer cannot fire until it is swiped to; that turned the reveal into a
+     swipe animation, arriving late behind its stagger delay on the very frame
+     being looked at. Those are simply there. */
+  .swipe-m > .reveal:nth-child(n + 3) {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+}
+
 .bg-surface { background: var(--surface); }
 .bg-ink { background: var(--blue-ink); }

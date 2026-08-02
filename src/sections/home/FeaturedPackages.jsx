@@ -36,7 +36,9 @@ export default function FeaturedPackages() {
             </div>
           }
         />
-        <div className="grid grid-3">
+        {/* swipe-m: below 640 these six stack into a very long scroll, so the
+            row becomes a swipeable track instead. */}
+        <div className="grid grid-3 swipe-m">
           {featured.map((p, i) => <PackageCard key={p.id} pkg={p} delay={i * 0.09} />)}
         </div>
         <Reveal className="center mt-4">

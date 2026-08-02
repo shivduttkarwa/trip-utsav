@@ -96,3 +96,30 @@
   .dest-card .dest-body { transform: translateY(0.75rem) translateZ(1.75rem); }
   .dest-card:hover .dest-body { transform: translateZ(2.375rem); }
 }
+
+/* ---- Touch: no hover states ----
+   Keyed to the pointer rather than the viewport, because this is about what the
+   input can do, not how wide the screen is — a narrow desktop window still has
+   a cursor and should keep its hover.
+
+   On touch, :hover latches on at the tap and stays until something else is
+   tapped, so a lift or a zoom sticks to whichever card was last touched. */
+@media (hover: none) {
+  .pkg-card { transition: none; will-change: auto; }
+  .pkg-card:hover { transform: none; box-shadow: none; }
+  .pkg-card:hover .pkg-media img { transform: none; }
+  /* .active is the favourite toggle and must keep working — only the hover half
+     of that shared rule is being undone here. */
+  .pkg-fav:hover { background: rgba(255, 255, 255, 0.2); color: #fff; transform: none; }
+
+  .dest-card:hover img { transform: none; }
+  /* These two only ever existed to be released by hover: the body rests 0.75rem
+     low waiting to lift, and the CTA sits at opacity 0 waiting to appear. With
+     no hover to release them the body stayed low for good and the CTA was never
+     visible at all — while still occupying its space in the card. Settling both
+     fills the room already reserved for them rather than adding any. */
+  .dest-body,
+  .dest-card:hover .dest-body { transform: none; }
+  .dest-cta,
+  .dest-card:hover .dest-cta { opacity: 1; transform: none; }
+}
