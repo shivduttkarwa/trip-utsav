@@ -34,9 +34,21 @@
   border-bottom-color: rgba(19, 26, 42, 0.06);
   box-shadow: 0 0.125rem 1rem rgba(5, 17, 38, 0.06);
 }
-/* No justify-content: the nav centres itself with an auto margin between the
+/* Full-bleed, unlike every other .container on the site: the masthead reads as
+   the edge of the page, so the logo sits in the left corner and the CTA in the
+   right one rather than both being pulled inboard by the 76.25rem cap.
+   No justify-content: the nav centres itself with an auto margin between the
    brand and the CTA, both of which are flex: none. */
-.navbar .container { height: 100%; display: flex; align-items: center; gap: 1.5rem; }
+.navbar .container {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: clamp(1.25rem, 2.5vw, 2.5rem);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
 
 /* position:relative so the z-index actually applies — nothing may sit over the
    home link and swallow the click. */
@@ -48,10 +60,10 @@
   position: relative;
   z-index: 2;
 }
-.brand img { height: 2.75rem; width: auto; transition: height 0.4s var(--ease-out), transform 0.35s var(--ease-out); }
+/* No hover state: the logo is the site's identity mark, and a masthead logo
+   reads as home without one. The only transition is the scroll-shrink. */
+.brand img { height: 2.75rem; width: auto; transition: height 0.4s var(--ease-out); }
 .navbar.scrolled .brand img { height: 2.35rem; }
-/* hover affordance — without it the logo doesn't read as a link */
-.brand:hover img { transform: scale(1.04); }
 .brand:focus-visible { outline: 0.125rem solid var(--orange); outline-offset: 0.375rem; border-radius: 0.375rem; }
 
 /* Desktop navigation + fluid multi-panel mega menu */
