@@ -97,6 +97,12 @@ body {
   line-height: 1.7;
   color: var(--body);
   background: var(--white);
+  /* Mobile browsers paint a translucent grey box over whatever is tapped. It
+     ignores border-radius, so on a rounded card or pill button it flashes as a
+     hard-edged rectangle that reads as a stray shadow. The property inherits,
+     so this one declaration covers every link, button and card on the site.
+     Buttons keep their own :active feedback, so nothing is lost by dropping it. */
+  -webkit-tap-highlight-color: transparent;
   /* No overflow clip here — clipping on body/html breaks the CTA's
      position:sticky reveal. Horizontal bleed is contained per-section
      (e.g. .hero has overflow: clip). */
