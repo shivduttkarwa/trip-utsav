@@ -410,15 +410,21 @@
 }
 
 /* ============================================================
-   CTA — a background video seen through a world map.
+   CTA — a background video seen through a world map, and through
+   the words laid over it.
 
-   Static: the map cover sits over the video and the continents are
-   the holes it is seen through. There is no pin, no scrub and no
-   second phase — the section is one image that happens to move.
+   ONE white sheet covers a full-bleed video. Its mask cuts the
+   continents out of that sheet, and the words printed on it are
+   knocked out of it by `mix-blend-mode: screen`: screen leaves
+   white as white and turns black fully transparent, so black type
+   on a white layer becomes a hole. Map and lettering are therefore
+   the same effect, and the video runs behind both.
 
-   The statement never sits on the map. Stacked above it on a phone,
-   and beside it on a desktop, where the spare room is horizontal
-   rather than vertical.
+   This is also why the video is no longer boxed. It used to sit
+   inside a .cta-map the exact size of the map, and that box's own
+   edge was the hairline showing down one side and along the
+   bottom — the cover could not land on it to the pixel. With the
+   video spanning the whole stage there is no edge to leak.
    ============================================================ */
 .cta {
   position: relative;
@@ -426,47 +432,20 @@
 }
 .cta-stage {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: clamp(2.5rem, 7vh, 4.5rem) 2vw clamp(2rem, 5vh, 3.5rem);
+  /* The band's inner margin. The map is sized against it below, so the two
+     cannot drift apart. */
+  --pad-y: clamp(2.5rem, 7vh, 4.5rem);
+  --pad-x: clamp(1.5rem, 4vw, 3.5rem);
+
+  padding: var(--pad-y) var(--pad-x);
   overflow: clip;
   background: #fff;
+  /* Confines the blend below to this section — without it the knockout would
+     composite against whatever the page happens to put behind it. */
   isolation: isolate;
 }
 
-/* On white, never over the continents — so no scrim and no bloom, because
-   there is nothing behind it to be lifted off. */
-.cta-intro {
-  padding-bottom: clamp(1.25rem, 3vh, 2.25rem);
-  text-align: center;
-}
-.cta-intro-title {
-  margin: 0;
-  font-family: var(--font-hero);
-  font-size: clamp(2.6rem, 9vw, 7rem);
-  font-weight: 800;
-  line-height: 0.96;
-  letter-spacing: -0.015em;
-  color: var(--blue-ink);
-}
-.cta-intro-title em {
-  font-style: italic;
-  font-weight: 700;
-  color: var(--orange);
-}
-
-/* Held to world.svg's own proportions (1009.67 × 665.96), so the map fills the
-   box exactly and the box needs no height of its own. Whatever width the
-   layout hands it, the band is that tall and no taller — which is what keeps
-   the empty space above and below from coming back. */
-.cta-map {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1009.6727 / 665.96301;
-  overflow: hidden;
-}
-
-/* Full-bleed background video, sitting behind the map. */
+/* Full-bleed, behind everything. */
 .cta-video {
   position: absolute;
   inset: 0;
@@ -477,14 +456,18 @@
   filter: saturate(1.08) contrast(1.02);
 }
 
-/* White cover with world-map-shaped holes: the video shows through the
-   continents while the oceans stay white. The mask subtracts the map from a
-   fully opaque layer, so white paints everywhere EXCEPT the map. */
+/* The white sheet. Two mask layers composited with `exclude`: a solid
+   rectangle minus the world, so white paints everywhere EXCEPT the
+   continents. Sized by HEIGHT (`auto <h>`) rather than width, which is what
+   holds the whole band to one screen — the map is 1.5:1, so sizing it by
+   width on a wide monitor made the section ~1.4 screens tall. */
 .cta-cover {
   position: absolute;
   inset: 0;
   z-index: 2;
   background: #fff;
+  mix-blend-mode: screen;
+
   -webkit-mask-image: linear-gradient(#000, #000), url(/world.svg);
   -webkit-mask-position: center, center;
   -webkit-mask-size: cover, 100% auto;
@@ -497,40 +480,92 @@
   mask-composite: exclude;
 }
 
-/* Desktop: the map keeps the middle and the statement breaks apart into the
-   white around it — "The" and "World" against its top edge left and right,
-   "Awaits" against the bottom left. Reading it walks the eye around the map
-   rather than past it, which is the only reason to split a line at all.
+/* Black, because black is the hole. Any colour here would tint rather than
+   knock out — screen only clears a channel where it is at zero. */
+.cta-intro {
+  position: absolute;
+  inset: var(--pad-y) var(--pad-x);
+  z-index: 3;
+  pointer-events: none;
+}
+.cta-intro-title {
+  margin: 0;
+  font-family: var(--font-hero);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  color: #000;
+  text-align: center;
+}
+.cta-intro-title em { font-style: italic; font-weight: 700; color: #000; }
 
-   .cta-intro is inset to exactly the stage padding, so the words sit on the
-   map's own top and bottom edges instead of on numbers picked by eye. */
+/* ---------------------------------------------------------------
+   Phone: the map keeps the band and the line sits under it, still
+   knocked out of the sheet.
+   --------------------------------------------------------------- */
+.cta-stage { min-height: calc(100vw / 1.516 + 14rem); }
+.cta-intro { display: flex; align-items: flex-end; justify-content: center; }
+.cta-intro-title { font-size: clamp(2.2rem, 8vw, 4rem); }
+.cta-word { display: inline; }
+
+/* ---------------------------------------------------------------
+   Desktop: one screen tall, the map centred in it, and the four
+   words placed around it in the white.
+   --------------------------------------------------------------- */
 @media (min-width: 901px) {
+  .cta-stage {
+    height: 100svh;
+    min-height: 0;
+  }
+
+  /* Sized by HEIGHT here, not width. The map is 1.5:1, so width-sizing on a
+     wide monitor derived a map ~1.4 screens tall; deriving the width from the
+     height instead holds the band to one screen and opens the side gutters the
+     words sit in. */
+  .cta-cover {
+    -webkit-mask-size: cover, auto calc(100% - var(--pad-y) * 2);
+    mask-size: cover, auto calc(100% - var(--pad-y) * 2);
+  }
+
   .cta-intro {
-    position: absolute;
-    inset: clamp(2.25rem, 5vh, 4rem) clamp(1.5rem, 4vw, 3.5rem);
-    z-index: 5;
-    padding: 0;
-    pointer-events: none;
+    display: block;
+
+    /* ══════════════════════════════════════════════════════════════
+       WORD PLACEMENT — this block is the whole control surface.
+
+       --x and --y are percentages of the band inside its padding.
+       0% is its left / top edge, 100% its right / bottom. Each word
+       is anchored to the side it belongs to (--ax / --ay further
+       down), so 100% means "flush against that edge", never "past
+       it". Values outside 0–100% are fine and push into the padding.
+
+       The map is centred and narrower than the band, so 0% and 100%
+       land in the white gutters either side of it.
+       ══════════════════════════════════════════════════════════════ */
+    --word-size: clamp(2.2rem, 4.4vw, 5.5rem);
+
+    --the-x: 0%;      --the-y: 0%;
+    --world-x: 100%;  --world-y: 0%;
+    --awaits-x: 0%;   --awaits-y: 100%;
+    --you-x: 100%;    --you-y: 100%;
   }
-  .cta-intro-title {
-    /* Sized against the gutter it has to fit, not the viewport. */
-    font-size: clamp(2rem, 3.4vw, 4.5rem);
-    line-height: 1;
-  }
+
+  .cta-intro-title { font-size: var(--word-size); }
+
   .cta-word {
     position: absolute;
+    left: var(--x);
+    top: var(--y);
+    /* The anchor. Shifts the word back by its own width or height so that
+       --x: 100% sits its right edge on the band's right edge rather than
+       starting it there. Only change these if a word moves to a new side. */
+    transform: translate(var(--ax, 0), var(--ay, 0));
     white-space: nowrap;
   }
-  .cta-word--the { top: 0; left: 0; }
-  .cta-word--world { top: 0; right: 0; }
-  .cta-word--awaits { bottom: 0; left: 0; }
-
-  /* Pulled in off the full width to open the side gutters the words live in —
-     at 62% the narrowest desktop still leaves room for "Awaits". */
-  .cta-map {
-    width: min(58rem, 62%);
-    margin-inline: auto;
-  }
+  .cta-word--the { --x: var(--the-x); --y: var(--the-y); --ax: 0; --ay: 0; }
+  .cta-word--world { --x: var(--world-x); --y: var(--world-y); --ax: -100%; --ay: 0; }
+  .cta-word--awaits { --x: var(--awaits-x); --y: var(--awaits-y); --ax: 0; --ay: -100%; }
+  .cta-word--you { --x: var(--you-x); --y: var(--you-y); --ax: -100%; --ay: -100%; }
 }
 
 /* Floating search card */

@@ -1,35 +1,40 @@
 /**
- * CTA band — a background video seen through a world map.
+ * CTA band — a background video seen through a world map, and through the
+ * words laid over it.
  *
- * Static by design. The white cover is masked with the world so the video
- * shows through the continents and the oceans stay white. There is no pin, no
- * scrubbed timeline and no second phase, so there is no JS here at all — the
- * only motion in the section is the video playing behind the map.
+ * One white sheet covers a full-bleed video. Its mask cuts the continents out
+ * of that sheet, and the words sit INSIDE the sheet in black, so
+ * `mix-blend-mode: screen` turns them into holes as well — screen leaves white
+ * as white and takes black to fully transparent. The map and the lettering are
+ * therefore the same effect, and the same video runs behind both.
  *
- * The statement is stacked above the map on plain white rather than laid over
- * it, so it never has to compete with the continents behind it.
+ * The words have to be children of the cover, not a layer above it: the blend
+ * applies to the element and its descendants as one group. Sitting on top they
+ * would simply paint black over the already-composited white.
+ *
+ * Static — no pin, no scrub, no JS. The only motion is the video itself.
  */
 export default function Cta({ video }) {
   return (
     <section className="cta">
       <div className="cta-stage">
-        {/* Three spans so the desktop layout can place each word on its own
-            side of the map. The explicit spaces keep it one readable line when
-            they flow back together on a phone. */}
-        <div className="cta-intro">
-          <h2 className="cta-intro-title">
-            <span className="cta-word cta-word--the">The</span>{" "}
-            <span className="cta-word cta-word--world">World</span>{" "}
-            <em className="cta-word cta-word--awaits">Awaits</em>
-          </h2>
-        </div>
+        <video className="cta-video" autoPlay muted loop playsInline preload="auto" aria-hidden="true">
+          <source src={video} type="video/mp4" />
+        </video>
 
-        <div className="cta-map">
-          <video className="cta-video" autoPlay muted loop playsInline preload="auto" aria-hidden="true">
-            <source src={video} type="video/mp4" />
-          </video>
-          {/* white cover with world-map-shaped holes */}
-          <div className="cta-cover" aria-hidden="true" />
+        {/* the white sheet — the map and the words are both holes in it */}
+        <div className="cta-cover">
+          {/* Four spans so each word can be placed on its own side of the map.
+              The explicit spaces keep it one readable line when they flow back
+              together on a phone. */}
+          <div className="cta-intro">
+            <h2 className="cta-intro-title">
+              <span className="cta-word cta-word--the">The</span>{" "}
+              <span className="cta-word cta-word--world">World</span>{" "}
+              <em className="cta-word cta-word--awaits">Awaits</em>{" "}
+              <span className="cta-word cta-word--you">You</span>
+            </h2>
+          </div>
         </div>
       </div>
     </section>
