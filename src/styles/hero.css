@@ -410,47 +410,63 @@
 }
 
 /* ============================================================
-   CTA — a background video peeks through a world map, then the
-   map dissolves to reveal the full-bleed video and CTA content.
+   CTA — a background video seen through a world map.
 
-   The whole band is ONE scrubbed timeline. JS writes a single
-   `--p` (0 → 1) onto .cta-stage while the stage is pinned; every
-   rule below slices its own window out of it with the
-   `(p − start) / span` pattern, clamped to 0…1. Nothing here is
-   time-based, so the section can never animate "past" the pin.
+   Static: the map cover sits over the video and the continents are
+   the holes it is seen through. There is no pin, no scrub and no
+   second phase — the section is one image that happens to move.
 
-     0.00–0.08 ENTER · 0.04–0.34 EXIT  · 0.08–0.42 OPEN
-     0.30–0.52 LIGHT · 0.36–0.88 COPY  · 0.88–1.00 HOLD (then unpin)
+   The statement never sits on the map. Stacked above it on a phone,
+   and beside it on a desktop, where the spare room is horizontal
+   rather than vertical.
    ============================================================ */
 .cta {
   position: relative;
-  height: 280svh;                /* scroll track: 1 screen pinned + 1.8 of travel */
   background: #fff;
 }
 .cta-stage {
-  position: sticky;
-  top: 0;
-  height: 100svh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(2.5rem, 7vh, 4.5rem) 2vw clamp(2rem, 5vh, 3.5rem);
   overflow: clip;
   background: #fff;
-  /* contains .cta-glow's `screen` blend to this stage — sticky with
-     z-index:auto does NOT make a stacking context on its own. */
   isolation: isolate;
-  --p: 0;                        /* 0 → 1, written from JS on scroll */
-
-  /* ---- timeline slices ---------------------------------------- */
-  --t-exit:  clamp(0, calc((var(--p) - 0.04) / 0.30), 1);   /* intro leaves  */
-  --t-open:  clamp(0, calc((var(--p) - 0.08) / 0.34), 1);   /* map dissolves */
-  --t-light: clamp(0, calc((var(--p) - 0.30) / 0.22), 1);   /* scrim + bloom */
-
-  /* easeOutQuad on the map so it flies open, then settles */
-  --e-open: calc(1 - (1 - var(--t-open)) * (1 - var(--t-open)));
-
-  --mask-w: calc(min(73.75rem, 90vw) + var(--e-open) * 100rem);
 }
 
-/* full-bleed background video — eases out of a slight push-in as the
-   map opens, so the reveal lands on a settled frame. */
+/* On white, never over the continents — so no scrim and no bloom, because
+   there is nothing behind it to be lifted off. */
+.cta-intro {
+  padding-bottom: clamp(1.25rem, 3vh, 2.25rem);
+  text-align: center;
+}
+.cta-intro-title {
+  margin: 0;
+  font-family: var(--font-hero);
+  font-size: clamp(2.6rem, 9vw, 7rem);
+  font-weight: 800;
+  line-height: 0.96;
+  letter-spacing: -0.015em;
+  color: var(--blue-ink);
+}
+.cta-intro-title em {
+  font-style: italic;
+  font-weight: 700;
+  color: var(--orange);
+}
+
+/* Held to world.svg's own proportions (1009.67 × 665.96), so the map fills the
+   box exactly and the box needs no height of its own. Whatever width the
+   layout hands it, the band is that tall and no taller — which is what keeps
+   the empty space above and below from coming back. */
+.cta-map {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1009.6727 / 665.96301;
+  overflow: hidden;
+}
+
+/* Full-bleed background video, sitting behind the map. */
 .cta-video {
   position: absolute;
   inset: 0;
@@ -459,248 +475,62 @@
   height: 100%;
   object-fit: cover;
   filter: saturate(1.08) contrast(1.02);
-  transform: scale(calc(1.08 - var(--e-open) * 0.08));
-  will-change: transform;
 }
 
-/* White cover with world-map-shaped holes: the video peeks through the
-   continents while the oceans stay white. mask-composite subtracts the map
-   from a fully-opaque layer, so white paints everywhere EXCEPT the map.
-   As it scrolls the holes grow (--mask-w) and the whole cover fades away. */
+/* White cover with world-map-shaped holes: the video shows through the
+   continents while the oceans stay white. The mask subtracts the map from a
+   fully opaque layer, so white paints everywhere EXCEPT the map. */
 .cta-cover {
   position: absolute;
   inset: 0;
   z-index: 2;
   background: #fff;
-  opacity: clamp(0, calc(1.06 - var(--t-open) * 1.18), 1);
   -webkit-mask-image: linear-gradient(#000, #000), url(/world.svg);
   -webkit-mask-position: center, center;
-  -webkit-mask-size: cover, var(--mask-w) auto;
+  -webkit-mask-size: cover, 100% auto;
   -webkit-mask-repeat: no-repeat, no-repeat;
   -webkit-mask-composite: xor;
   mask-image: linear-gradient(#000, #000), url(/world.svg);
   mask-position: center, center;
-  mask-size: cover, var(--mask-w) auto;
+  mask-size: cover, 100% auto;
   mask-repeat: no-repeat, no-repeat;
   mask-composite: exclude;
-  will-change: opacity, mask-size;
 }
 
-/* Legibility wash — an even veil, not a centre vignette. A soft radial behind
-   the copy reads as a grey blob sitting on the frame; a flat 180° pass at
-   ~20% through the middle disappears as an effect while still lifting the
-   type. Edges take the weight. The tight text-shadows below do the rest. */
-.cta-scrim {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  pointer-events: none;
-  opacity: var(--t-light);
-  background:
-    linear-gradient(180deg,
-      rgba(5, 17, 38, 0.42) 0%,
-      rgba(5, 17, 38, 0.2) 24%,
-      rgba(5, 17, 38, 0.22) 60%,
-      rgba(5, 17, 38, 0.56) 100%);
-}
+/* Desktop: the map keeps the middle and the statement breaks apart into the
+   white around it — "The" and "World" against its top edge left and right,
+   "Awaits" against the bottom left. Reading it walks the eye around the map
+   rather than past it, which is the only reason to split a line at all.
 
-/* Warm brand bloom. `screen` blending ADDS light, which is what keeps the
-   band feeling rich rather than dark once the scrim is on. */
-.cta-glow {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  opacity: calc(var(--t-light) * 0.92);
-  background:
-    radial-gradient(44rem 30rem at 50% 74%, rgba(224, 97, 58, 0.42), transparent 68%),
-    radial-gradient(38rem 26rem at 16% 18%, rgba(24, 110, 214, 0.32), transparent 70%),
-    radial-gradient(30rem 22rem at 88% 26%, rgba(255, 190, 140, 0.22), transparent 72%);
-}
+   .cta-intro is inset to exactly the stage padding, so the words sit on the
+   map's own top and bottom edges instead of on numbers picked by eye. */
+@media (min-width: 901px) {
+  .cta-intro {
+    position: absolute;
+    inset: clamp(2.25rem, 5vh, 4rem) clamp(1.5rem, 4vw, 3.5rem);
+    z-index: 5;
+    padding: 0;
+    pointer-events: none;
+  }
+  .cta-intro-title {
+    /* Sized against the gutter it has to fit, not the viewport. */
+    font-size: clamp(2rem, 3.4vw, 4.5rem);
+    line-height: 1;
+  }
+  .cta-word {
+    position: absolute;
+    white-space: nowrap;
+  }
+  .cta-word--the { top: 0; left: 0; }
+  .cta-word--world { top: 0; right: 0; }
+  .cta-word--awaits { bottom: 0; left: 0; }
 
-/* Phase 1 — big attractive intro text over the map; fades + lifts away
-   just ahead of the map dissolve (driven by --t-exit). */
-.cta-intro {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 1.5rem;
-  pointer-events: none;
-  opacity: clamp(0, calc(1.05 - var(--t-exit) * 1.35), 1);
-  transform: translateY(calc(var(--t-exit) * -3rem)) scale(calc(1 - var(--t-exit) * 0.06));
-  will-change: opacity, transform;
-}
-.cta-intro-title {
-  font-family: var(--font-hero);
-  margin: 0;
-  font-size: clamp(3rem, 11vw, 8.5rem);
-  font-weight: 800;
-  line-height: 0.96;
-  letter-spacing: -0.015em;
-  color: var(--blue-ink);
-  text-shadow: 0 0.0625rem 0 rgba(255, 255, 255, 0.5), 0 0.375rem 2.75rem rgba(255, 255, 255, 0.72);
-}
-.cta-intro-title em {
-  font-style: italic;
-  font-weight: 700;
-  color: var(--orange);
-}
-.cta-intro-cue {
-  position: absolute;
-  bottom: clamp(1.5rem, 6vh, 3.25rem);
-  left: 50%;
-  transform: translateX(-50%);
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.74rem;
-  font-weight: 600;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: rgba(7, 31, 66, 0.6);
-  text-shadow: 0 0.125rem 1.125rem rgba(255, 255, 255, 0.7);
-}
-.cta-intro-cue i {
-  width: 0.0625rem;
-  height: 2.5rem;
-  background: linear-gradient(rgba(7, 31, 66, 0.45), rgba(7, 31, 66, 0));
-  position: relative;
-  overflow: hidden;
-}
-.cta-intro-cue i::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--orange);
-  animation: cueRun 1.9s ease-in-out infinite;
-}
-@keyframes cueRun {
-  0% { transform: translateY(-100%); }
-  60%, 100% { transform: translateY(100%); }
-}
-
-/* ---- Phase 2: revealed content, centred over the full-bleed video ---- */
-.cta-content {
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;          /* flipped on by .is-live once readable */
-}
-.cta.is-live .cta-content { pointer-events: auto; }
-
-/* Three blocks now rather than five, so the gap opens up — with less on screen
-   the spacing is what carries the composition. */
-.cta-content-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.875rem;
-  text-align: center;
-  color: #fff;
-}
-
-/* Each child slices its own window out of --p: start 0.36, then 0.07 apart,
-   0.17 long. The last of six lands at 0.87 — just inside the HOLD tail, so
-   everything is settled before the pin lets go. */
-.cta-content-inner > * {
-  --i: 0;
-  --start: calc(0.36 + var(--i) * 0.07);
-  --t: clamp(0, calc((var(--p) - var(--start)) / 0.17), 1);
-  /* easeOutCubic: 1 − (1 − t)³ */
-  --e: calc(1 - (1 - var(--t)) * (1 - var(--t)) * (1 - var(--t)));
-  max-width: 44rem;
-  opacity: var(--e);
-  transform: translate3d(0, calc((1 - var(--e)) * 2.75rem), 0) scale(calc(0.965 + var(--e) * 0.035));
-  will-change: opacity, transform;
-}
-.cta-content-inner > *:nth-child(2) { --i: 1; }
-.cta-content-inner > *:nth-child(3) { --i: 2; }
-.cta-content-inner > *:nth-child(4) { --i: 3; }
-.cta-content-inner > *:nth-child(5) { --i: 4; }
-.cta-content-inner > *:nth-child(6) { --i: 5; }
-
-/* Headline: the site's hand face is too light over photography, so the CTA
-   uses the hero face for the statement and keeps the hand face for accents. */
-.cta-title {
-  font-family: var(--font-hero);
-  font-weight: 800;
-  font-size: clamp(2.5rem, 5.4vw, 4.6rem);
-  line-height: 1.03;
-  letter-spacing: -0.025em;
-  color: #fff;
-  /* tight contact shadow — legibility without tinting the video behind it */
-  text-shadow: 0 0.012em 0.03em rgba(5, 17, 38, 0.55), 0 0.02em 0.11em rgba(5, 17, 38, 0.35);
-}
-.cta-title em {
-  font-family: var(--font-hand);
-  font-style: normal;
-  font-weight: 700;
-  color: #ffc8ac;
-  padding-right: 0.15em;
-}
-.cta-content p {
-  font-size: clamp(1.02rem, 1.4vw, 1.2rem);
-  line-height: 1.62;
-  color: rgba(255, 255, 255, 0.9);
-  max-width: 34rem;
-  margin: 0;
-  text-shadow: 0 0.03em 0.08em rgba(5, 17, 38, 0.6), 0 0.05em 0.3em rgba(5, 17, 38, 0.35);
-}
-.cta-actions {
-  display: flex;
-  gap: 0.875rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 0.25rem;
-}
-
-/* Progress rail — makes the pin read as intentional. Appears with the
-   reveal and fades out again over the HOLD tail, as the pin releases. */
-.cta-rail {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 6;
-  height: 0.1875rem;
-  pointer-events: none;
-  background: rgba(255, 255, 255, 0.16);
-  opacity: clamp(0, calc(min(var(--p) / 0.12, (1 - var(--p)) / 0.08)), 1);
-}
-.cta-rail i {
-  display: block;
-  height: 100%;
-  width: calc(var(--p) * 100%);
-  background: var(--grad-orange);
-  box-shadow: 0 0 1.25rem rgba(224, 97, 58, 0.7);
-}
-
-@media (max-width: 900px) {
-  .cta { height: 240svh; }
-  .cta-stage { --mask-w: calc(min(75rem, 96vw) + var(--e-open) * 75rem); }
-  .cta-content-inner { gap: 1.125rem; }
-  .cta-actions { width: 100%; }
-  .cta-actions .btn { flex: 1 1 12rem; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .cta { height: auto; }
-  .cta-stage { position: relative; height: auto; min-height: 100svh; padding: 6rem 0; --p: 1; }
-  .cta-video { transform: none; }
-  .cta-intro { display: none; }
-  .cta-content { position: relative; inset: auto; }
-  .cta-content-inner > * { opacity: 1; transform: none; }
-  .cta-rail { display: none; }
+  /* Pulled in off the full width to open the side gutters the words live in —
+     at 62% the narrowest desktop still leaves room for "Awaits". */
+  .cta-map {
+    width: min(58rem, 62%);
+    margin-inline: auto;
+  }
 }
 
 /* Floating search card */
