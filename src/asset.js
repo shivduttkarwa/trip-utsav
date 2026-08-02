@@ -7,8 +7,10 @@
  * from /trip-utsav/, so every public asset referenced from JS has to be
  * prefixed here instead.
  *
- * BASE_URL is "/" in dev, so this is a no-op locally.
+ * Vite uses BASE_URL in both development and production, so this helper keeps
+ * public assets correct regardless of where the application is mounted.
  */
 export default function asset(path) {
-  return `${import.meta.env.BASE_URL}${String(path).replace(/^\/+/, "")}`;
+  const base = import.meta.env?.BASE_URL ?? "/";
+  return `${base.replace(/\/?$/, "/")}${String(path).replace(/^\/+/, "")}`;
 }
