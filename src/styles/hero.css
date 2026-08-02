@@ -280,17 +280,62 @@
   .hs-cap.is-in .hs-loc::before { transition: none; }
 }
 /* Mobile: lift the caption and cap the title so long words never bleed. */
+/* ---------------------------------------------------------------
+   Phone. The caption was set at desktop proportions scaled down,
+   which left a 36px word floating in the middle of a full-bleed
+   photograph — too small to carry the frame, so the composition
+   read as unresolved rather than as a statement.
+
+   The block now runs to the gutter and the statement is sized to
+   nearly fill it. The ceiling is "PERSPECTIVE": eleven characters
+   with no break opportunity, so the word governs the size, not the
+   frame. At 12.5vw it measures about 313px inside a 358px gutter on
+   a 390px screen — anything larger overflows on that one slide.
+   --------------------------------------------------------------- */
 @media (max-width: 700px) {
-  .hs-cap { top: 34%; left: 1.25rem; max-width: calc(100% - 2.5rem); }
-  .hs-cap .hs-loc { margin-bottom: 0.875rem; font-size: 0.64rem; letter-spacing: 0.24em; gap: 0.625rem; }
-  .hs-cap .hs-loc::before { width: 1.375rem; }
-  .hs-cap .hs-lead { font-size: clamp(1.75rem, 8vw, 3rem); }
-  .hs-cap .hs-word { font-size: clamp(2rem, 9.4vw, 3.4rem); }
-  /* narrow frame: the caption spans it, so shade evenly rather than from one edge */
+  .hs-cap {
+    top: 33%;
+    left: 1rem;
+    max-width: calc(100% - 2rem);
+  }
+  .hs-cap .hs-loc { margin-bottom: 0.75rem; font-size: 0.66rem; letter-spacing: 0.2em; gap: 0.5rem; }
+  .hs-cap .hs-loc::before { width: 1.5rem; }
+
+  /* Comic Neue at 400 is a hairline once it is down at 28px over a
+     photograph — it reads as a caption sitting near the headline rather than
+     as the first half of it. The family ships 300/400/700 and nothing in
+     between, so 700 is the only step that holds at this size. */
+  .hs-cap .hs-lead {
+    font-weight: 700;
+    font-size: clamp(1.6rem, 7.6vw, 2.6rem);
+    letter-spacing: -0.015em;
+    margin-bottom: 0.1em;
+    text-shadow:
+      0 0.03em 0.06em rgba(5, 17, 38, 0.8),
+      0 0.06em 0.3em rgba(5, 17, 38, 0.5);
+  }
+
+  .hs-cap .hs-word {
+    font-size: clamp(2.4rem, 12.5vw, 4rem);
+    letter-spacing: -0.035em;
+    text-shadow:
+      0 0.015em 0.04em rgba(5, 17, 38, 0.6),
+      0 0.05em 0.22em rgba(5, 17, 38, 0.4);
+  }
+
+  /* Deeper through the middle than the desktop wash. The caption sits at a
+     third of the way down, where the old gradient had thinned to 22% — the
+     type was carrying its own contrast on text-shadow alone. Still open at
+     the very top so the photograph is not flattened. */
   .hs-scrim {
     background:
-      linear-gradient(180deg, rgba(5, 17, 38, 0.42) 0%, rgba(5, 17, 38, 0.22) 30%, rgba(5, 17, 38, 0.18) 52%, rgba(5, 17, 38, 0.8) 100%);
+      linear-gradient(180deg,
+        rgba(5, 17, 38, 0.44) 0%,
+        rgba(5, 17, 38, 0.34) 26%,
+        rgba(5, 17, 38, 0.28) 50%,
+        rgba(5, 17, 38, 0.82) 100%);
   }
+
   .hs-ui .container { gap: 0.75rem; }
   .hs-count { display: none; }
   .hs-dot { width: 1.25rem; }
