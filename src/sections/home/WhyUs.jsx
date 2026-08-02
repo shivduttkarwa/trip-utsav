@@ -1,46 +1,54 @@
-import { useState } from "react";
 import Reveal from "../../components/Reveal";
 import Button from "../../components/Button";
-import Icon from "../../components/Icon";
 import { useUI } from "../../components/UIContext";
 import "./WhyUs.css";
 
-/* Why-us as an index whose rows become the destination.
+/* Why-us as a bento of four tiles.
  *
- * On hover a row floods with its own photograph — the image band wipes in from
- * the gutter while the picture itself settles out of a push-in, the title lifts
- * character by character, and the whole row inverts to white. Four things move
- * on one trigger, which is what separates it from a hover state.
+ * The previous version was an index whose rows flooded with a photograph on
+ * hover — which meant the photography only existed for someone holding a mouse,
+ * and every touch device got a plain text list. Here the pictures are on screen
+ * from the start and the tiles carry their own weight; hover only opens the
+ * crop a little further.
  *
  * The stills are the hero slider's, deliberately: they are already fetched and
- * decoded at the top of this page, so a row fills instantly and costs nothing. */
+ * decoded at the top of this page, so the tiles cost nothing to fill. */
 
 const POINTS = [
   {
+    idx: "01",
     title: "Human experts, not algorithms",
     text: "A dedicated trip designer from first call to touchdown home.",
+    surface: "photo",
+    span: "why-tile--wide why-tile--tall",
     img: "/images/hero/hero-kerala-4k.webp",
   },
   {
+    idx: "02",
     title: "Fully customisable itineraries",
     text: "Every package is a starting point — stretch, swap and season to taste.",
-    img: "/images/hero/hero-ladakh-4k.webp",
+    surface: "ink",
+    span: "why-tile--wide",
   },
   {
+    idx: "03",
     title: "24×7 on-trip support",
     text: "Missed connection at 2 AM? One WhatsApp and we're on it.",
+    surface: "photo",
+    span: "",
     img: "/images/hero/hero-kashmir-4k.webp",
   },
   {
+    idx: "04",
     title: "Zero hidden costs",
-    text: "What you see is what you pay — no line items appearing at checkout.",
-    img: "/images/hero/hero-maldives-4k.webp",
+    text: "What you see is what you pay — no line items at checkout.",
+    surface: "soft",
+    span: "",
   },
 ];
 
 export default function WhyUs() {
   const { openEnquiry } = useUI();
-  const [hot, setHot] = useState(-1);
 
   return (
     <section className="why">
@@ -60,39 +68,27 @@ export default function WhyUs() {
           </p>
         </Reveal>
 
-        <ul className="why-list" onPointerLeave={() => setHot(-1)}>
+        <div className="why-bento">
           {POINTS.map((p, i) => (
-            <li
-              key={p.title}
-              className={`why-row${i === hot ? " is-hot" : ""}`}
-              onPointerEnter={() => setHot(i)}
+            <Reveal
+              as="article"
+              key={p.idx}
+              delay={i * 0.08}
+              className={`why-tile why-tile--${p.surface} ${p.span}`.trim()}
             >
-              <span className="why-row-bg" aria-hidden="true">
-                <img src={p.img} alt="" />
-              </span>
-
-              <span className="why-idx">{String(i + 1).padStart(2, "0")}</span>
-
-              {/* Split per character to stagger the lift; aria-label keeps it
-                  one continuous string for anything reading the page. */}
-              <h3 className="why-row-title" aria-label={p.title}>
-                {[...p.title].map((ch, k) => (
-                  <span key={k} aria-hidden="true" style={{ "--k": k }}>
-                    {ch === " " ? " " : ch}
-                  </span>
-                ))}
-              </h3>
-
-              <p className="why-row-text">{p.text}</p>
-              <i className="why-row-go" aria-hidden="true"><Icon name="arrow" /></i>
-            </li>
+              {p.img && <img className="why-tile-img" src={p.img} alt="" />}
+              <span className="why-tile-idx">{p.idx}</span>
+              <div className="why-tile-body">
+                <h3 className="why-tile-title">{p.title}</h3>
+                <p className="why-tile-text">{p.text}</p>
+              </div>
+            </Reveal>
           ))}
-        </ul>
+        </div>
 
         <Reveal delay={0.1}>
           <div className="why-cta">
             <Button icon="arrow" onClick={() => openEnquiry()}>Start Planning Free</Button>
-            <span className="why-trust"><b>4.8★</b> from 2,000+ verified reviews</span>
           </div>
         </Reveal>
       </div>
