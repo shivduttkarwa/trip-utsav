@@ -17,7 +17,12 @@ import "./styles/pages.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    {/* basename tracks Vite's base, so every <Link to="/packages"> resolves
+        under /trip-utsav/ on Pages and stays at /packages in dev. */}
+    <BrowserRouter
+      basename={import.meta.env.BASE_URL}
+      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+    >
       <App />
     </BrowserRouter>
   </React.StrictMode>

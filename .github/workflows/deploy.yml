@@ -1,0 +1,57 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Lets the site be redeployed from the Actions tab without a new commit.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time. A second push mid-run cancels the first rather than
+# racing it to the same environment.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # ci, not install: installs exactly what package-lock.json pins, so a
+      # deploy can never pick up a version the local build has not seen.
+      - run: npm ci
+
+      - run: npm run build
+
+      # GitHub Pages is a static host with no SPA rewrite, so a deep link like
+      # /trip-utsav/packages asks for a file that does not exist. Serving the
+      # app itself as the 404 page hands those URLs to the client router
+      # instead of showing GitHub's error page.
+      - run: cp dist/index.html dist/404.html
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

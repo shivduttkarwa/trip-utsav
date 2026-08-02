@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { SITE } from "../data/site";
 import Icon from "./Icon";
 import "../styles/navbar.css";
+import asset from "../asset";
 
 /* Destinations grouped by region — pills deep-link into the packages listing */
 const DEST_GROUPS = [
@@ -41,7 +42,7 @@ const DESKTOP_MENUS = [
       title: "Maldives, made effortless",
       copy: "Private villas, blue lagoons and every detail arranged.",
       to: "/packages?search=Maldives",
-      image: "/images/hero/hero-maldives-4k.webp",
+      image: asset("images/hero/hero-maldives-4k.webp"),
     },
   },
   {
@@ -76,7 +77,7 @@ const DESKTOP_MENUS = [
       title: "The valleys of Kashmir",
       copy: "Alpine mornings, river trails and stays full of warmth.",
       to: "/packages?search=Kashmir",
-      image: "/images/hero/hero-kashmir-4k.webp",
+      image: asset("images/hero/hero-kashmir-4k.webp"),
     },
   },
   {
@@ -111,7 +112,7 @@ const DESKTOP_MENUS = [
       title: "Your trip, not a template",
       copy: "Tell us your pace, passions and budget. We will shape the rest.",
       to: "/contact",
-      image: "/images/hero/hero-bali-4k.webp",
+      image: asset("images/hero/hero-bali-4k.webp"),
     },
   },
   {
@@ -145,7 +146,7 @@ const DESKTOP_MENUS = [
       title: "Personal from hello to home",
       copy: "Real experts, honest advice and support whenever you need it.",
       to: "/about",
-      image: "/images/hero/hero-kerala-4k.webp",
+      image: asset("images/hero/hero-kerala-4k.webp"),
     },
   },
 ];
@@ -255,7 +256,7 @@ export default function Navbar() {
               if (location.pathname === "/") window.scrollTo({ top: 0, behavior: "smooth" });
             }}
           >
-            <img src="/trip-utsav-logo.svg" alt="Trip Utsav" />
+            <img src={asset("trip-utsav-logo.svg")} alt="Trip Utsav" />
           </Link>
 
           <div

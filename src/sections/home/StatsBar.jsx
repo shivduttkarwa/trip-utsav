@@ -1,15 +1,16 @@
 import Reveal from "../../components/Reveal";
 import useCountUp from "../../components/useCountUp";
 import "./StatsBar.css";
+import asset from "../../asset";
 
 /* Each figure is filled with a different destination, so the row doubles as a
    glimpse of the catalogue. Bright, open frames only — a dark or busy crop
    turns the digits to mud once they are clipped to the glyphs. */
 const STATS = [
-  { value: 12, label: "Years of Craft", image: "/images/hero/hero-ladakh-4k.webp" },
-  { value: 25000, label: "Happy Travellers", image: "/images/hero/hero-maldives-4k.webp" },
-  { value: 120, label: "Destinations Covered", image: "/images/hero/hero-kerala-4k.webp" },
-  { value: 4.8, suffix: "★", decimals: 1, label: "Average Rating", image: "/images/hero/hero-bali-4k.webp" },
+  { value: 12, label: "Years of Craft", image: asset("images/hero/hero-ladakh-4k.webp") },
+  { value: 25000, label: "Happy Travellers", image: asset("images/hero/hero-maldives-4k.webp") },
+  { value: 120, label: "Destinations Covered", image: asset("images/hero/hero-kerala-4k.webp") },
+  { value: 4.8, suffix: "★", decimals: 1, label: "Average Rating", image: asset("images/hero/hero-bali-4k.webp") },
 ];
 
 function StatWindow({ index, value, suffix = "+", decimals = 0, label, image, delay }) {

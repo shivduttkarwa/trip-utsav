@@ -497,7 +497,9 @@
   color: #000;
   text-align: center;
 }
-.cta-intro-title em { font-style: italic; font-weight: 700; color: #000; }
+/* "Awaits" is still an <em> for emphasis in the markup, but it is set exactly
+   like its neighbours — four words, one voice. */
+.cta-intro-title em { font-style: normal; font-weight: inherit; color: inherit; }
 
 /* ---------------------------------------------------------------
    Phone: the map keeps the band and the line sits under it, still
@@ -544,10 +546,10 @@
        ══════════════════════════════════════════════════════════════ */
     --word-size: clamp(2.2rem, 4.4vw, 5.5rem);
 
-    --the-x: 0%;      --the-y: 0%;
-    --world-x: 100%;  --world-y: 0%;
-    --awaits-x: 0%;   --awaits-y: 100%;
-    --you-x: 100%;    --you-y: 100%;
+    --the-x: 5%;     --the-y: 4%;
+    --world-x: 95%;  --world-y: 4%;
+    --awaits-x: 5%;  --awaits-y: 96%;
+    --you-x: 95%;    --you-y: 96%;
   }
 
   .cta-intro-title { font-size: var(--word-size); }

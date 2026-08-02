@@ -4,6 +4,7 @@ import { useUI } from "./UIContext";
 import Icon from "./Icon";
 import Button from "./Button";
 import "../styles/footer.css";
+import asset from "../asset";
 
 const EXPLORE = [
   { to: "/packages?category=domestic", label: "Domestic Packages" },
@@ -55,7 +56,7 @@ export default function Footer() {
       <div className="footer-main">
         <div className="container footer-grid">
           <div className="footer-brand">
-            <img src="/trip-utsav-logo.svg" alt="Trip Utsav" />
+            <img src={asset("trip-utsav-logo.svg")} alt="Trip Utsav" />
             <p>
               Travel More, Celebrate Life. We craft journeys across India and the world — from
               weekend escapes to grand honeymoons — with the care of a friend and the precision

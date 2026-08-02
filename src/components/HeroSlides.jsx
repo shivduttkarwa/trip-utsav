@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Icon from "./Icon";
+import asset from "../asset";
 
 /* Hero slider.
  *
@@ -21,11 +22,11 @@ import Icon from "./Icon";
  * the same component as the state that drives them. */
 
 const SLIDES = [
-  { pre: "Chase the", word: "Horizon", loc: "Ladakh, India", img: "/images/hero/hero-ladakh-4k.webp" },
-  { pre: "Savour the", word: "Journey", loc: "Kerala Backwaters", img: "/images/hero/hero-kerala-4k.webp" },
-  { pre: "Wander the", word: "Valleys", loc: "Pahalgam, Kashmir", img: "/images/hero/hero-kashmir-4k.webp" },
-  { pre: "Escape to", word: "Paradise", loc: "Maldives", img: "/images/hero/hero-maldives-4k.webp" },
-  { pre: "Change your", word: "Perspective", loc: "Bali, Indonesia", img: "/images/hero/hero-bali-4k.webp" },
+  { pre: "Chase the", word: "Horizon", loc: "Ladakh, India", img: asset("images/hero/hero-ladakh-4k.webp") },
+  { pre: "Savour the", word: "Journey", loc: "Kerala Backwaters", img: asset("images/hero/hero-kerala-4k.webp") },
+  { pre: "Wander the", word: "Valleys", loc: "Pahalgam, Kashmir", img: asset("images/hero/hero-kashmir-4k.webp") },
+  { pre: "Escape to", word: "Paradise", loc: "Maldives", img: asset("images/hero/hero-maldives-4k.webp") },
+  { pre: "Change your", word: "Perspective", loc: "Bali, Indonesia", img: asset("images/hero/hero-bali-4k.webp") },
 ];
 
 const HS_INTERVAL = 6000;

@@ -3,6 +3,7 @@ import { useUI } from "./UIContext";
 import { SITE } from "../data/site";
 import { WORLD_LAND } from "./worldMap";
 import Icon from "./Icon";
+import asset from "../asset";
 
 /* Toast, WhatsApp float, back-to-top and the one-time preloader */
 
@@ -211,7 +212,7 @@ export function Preloader() {
       <div className="pl-panels" aria-hidden="true"><i /><i /><i /></div>
 
       <div className="pl-content">
-        <img className="pl-logo" src="/trip-utsav-logo.svg" alt="Trip Utsav" />
+        <img className="pl-logo" src={asset("trip-utsav-logo.svg")} alt="Trip Utsav" />
 
         <svg className="pl-map" viewBox="0 18 1000 404" fill="none" aria-hidden="true">
           <defs>

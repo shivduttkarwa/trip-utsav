@@ -2,6 +2,7 @@ import Reveal from "../../components/Reveal";
 import Button from "../../components/Button";
 import { useUI } from "../../components/UIContext";
 import "./WhyUs.css";
+import asset from "../../asset";
 
 /* Why-us as a bento of four tiles.
  *
@@ -21,7 +22,7 @@ const POINTS = [
     text: "A dedicated trip designer from first call to touchdown home.",
     surface: "photo",
     span: "why-tile--wide why-tile--tall",
-    img: "/images/hero/hero-kerala-4k.webp",
+    img: asset("images/hero/hero-kerala-4k.webp"),
   },
   {
     idx: "02",
@@ -36,7 +37,7 @@ const POINTS = [
     text: "Missed connection at 2 AM? One WhatsApp and we're on it.",
     surface: "photo",
     span: "",
-    img: "/images/hero/hero-kashmir-4k.webp",
+    img: asset("images/hero/hero-kashmir-4k.webp"),
   },
   {
     idx: "04",

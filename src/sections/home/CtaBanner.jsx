@@ -2,6 +2,7 @@ import Reveal from "../../components/Reveal";
 import Button from "../../components/Button";
 import { useUI } from "../../components/UIContext";
 import "./CtaBanner.css";
+import asset from "../../asset";
 
 /* Closing CTA — full-bleed photograph, full viewport height, content over it.
  *
@@ -18,7 +19,7 @@ export default function CtaBanner() {
     <section className="cta-full">
       <img
         className="cta-full-bg"
-        src="/images/hero/hero-ladakh-4k.webp"
+        src={asset("images/hero/hero-ladakh-4k.webp")}
         alt=""
         loading="lazy"
         decoding="async"
