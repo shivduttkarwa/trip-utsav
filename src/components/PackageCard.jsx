@@ -15,7 +15,7 @@ export default function PackageCard({ pkg, delay = 0 }) {
       <div className="pkg-media">
         <img
           src={pkg.image}
-          alt={pkg.title}
+          alt={pkg.imageAlt ?? pkg.title}
           loading="lazy"
           onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = FALLBACK_IMG; }}
         />

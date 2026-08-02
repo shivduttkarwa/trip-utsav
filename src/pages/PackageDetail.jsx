@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
-import { PACKAGES, GALLERY_POOL, FALLBACK_IMG } from "../data/packages";
+import { PACKAGES, FALLBACK_IMG } from "../data/packages";
 import { fmtINR, SITE } from "../data/site";
 import { useUI } from "../components/UIContext";
 import Icon from "../components/Icon";
@@ -25,14 +25,14 @@ export default function PackageDetail() {
   if (!pkg) return <NotFound />;
 
   const stars = "★".repeat(Math.round(pkg.rating));
-  const gallery = [pkg.image, ...GALLERY_POOL.slice(0, 5)];
+  const gallery = pkg.gallery ?? [{ src: pkg.image, alt: pkg.imageAlt ?? pkg.title }];
 
   return (
     <>
       {/* ---------- HERO ---------- */}
       <header className="detail-hero">
         <div className="hero-media">
-          <img src={pkg.image} alt={pkg.title} onError={onImgError} />
+          <img src={pkg.image} alt={pkg.imageAlt ?? pkg.title} onError={onImgError} />
         </div>
         <div className="container detail-hero-inner">
           <nav className="breadcrumb" aria-label="Breadcrumb">
@@ -110,9 +110,9 @@ export default function PackageDetail() {
             <Reveal className="detail-section" style={{ borderBottom: 0 }}>
               <h2>Gallery</h2>
               <div className="gallery-grid">
-                {gallery.map((src, i) => (
-                  <a key={i} href={src} target="_blank" rel="noopener noreferrer">
-                    <img src={src} alt={`${pkg.title} — photo ${i + 1}`} loading="lazy" onError={onImgError} />
+                {gallery.map(({ src, alt }, i) => (
+                  <a key={src} href={src} target="_blank" rel="noopener noreferrer">
+                    <img src={src} alt={alt || `${pkg.title} — photo ${i + 1}`} loading="lazy" onError={onImgError} />
                   </a>
                 ))}
               </div>

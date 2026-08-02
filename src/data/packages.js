@@ -566,15 +566,133 @@ const PACKAGES = [
   }
 ];
 
-/* Shared gallery pool used on detail pages */
-const GALLERY_POOL = [
-  IMG("photo-1476514525535-07fb3b4ae5f1", 800),
-  IMG("photo-1530521954074-e64f6810b32d", 800),
-  IMG("photo-1488646953014-85cb44e25828", 800),
-  IMG("photo-1500835556837-99ac94a94552", 800),
-  IMG("photo-1469854523086-cc02fe5d8800", 800),
-  IMG("photo-1436491865332-7a61a109cc05", 800)
-];
+/* Package-specific, locally generated attraction galleries. */
+const PACKAGE_GALLERIES = {
+  "kashmir-paradise": [
+    ["01-dal-lake.jpg", "A shikara on Dal Lake beneath the Zabarwan Mountains in Srinagar"],
+    ["02-gulmarg-gondola.jpg", "Gulmarg Gondola crossing snow-covered Pir Panjal mountains"],
+    ["03-betaab-valley.jpg", "The Lidder River flowing through Betaab Valley near Pahalgam"],
+    ["04-nishat-bagh.jpg", "Nishat Bagh's terraced Mughal gardens overlooking Dal Lake"],
+    ["05-pampore-saffron.jpg", "Saffron crocus harvest in the fields of Pampore, Kashmir"]
+  ],
+  "kerala-backwaters": [
+    ["01-munnar-tea.jpg", "Misty tea plantations rolling across the hills of Munnar"],
+    ["02-alleppey-houseboat.jpg", "Traditional kettuvallam houseboat cruising the Alleppey backwaters"],
+    ["03-periyar-lake.jpg", "Wild Asian elephants beside a sanctuary boat on Periyar Lake"],
+    ["04-fort-kochi-nets.jpg", "Chinese fishing nets raised along the Fort Kochi waterfront"],
+    ["05-cheeyappara-waterfalls.jpg", "Cheeyappara Waterfalls cascading through Kerala's rain forest"]
+  ],
+  "goa-beach-escape": [
+    ["01-baga-beach.jpg", "Baga Beach and its palm-lined shoreline in North Goa"],
+    ["02-fort-aguada.jpg", "Fort Aguada lighthouse overlooking the Arabian Sea"],
+    ["03-chapora-vagator.jpg", "Vagator Beach viewed from the ramparts of Chapora Fort"],
+    ["04-bom-jesus.jpg", "The red-laterite facade of the Basilica of Bom Jesus in Old Goa"],
+    ["05-mandovi-cruise.jpg", "Evening cruise boat on the Mandovi River beside Panjim"]
+  ],
+  "rajasthan-royal": [
+    ["01-amber-fort.jpg", "Amber Fort rising above Maota Lake in Jaipur"],
+    ["02-mehrangarh-blue-city.jpg", "Mehrangarh Fort above the blue-painted old city of Jodhpur"],
+    ["03-lake-pichola.jpg", "Udaipur City Palace and a heritage boat on Lake Pichola"],
+    ["04-jaisalmer-fort.jpg", "Golden Jaisalmer Fort above the living desert city"],
+    ["05-sam-sand-dunes.jpg", "Camel safari crossing the Sam Sand Dunes at sunset"]
+  ],
+  "himachal-hills": [
+    ["01-shimla-ridge.jpg", "Christ Church and pedestrians on the Ridge in Shimla"],
+    ["02-kufri-snow.jpg", "Snow-covered deodar slopes and Himalayan ridges near Kufri"],
+    ["03-hidimba-temple.jpg", "The tiered wooden Hidimba Devi Temple among Manali cedars"],
+    ["04-solang-valley.jpg", "Paragliders above the green mountain slopes of Solang Valley"],
+    ["05-kasol-parvati-river.jpg", "The Parvati River flowing past forested Kasol"]
+  ],
+  "andaman-islands": [
+    ["01-radhanagar-beach.jpg", "The pristine forest-backed curve of Radhanagar Beach"],
+    ["02-elephant-beach-scuba.jpg", "Scuba divers above a coral reef near Elephant Beach"],
+    ["03-cellular-jail.jpg", "The central watchtower and radiating wings of Cellular Jail"],
+    ["04-neil-natural-bridge.jpg", "Natural rock bridge and tidal pools on Neil Island"],
+    ["05-north-bay-lighthouse.jpg", "North Bay lighthouse and a glass-bottom boat off Port Blair"]
+  ],
+  "ladakh-expedition": [
+    ["01-pangong-tso.jpg", "Blue Pangong Tso beneath the barren mountains of Ladakh"],
+    ["02-khardung-la.jpg", "A winding expedition road crossing snow-dusted Khardung La"],
+    ["03-hunder-bactrian-camels.jpg", "Double-humped Bactrian camels on the dunes of Hunder"],
+    ["04-thiksey-monastery.jpg", "Thiksey Monastery cascading down a hill above the Indus Valley"],
+    ["05-sangam-confluence.jpg", "The contrasting Indus and Zanskar rivers meeting at Sangam"]
+  ],
+  "golden-triangle": [
+    ["01-taj-mahal.jpg", "The Taj Mahal and its garden-pool reflection at sunrise"],
+    ["02-agra-fort.jpg", "The red-sandstone ramparts and gateway of Agra Fort"],
+    ["03-amber-ganesh-pol.jpg", "The ornate Ganesh Pol gateway inside Amber Fort"],
+    ["04-hawa-mahal.jpg", "The honeycomb pink facade of Hawa Mahal in Jaipur"],
+    ["05-india-gate.jpg", "India Gate viewed across its lawns in New Delhi"]
+  ],
+  "bali-bliss": [
+    ["01-tegalalang-terraces.jpg", "Sunrise over the layered Tegalalang rice terraces near Ubud"],
+    ["02-kelingking-beach.jpg", "Kelingking Beach and its T-Rex-shaped limestone headland"],
+    ["03-ulun-danu-beratan.jpg", "Ulun Danu Beratan Temple reflected in its mountain lake"],
+    ["04-mount-batur.jpg", "Mount Batur and its volcanic caldera lake from Kintamani"],
+    ["05-tanah-lot.jpg", "Tanah Lot sea temple on its offshore rock at sunset"]
+  ],
+  "dubai-dazzle": [
+    ["01-burj-khalifa.jpg", "Burj Khalifa above Downtown Dubai at golden hour"],
+    ["02-desert-safari.jpg", "Four-wheel-drive desert safari across Dubai's red dunes"],
+    ["03-sheikh-zayed-mosque.jpg", "White marble domes and courtyard of Sheikh Zayed Grand Mosque"],
+    ["04-marina-dhow.jpg", "Traditional dhow dinner cruise in Dubai Marina at blue hour"],
+    ["05-old-dubai-abra.jpg", "Wooden abra ferry crossing Dubai Creek by historic wind towers"]
+  ],
+  "thailand-tropics": [
+    ["01-grand-palace.jpg", "Gilded spires and tiled roofs of Bangkok's Grand Palace"],
+    ["02-wat-arun.jpg", "Wat Arun's porcelain-covered prang across the Chao Phraya River"],
+    ["03-coral-island.jpg", "A longtail boat in clear water beside Coral Island, Pattaya"],
+    ["04-maya-bay.jpg", "Maya Bay enclosed by the limestone cliffs of the Phi Phi Islands"],
+    ["05-phang-nga-canoe.jpg", "Sea canoes moving between the limestone karsts of Phang Nga Bay"]
+  ],
+  "singapore-family": [
+    ["01-marina-bay-merlion.jpg", "The Merlion and Marina Bay Sands skyline at blue hour"],
+    ["02-supertree-grove.jpg", "Illuminated Supertree Grove at Gardens by the Bay"],
+    ["03-sentosa-cable-car.jpg", "Sentosa cable cars crossing above Keppel Harbour"],
+    ["04-night-safari.jpg", "Night Safari tram observing a Malayan tapir and sambar deer"],
+    ["05-jewel-rain-vortex.jpg", "The Rain Vortex descending through Jewel Changi's glass roof"]
+  ],
+  "maldives-luxury": [
+    ["01-overwater-villas.jpg", "Overwater villas curving across a clear Maldivian atoll lagoon"],
+    ["02-house-reef-snorkeling.jpg", "Snorkelers and a manta ray above a Maldivian house reef"],
+    ["03-beach-villa.jpg", "A secluded beach villa beside a calm Maldives lagoon"],
+    ["04-dolphin-cruise.jpg", "Spinner dolphins surfacing beside a sunset dhoni cruise"],
+    ["05-sandbank-picnic.jpg", "A shaded private picnic on a tiny white-sand Maldivian cay"]
+  ],
+  "europe-highlights": [
+    ["01-eiffel-seine.jpg", "The Eiffel Tower and a Seine cruise at blue hour"],
+    ["02-jungfrau-railway.jpg", "Jungfrau Railway climbing through the snow-covered Swiss Alps"],
+    ["03-venice-gondola.jpg", "A black gondola gliding through a narrow Venice canal"],
+    ["04-colosseum.jpg", "The ancient travertine arcades of Rome's Colosseum"],
+    ["05-vatican.jpg", "St Peter's Basilica and Bernini's colonnades in Vatican City"]
+  ],
+  "vietnam-discovery": [
+    ["01-ha-long-bay.jpg", "A traditional overnight cruise junk among Ha Long Bay's karsts"],
+    ["02-golden-bridge.jpg", "The giant stone hands supporting the Golden Bridge at Ba Na Hills"],
+    ["03-hoi-an-lanterns.jpg", "Lantern-lit heritage houses beside the river in Hoi An"],
+    ["04-hanoi-old-quarter.jpg", "Morning street-food vendors in Hanoi's Old Quarter"],
+    ["05-cam-thanh-basket-boats.jpg", "Woven basket boats in the coconut waterways of Cam Thanh"]
+  ],
+  "sri-lanka-serendipity": [
+    ["01-nine-arch-train.jpg", "The blue Kandy-Ella train crossing Nine Arch Bridge"],
+    ["02-temple-of-the-tooth.jpg", "Temple of the Sacred Tooth Relic beside Kandy Lake"],
+    ["03-nuwara-eliya-tea.jpg", "Tea pickers working in the misty hills of Nuwara Eliya"],
+    ["04-madu-river.jpg", "A safari boat moving through the mangroves of the Madu River"],
+    ["05-bentota-beach.jpg", "Golden sand and coconut palms along Bentota Beach"]
+  ]
+};
+
+for (const pkg of PACKAGES) {
+  const images = PACKAGE_GALLERIES[pkg.id];
+  if (!images) continue;
+
+  pkg.gallery = images.map(([filename, alt]) => ({
+    src: `/images/packages/${pkg.id}/${filename}`,
+    alt
+  }));
+  pkg.image = pkg.gallery[0].src;
+  pkg.imageAlt = pkg.gallery[0].alt;
+}
 
 const TESTIMONIALS = [
   { name: "Priya & Arjun Mehta", trip: "Maldives Honeymoon", text: "Trip Utsav planned our honeymoon down to the flower petals on the bed. The floating breakfast surprise had us in tears. Worth every rupee." },
@@ -585,5 +703,5 @@ const TESTIMONIALS = [
   { name: "Anita Reddy", trip: "Kashmir Family Tour", text: "From the houseboat to the Gulmarg gondola, everything was pre-booked and seamless. My parents haven't stopped talking about it." }
 ];
 
-export { IMG, FALLBACK_IMG, PACKAGES, GALLERY_POOL, TESTIMONIALS };
+export { IMG, FALLBACK_IMG, PACKAGES, TESTIMONIALS };
 
