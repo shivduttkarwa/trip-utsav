@@ -37,9 +37,11 @@
 /* Full-bleed, unlike every other .container on the site: the masthead reads as
    the edge of the page, so the logo sits in the left corner and the CTA in the
    right one rather than both being pulled inboard by the 76.25rem cap.
+   Child combinator, not descendant — the mega panel's grid is also a
+   .container and it must keep the normal centred cap.
    No justify-content: the nav centres itself with an auto margin between the
    brand and the CTA, both of which are flex: none. */
-.navbar .container {
+.navbar > .container {
   width: 100%;
   max-width: none;
   margin-inline: 0;
@@ -171,30 +173,25 @@
   background: #fff;
   border-top: 0.0625rem solid rgba(13, 54, 98, 0.08);
   box-shadow: 0 1.8rem 3.8rem rgba(5, 17, 38, 0.18);
+  /* A straight fade — no clip-path wipe, no translate. The whole panel, text
+     and all, arrives together as one surface. visibility is delayed by the
+     fade duration so the layer survives its own fade-out. */
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  clip-path: inset(0 0 100% 0);
-  transform: translateY(-0.35rem) scaleY(0.98);
-  transform-origin: top center;
-  transition:
-    clip-path 0.48s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.18s ease 0.08s,
-    transform 0.42s cubic-bezier(0.16, 1, 0.3, 1),
-    visibility 0s linear 0.5s;
+  transition: opacity 0.16s ease, visibility 0s linear 0.16s;
 }
 .mega-layer.has-open {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  clip-path: inset(0);
-  transform: none;
-  transition:
-    clip-path 0.52s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.16s ease,
-    transform 0.42s cubic-bezier(0.16, 1, 0.3, 1),
-    visibility 0s;
+  transition: opacity 0.16s ease, visibility 0s;
 }
+/* Switching menus swaps the panel outright, with no transition of its own.
+   The panels are stacked on the same inset, so crossfading them ghosts one
+   column of text over another, and fading out before fading in reads as a
+   stutter on a hover the user is still moving through. The layer's fade
+   already covers the open; between menus the content simply changes. */
 .mega-panel {
   position: absolute;
   inset: 0;
@@ -205,41 +202,29 @@
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: translateY(0.55rem);
-  transition:
-    opacity 0.16s ease,
-    transform 0.28s var(--ease-out),
-    visibility 0s linear 0.3s;
 }
 .mega-panel.is-open {
   z-index: 2;
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  transform: none;
-  transition:
-    opacity 0.2s ease,
-    transform 0.32s var(--ease-out),
-    visibility 0s;
 }
 .mega-grid {
   position: relative;
   z-index: 1;
+  /* Fills the panel rather than being sized by its own content. The panels are
+     absolutely positioned inside a fixed-height layer, so this makes the grid
+     row the same height in all four menus — which is what keeps the spotlight
+     image from resizing as you move between them. Destinations carries six
+     links per group and the rest four, so a content-sized row moves it. */
+  height: 100%;
   display: grid;
   grid-template-columns: minmax(13rem, 1.28fr) repeat(2, minmax(9.5rem, 0.78fr)) minmax(14rem, 1.05fr);
   gap: clamp(1.4rem, 2.7vw, 2.8rem);
   align-items: stretch;
 }
-.mega-grid > * {
-  opacity: 0;
-  transform: translateY(1.1rem) scale(0.98);
-  transition: opacity 0.35s ease, transform 0.48s var(--ease-out);
-}
-.mega-panel.is-open .mega-grid > * { opacity: 1; transform: none; }
-.mega-panel.is-open .mega-grid > :nth-child(1) { transition-delay: 0.08s; }
-.mega-panel.is-open .mega-grid > :nth-child(2) { transition-delay: 0.12s; }
-.mega-panel.is-open .mega-grid > :nth-child(3) { transition-delay: 0.16s; }
-.mega-panel.is-open .mega-grid > :nth-child(4) { transition-delay: 0.2s; }
+/* No per-column rise or stagger: the columns fade in with the layer, as one
+   thing. A stagger here also made every menu switch replay the sequence. */
 .mega-intro { padding-right: 0.5rem; }
 .mega-eyebrow {
   display: inline-flex;
@@ -450,7 +435,7 @@
   .desktop-nav-wrap, .desktop-nav-cta { display: none; }
   .nav-burger { display: flex; }
   .menu-overlay { display: block; }
-  .navbar .container { justify-content: space-between; }
+  .navbar > .container { justify-content: space-between; }
   .brand img { height: 2.8rem; }
   .navbar.scrolled .brand img { height: 2.5rem; }
 }
@@ -460,8 +445,8 @@
   .menu-inner { padding-top: calc(var(--nav-h) + 3vh); align-items: flex-start; }
 }
 
+/* The layer's fade is now the only thing left to shorten — the panels and the
+   grid no longer transition at all. */
 @media (prefers-reduced-motion: reduce) {
-  .mega-layer,
-  .mega-panel,
-  .mega-grid > * { transition-duration: 0.01ms !important; }
+  .mega-layer { transition-duration: 0.01ms !important; }
 }

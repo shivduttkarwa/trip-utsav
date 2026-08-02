@@ -598,11 +598,13 @@
 }
 .cta.is-live .cta-content { pointer-events: auto; }
 
+/* Three blocks now rather than five, so the gap opens up — with less on screen
+   the spacing is what carries the composition. */
 .cta-content-inner {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.875rem;
   text-align: center;
   color: #fff;
 }
@@ -626,18 +628,6 @@
 .cta-content-inner > *:nth-child(4) { --i: 3; }
 .cta-content-inner > *:nth-child(5) { --i: 4; }
 .cta-content-inner > *:nth-child(6) { --i: 5; }
-
-/* eyebrow as a glass pill — reads on any frame of the video */
-.cta-content .eyebrow {
-  color: #fff;
-  padding: 0.5rem 1.125rem 0.5rem 0.9375rem;
-  border-radius: var(--r-pill);
-  background: rgba(255, 255, 255, 0.13);
-  border: 0.0625rem solid rgba(255, 255, 255, 0.28);
-  backdrop-filter: blur(0.625rem);
-  -webkit-backdrop-filter: blur(0.625rem);
-}
-.cta-content .eyebrow::before { width: 1.25rem; background: var(--orange); }
 
 /* Headline: the site's hand face is too light over photography, so the CTA
    uses the hero face for the statement and keeps the hand face for accents. */
@@ -672,30 +662,6 @@
   flex-wrap: wrap;
   justify-content: center;
   margin-top: 0.25rem;
-}
-
-/* trust strip — quiet proof under the buttons */
-.cta-trust {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem 1.5rem;
-  max-width: none;
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.78);
-}
-.cta-trust li { display: inline-flex; align-items: center; gap: 0.75rem; }
-.cta-trust li + li::before {
-  content: "";
-  width: 0.25rem;
-  height: 0.25rem;
-  border-radius: 50%;
-  background: var(--orange);
-  flex: none;
 }
 
 /* Progress rail — makes the pin read as intentional. Appears with the

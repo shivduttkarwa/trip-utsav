@@ -319,7 +319,7 @@ export default function Navbar() {
                   onMouseEnter={() => showDesktopPanel(menu.id)}
                 >
                   <div className="container mega-grid">
-                    <div className="mega-intro" style={{ "--order": 0 }}>
+                    <div className="mega-intro">
                       <span className="mega-eyebrow">{menu.eyebrow}</span>
                       <h2>{menu.title}</h2>
                       <p>{menu.description}</p>
@@ -328,8 +328,8 @@ export default function Navbar() {
                       </Link>
                     </div>
 
-                    {menu.groups.map((group, groupIndex) => (
-                      <div className="mega-group" style={{ "--order": groupIndex + 1 }} key={group.title}>
+                    {menu.groups.map((group) => (
+                      <div className="mega-group" key={group.title}>
                         <h3>{group.title}</h3>
                         <div className="mega-links">
                           {group.links.map(renderMegaLink)}
@@ -339,7 +339,7 @@ export default function Navbar() {
 
                     <Link
                       className="mega-spotlight"
-                      style={{ "--order": 3, "--spotlight-image": `url("${menu.spotlight.image}")` }}
+                      style={{ "--spotlight-image": `url("${menu.spotlight.image}")` }}
                       to={menu.spotlight.to}
                       onClick={closeDesktopPanel}
                     >

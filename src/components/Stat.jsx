@@ -1,36 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import useCountUp from "./useCountUp";
 
-/* Animated counter that runs once when scrolled into view */
+/* Animated counter block, used on the About page. The homepage renders the same
+   figures with its own markup — the counting itself is shared. */
 export default function Stat({ value, suffix = "+", label, decimals = 0 }) {
-  const ref = useRef(null);
-  const [display, setDisplay] = useState("0");
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        io.disconnect();
-        const dur = 1800;
-        const start = performance.now();
-        const tick = (now) => {
-          const t = Math.min((now - start) / dur, 1);
-          const eased = 1 - Math.pow(1 - t, 3);
-          /* Grouped, so 25000 reads as 25,000 rather than a run of digits. */
-          setDisplay((value * eased).toLocaleString("en-IN", {
-            minimumFractionDigits: decimals,
-            maximumFractionDigits: decimals,
-          }));
-          if (t < 1) requestAnimationFrame(tick);
-        };
-        requestAnimationFrame(tick);
-      },
-      { threshold: 0.6 }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [value, decimals]);
+  const [ref, display] = useCountUp(value, decimals);
 
   return (
     <div className="stat" ref={ref}>

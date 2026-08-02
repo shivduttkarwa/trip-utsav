@@ -11,13 +11,18 @@
   font-size: 0.95rem;
   line-height: 1;
   white-space: nowrap;
-  transition: transform 0.35s var(--ease-spring), box-shadow 0.35s ease, background 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+  /* Plain ease, not --ease-spring: the spring overshoots its target and settles
+     back, which on a 3px lift reads as a wobble rather than as bounce. */
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
   overflow: hidden;
+  /* isolation, because the sweep below sits at z-index -1 and needs a stacking
+     context of its own to stay behind the label without falling through the
+     button's background. */
   isolation: isolate;
 }
-.btn svg { width: 1.0625rem; height: 1.0625rem; transition: transform 0.35s var(--ease-spring); flex: none; }
-.btn:hover svg { transform: translateX(0.3125rem); }
-.btn:active { transform: scale(0.96); }
+.btn svg { width: 1.0625rem; height: 1.0625rem; transition: transform 0.25s ease; flex: none; }
+.btn:hover svg { transform: translateX(0.1875rem); }
+.btn:active { transform: scale(0.98); }
 
 /* shine sweep */
 .btn::after {
@@ -32,7 +37,9 @@
 .btn:hover::after { transform: translateX(120%); }
 
 .btn-primary { background: var(--grad-orange); color: #fff; box-shadow: var(--shadow-orange); }
-.btn-primary:hover { transform: translateY(-0.1875rem); box-shadow: 0 1.125rem 2.25rem rgba(242, 107, 33, 0.45); }
+/* The shadow deepens rather than blooms — the old hover nearly doubled the
+   spread, which put a halo around the button instead of lifting it. */
+.btn-primary:hover { transform: translateY(-0.125rem); box-shadow: 0 0.875rem 1.875rem rgba(242, 103, 31, 0.38); }
 
 .btn-secondary { background: var(--blue); color: #fff; box-shadow: var(--shadow-blue); }
 .btn-secondary:hover { background: var(--blue-dark); transform: translateY(-0.1875rem); }

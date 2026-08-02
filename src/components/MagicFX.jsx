@@ -47,17 +47,6 @@ export default function MagicFX() {
       });
     });
 
-    /* 3. Magnetic primary CTAs */
-    document.querySelectorAll(".btn-primary").forEach((btn) => {
-      bind(btn, "pointermove", (e) => {
-        const r = btn.getBoundingClientRect();
-        const x = (e.clientX - r.left - r.width / 2) * 0.28;
-        const y = (e.clientY - r.top - r.height / 2) * 0.32;
-        btn.style.transform = `translate(${x.toFixed(1)}px, ${(y - 2).toFixed(1)}px)`;
-      });
-      bind(btn, "pointerleave", () => { btn.style.transform = ""; });
-    });
-
     return () => cleanups.forEach((fn) => fn());
   }, [pathname]);
 
