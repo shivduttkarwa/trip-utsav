@@ -1,138 +1,132 @@
-/* How it works — four steps on a drawn rail, no cards.
-   Geometry runs off three variables so the rail, the nodes and the step content
-   stay locked together: --rail is the line's distance from the top of the
-   track, --lead is how far below it the content starts, --node the dot size. */
-.hiw-track {
-  --rail: 0.3125rem;
-  --lead: 2.75rem;
-  --node: 0.625rem;
+/* How it works — one boarding pass, perforated into four stubs.
 
+   The notches are not cut out of the ticket; they are discs painted in the
+   section's own background colour, sitting half-on and half-off each
+   perforation. That is why .pass must not clip its overflow — the rounded ends
+   are put on the first and last stub instead of on the ticket. */
+.pass {
+  --notch: 1.15rem;
+  --perf: rgba(19, 26, 42, 0.2);
+
+  display: flex;
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+  border-radius: var(--r-lg);
+  background: #fff;
+  box-shadow: var(--shadow-md);
+}
+
+.pass-stub {
   position: relative;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: clamp(1.25rem, 2.4vw, 2.5rem);
-  padding-top: var(--lead);
-  margin-top: clamp(1rem, 2.5vw, 2rem);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1.5rem, 2.2vw, 2.15rem) clamp(1.25rem, 1.9vw, 1.85rem);
+  background: #fff;
+  border: 0.0625rem solid var(--line);
+  border-inline-width: 0;
 }
-/* The wrapper supplies .in and nothing else — its own rise would carry the rail
-   and the nodes up with it, and those are the thing being animated. */
-.hiw-track.reveal {
-  opacity: 1;
-  transform: none;
-  transition: none;
-  will-change: auto;
-}
+.pass-stub:first-child { border-radius: var(--r-lg) 0 0 var(--r-lg); border-left-width: 0.0625rem; }
+.pass-stub:last-child { border-radius: 0 var(--r-lg) var(--r-lg) 0; border-right-width: 0.0625rem; }
 
-/* Two rails on one line: the track it runs in, and the brand line that draws
-   along it as the section is reached. */
-.hiw-track::before,
-.hiw-track::after {
+/* The tear line, drawn as a repeating dash down the stub's leading edge. */
+.pass-stub + .pass-stub {
+  background-image: linear-gradient(var(--perf) 55%, transparent 0);
+  background-size: 0.0625rem 0.7rem;
+  background-repeat: repeat-y;
+  background-position: left top;
+}
+/* The discs that make the tear read as a tear. */
+.pass-stub + .pass-stub::before,
+.pass-stub + .pass-stub::after {
   content: "";
   position: absolute;
-  top: var(--rail);
-  left: 0;
-  right: 0;
-  height: 0.0625rem;
-}
-.hiw-track::before { background: var(--line); }
-.hiw-track::after {
-  background: var(--grad-orange);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 1.5s var(--ease-out) 0.1s;
-}
-.hiw-track.in::after { transform: scaleX(1); }
-
-.hiw-step {
-  position: relative;
-  opacity: 0;
-  transform: translateY(1.125rem);
-  transition: opacity 0.6s ease, transform 0.7s var(--ease-out);
-  /* Timed to land just after the drawing line reaches this node. */
-  transition-delay: calc(0.18s + var(--i) * 0.13s);
-}
-.hiw-track.in .hiw-step { opacity: 1; transform: none; }
-
-/* The node. Pulled up out of the step by exactly the lead, so it stays on the
-   line however the type below it reflows. */
-.hiw-step::before {
-  content: "";
-  position: absolute;
-  top: calc(var(--rail) - var(--lead) - var(--node) / 2);
-  left: 0;
-  width: var(--node);
-  height: var(--node);
+  left: calc(var(--notch) / -2);
+  width: var(--notch);
+  height: var(--notch);
   border-radius: 50%;
-  background: var(--white);
-  border: 0.125rem solid var(--line);
-  transition: background 0.4s ease, border-color 0.4s ease;
-  transition-delay: calc(0.18s + var(--i) * 0.13s);
+  background: var(--surface);
 }
-.hiw-track.in .hiw-step::before { background: var(--orange); border-color: var(--orange); }
+.pass-stub + .pass-stub::before { top: calc(var(--notch) / -2); }
+.pass-stub + .pass-stub::after { bottom: calc(var(--notch) / -2); }
 
-/* Outlined rather than filled: at this size a solid figure outweighs the
-   heading it belongs to, and hollow keeps the row light. */
-.hiw-num {
-  display: block;
-  margin-bottom: 0.75rem;
-  font-family: var(--font-statement);
-  font-size: clamp(2.25rem, 4.2vw, 3.5rem);
+/* The stub you keep. */
+.pass-stub--go {
+  --perf: rgba(255, 255, 255, 0.45);
+  color: #fff;
+  border-color: transparent;
+  background-color: var(--orange-dark);
+  background-image: linear-gradient(150deg, #f2822f 0%, var(--orange-dark) 88%);
+}
+.pass-stub--go + .pass-stub,
+.pass-stub--go {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+}
+
+.pass-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.9rem;
+  font-family: var(--font-display);
+  font-size: 0.66rem;
   font-weight: 800;
-  line-height: 1;
-  letter-spacing: -0.04em;
-  font-variant-numeric: tabular-nums;
-  color: rgba(19, 26, 42, 0.16);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--orange);
 }
-/* Guarded — an unsupported stroke leaves transparent text and nothing on
-   screen, so the flat tint above stands until the stroke is confirmed. */
-@supports (-webkit-text-stroke: 0.0625rem currentColor) {
-  .hiw-num {
-    color: transparent;
-    -webkit-text-stroke: 0.078125rem rgba(19, 26, 42, 0.28);
-  }
-}
+.pass-stub--go .pass-tag { color: rgba(255, 255, 255, 0.9); }
+.pass-plane { display: inline-grid; place-items: center; }
+.pass-plane svg { width: 0.9rem; height: 0.9rem; }
 
-.hiw-step h3 {
+.pass-stub h3 {
   margin-bottom: 0.5rem;
-  font-size: clamp(1.02rem, 1.35vw, 1.16rem);
-  letter-spacing: -0.01em;
+  font-size: clamp(1.02rem, 1.4vw, 1.2rem);
+  letter-spacing: -0.015em;
+  color: inherit;
 }
-.hiw-step p {
+.pass-stub p {
   margin: 0;
-  font-size: 0.93rem;
-  line-height: 1.6;
-  max-width: 30ch;
+  font-size: 0.9rem;
+  line-height: 1.62;
   color: var(--body);
 }
+.pass-stub--go p { color: rgba(255, 255, 255, 0.85); }
 
-/* Below four-across the rail turns vertical and runs down the left — the same
-   idea, without squeezing four columns onto a phone. */
-@media (max-width: 860px) {
-  .hiw-track {
-    --lead: 0;
-    grid-template-columns: 1fr;
-    gap: clamp(1.75rem, 5vw, 2.5rem);
-    padding-top: 0;
-    padding-left: 2.25rem;
-  }
-  .hiw-track::before,
-  .hiw-track::after {
-    top: 0.4rem;
-    bottom: 0.4rem;
-    left: calc(var(--node) / 2);
-    right: auto;
-    width: 0.0625rem;
-    height: auto;
-  }
-  .hiw-track::after { transform: scaleY(0); transform-origin: top; }
-  .hiw-track.in::after { transform: scaleY(1); }
-  .hiw-step::before { top: 0.75rem; left: -2.25rem; }
-  .hiw-num { margin-bottom: 0.4rem; }
-  .hiw-step p { max-width: none; }
+/* The field printed at the foot of a real stub. Pushed down by the auto margin
+   so it sits on the baseline of the ticket however long the copy above runs. */
+.pass-code {
+  margin-top: auto;
+  padding-top: 1.35rem;
+  font-family: var(--font-statement);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: rgba(19, 26, 42, 0.14);
 }
+.pass-stub--go .pass-code { color: rgba(255, 255, 255, 0.32); }
 
-@media (prefers-reduced-motion: reduce) {
-  .hiw-track::after,
-  .hiw-step,
-  .hiw-step::before { transition-duration: 0.01ms; transition-delay: 0s; }
+/* Stacked, the ticket tears the other way: perforations run across it and the
+   notches move to the outer edges. */
+@media (max-width: 900px) {
+  .pass { flex-direction: column; }
+  .pass-stub { border-inline-width: 0.0625rem; border-block-width: 0; }
+  .pass-stub:first-child { border-radius: var(--r-lg) var(--r-lg) 0 0; border-top-width: 0.0625rem; }
+  .pass-stub:last-child { border-radius: 0 0 var(--r-lg) var(--r-lg); border-bottom-width: 0.0625rem; }
+
+  .pass-stub + .pass-stub {
+    background-image: linear-gradient(90deg, var(--perf) 55%, transparent 0);
+    background-size: 0.7rem 0.0625rem;
+    background-repeat: repeat-x;
+  }
+  .pass-stub + .pass-stub::before,
+  .pass-stub + .pass-stub::after {
+    top: calc(var(--notch) / -2);
+    bottom: auto;
+  }
+  .pass-stub + .pass-stub::before { left: calc(var(--notch) / -2); }
+  .pass-stub + .pass-stub::after { left: auto; right: calc(var(--notch) / -2); }
+
+  .pass-code { padding-top: 1rem; }
 }
