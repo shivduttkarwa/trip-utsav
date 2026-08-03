@@ -26,7 +26,11 @@
   --body: #545d70;
   --muted: #8b93a5;
   --line: #ebedf3;
-  --surface: #f6f6f2;
+  /* The section band tone. Deliberately a clear step below white: the package
+     ticket's stub is solid --white, and .pass-stub in HowItWorks punches its
+     notches by painting circles in this exact colour, so anything that reads
+     as "nearly white" makes both of those dissolve into the band. */
+  --surface: #ecece7;
   --surface-2: #f1f2f6;
   --white: #ffffff;
 
