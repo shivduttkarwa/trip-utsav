@@ -42,7 +42,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(5, 15, 34, 0.6) 0%, rgba(5, 15, 34, 0.4) 45%, rgba(5, 15, 34, 0.68) 100%);
+  background: linear-gradient(180deg, rgba(5, 15, 34, 0.62) 0%, rgba(5, 15, 34, 0.42) 45%, rgba(5, 15, 34, 0.7) 100%);
 }
 
 .wsk-cards { position: relative; z-index: 1; }
@@ -64,28 +64,21 @@
   perspective: 75rem;
 }
 
-/* A portrait poster, not a banner. Narrow enough that the type sets in one
-   comfortable measure without a max-width fighting the box.
-   A fixed fraction of the screen rather than `max-height`, so every card is
-   exactly the same size and the stack lands dead flush; the photograph inside
-   takes whatever height is left over, which is what makes that safe. 80%
-   leaves the stage visible above and below the deck instead of the card
-   filling its screen edge to edge. */
+/* A portrait panel. A fixed fraction of the screen rather than `max-height`,
+   so every card is exactly the same size and the stack lands dead flush; the
+   drawing inside takes whatever height is left over, which is what makes that
+   safe. 80% leaves the stage visible above and below the deck. */
 .wsk-card {
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  /* Left, not centred. Four centred columns of type is the single thing that
-     made these read as templated — a hard left margin with a ragged right is
-     what makes a poster look art-directed. */
-  align-items: stretch;
   text-align: left;
   width: 100%;
   max-width: min(34rem, 92vw);
   height: 80%;
   margin: 0 auto;
-  padding: clamp(1rem, 2.4vh, 1.6rem);
+  padding: 0;
   border-radius: clamp(1.15rem, 1.8vw, 2rem);
   transform-origin: center top;
   will-change: transform;
@@ -95,134 +88,165 @@
   box-shadow: 0 1.25rem 3.5rem rgba(4, 12, 28, 0.38);
 }
 
-/* ---------- The plate ----------
-   Inset rather than bled to the card's edge, so the coloured ground reads as a
-   printed margin around a photograph — a poster — instead of the card looking
-   like a photo with a caption bar stuck under it. */
-.wsk-shot {
-  position: relative;
-  display: block;
-  /* Absorbs the card's spare height. min-height is what stops it collapsing to
-     nothing on a short window instead of the type shrinking. */
-  flex: 1 1 auto;
-  min-height: 5rem;
-  overflow: hidden;
-  border-radius: clamp(0.7rem, 1.1vw, 1.15rem);
-}
-.wsk-shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
-/* A wash in the card's own colour, so the photograph belongs to the card
-   rather than sitting on it as a foreign rectangle. */
-.wsk-shot::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(6, 16, 36, 0.1) 0%, rgba(6, 16, 36, 0.32) 100%);
-}
-
-/* --- Surfaces. Graded, not flat: a large area of one solid brand colour
-   reads as a placeholder, and the gradient is what gives the card a light
-   source consistent with the photograph behind it. --- */
+/* --- Surfaces. Graded, not flat: a large area of one solid brand colour reads
+   as a placeholder, and the gradient gives the card a light source consistent
+   with the photograph behind it. --- */
 .wsk-card--ink {
   color: #fff;
   background:
-    radial-gradient(88% 74% at 84% 6%, rgba(224, 97, 58, 0.28) 0%, transparent 62%),
-    linear-gradient(158deg, #103e78 0%, var(--blue-ink) 74%);
+    radial-gradient(88% 70% at 84% 4%, rgba(224, 97, 58, 0.3) 0%, transparent 62%),
+    linear-gradient(158deg, #12447f 0%, var(--blue-ink) 76%);
 }
 .wsk-card--flame {
   color: #fff;
   background:
-    radial-gradient(84% 70% at 16% 8%, rgba(255, 205, 150, 0.34) 0%, transparent 60%),
-    linear-gradient(150deg, #e8703f 0%, var(--orange-dark) 82%);
+    radial-gradient(84% 68% at 14% 6%, rgba(255, 208, 155, 0.36) 0%, transparent 60%),
+    linear-gradient(150deg, #ec7a4c 0%, var(--orange-dark) 84%);
 }
 .wsk-card--paper {
   color: var(--ink);
   background:
-    radial-gradient(80% 70% at 82% 10%, rgba(224, 97, 58, 0.1) 0%, transparent 62%),
-    linear-gradient(160deg, #fffdf8 0%, var(--surface) 78%);
+    radial-gradient(80% 66% at 84% 8%, rgba(224, 97, 58, 0.14) 0%, transparent 62%),
+    linear-gradient(160deg, #fffdf8 0%, var(--surface) 80%);
 }
 .wsk-card--sea {
   color: #fff;
   background:
-    radial-gradient(86% 72% at 20% 6%, rgba(120, 190, 255, 0.26) 0%, transparent 60%),
-    linear-gradient(154deg, #1560bd 0%, var(--blue-dark) 80%);
+    radial-gradient(86% 68% at 18% 4%, rgba(140, 200, 255, 0.3) 0%, transparent 60%),
+    linear-gradient(154deg, #1a67c4 0%, var(--blue-dark) 82%);
 }
 
-/* --- Contents ---
-   Everything below the plate is fixed height and sits in the card's own
-   padding. Sizes are clamped on min(vw, vh) because the card is boxed into one
-   screen and has to answer to whichever dimension is scarcer — sizing off vw
-   alone is what let a wide, short laptop grow it past its own frame. */
-.wsk-meta,
-.wsk-title,
-.wsk-fig,
-.wsk-text { position: relative; z-index: 1; flex: none; padding-inline: clamp(0.4rem, 1.4vw, 1.1rem); }
+/* The hairline. Drawn in currentColor so one rule serves the navy cards and
+   the paper one alike, and graded so it catches light at the top and fades at
+   the foot rather than boxing the card in evenly.
+   Two masks composited with `exclude`: the padding box is subtracted from the
+   border box, leaving only the 1px frame painted. */
+.wsk-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  padding: 0.0625rem;
+  background: linear-gradient(158deg,
+    color-mix(in srgb, currentColor 40%, transparent) 0%,
+    color-mix(in srgb, currentColor 12%, transparent) 40%,
+    transparent 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
 
-/* Index and rule on one line: the rule runs out from the number to the card's
-   edge, which sets the left margin everything below hangs from. */
-.wsk-meta {
+/* ---------- The drawing ----------
+   Gets the whole upper field and every pixel of slack in the card's height.
+   The words are a caption under it, which is the right order: you look, then
+   you read. */
+.wsk-art {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-top: clamp(1rem, 2.6vh, 1.6rem);
+  justify-content: center;
+  padding: clamp(1.25rem, 3.5vh, 2.5rem) clamp(1.2rem, 2.8vw, 1.9rem) 0;
 }
-.wsk-no {
-  font-family: var(--font-display);
-  font-size: 0.66rem;
-  font-weight: 800;
-  letter-spacing: 0.26em;
-  opacity: 0.62;
-  font-variant-numeric: tabular-nums;
+/* The medallion: the surround and the icon share one square box, so the icon
+   is always dead centre of the rings whatever size the card is. */
+.mk-medal {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 100%;
+  aspect-ratio: 1;
+  max-width: 100%;
 }
-.wsk-rule {
-  flex: 1;
-  height: 0.0625rem;
-  background: currentColor;
-  opacity: 0.26;
+.mk-ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+
+/* Every stroke is currentColor at a different weight — that is what lets one
+   drawing sit on a navy card and a cream one with no second palette. */
+.mk-hair, .mk-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  /* Without this the stroke scales with the SVG: hairlines go chunky on a wide
+     desktop and spidery on a phone. */
+  vector-effect: non-scaling-stroke;
+}
+.mk-hair { stroke-width: 1.2; opacity: 0.34; }
+.mk-line { stroke-width: 2.6; opacity: 0.9; }
+.mk-seed { fill: currentColor; stroke: none; opacity: 0.4; }
+
+/* The travel icon, from the site's shared set. */
+.mk-glyph {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 38%;
+}
+.mk-glyph svg {
+  width: 100%;
+  height: auto;
+  /* The set is drawn at stroke-width 2 in a 24-unit box — blown up to this size
+     that renders as a fat marker line. CSS beats the presentation attribute on
+     the <svg>, and the icons carry no per-shape stroke widths, so overriding it
+     here thins the whole glyph in one declaration. */
+  stroke-width: 1.35;
 }
 
-.wsk-title {
-  margin: clamp(0.7rem, 1.8vh, 1.15rem) 0 0;
+/* ---------- The caption ---------- */
+.wsk-foot {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  padding: clamp(1.1rem, 2.8vh, 1.75rem) clamp(1.2rem, 2.8vw, 1.9rem) clamp(1.4rem, 3.2vh, 2rem);
+}
+
+.wsk-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  margin-bottom: clamp(0.65rem, 1.7vh, 1.1rem);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.wsk-no { opacity: 0.45; font-variant-numeric: tabular-nums; }
+/* The figure kept as a hard fact rather than a display number — the drawing
+   above is carrying the scale now, and two loud elements in one card simply
+   cancel each other out. */
+.wsk-n {
   font-family: var(--font-statement);
-  font-size: clamp(1.25rem, min(2.6vw, 3.4vh), 1.95rem);
+  font-size: 1.26rem;
   font-weight: 700;
-  line-height: 1.06;
-  letter-spacing: -0.028em;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  font-variant-numeric: tabular-nums;
+}
+.wsk-tag { margin-left: auto; opacity: 0.5; font-weight: 700; }
+
+.wsk-title {
+  margin: 0 0 clamp(0.45rem, 1.4vh, 0.85rem);
+  font-family: var(--font-statement);
+  font-size: clamp(1.65rem, min(3.5vw, 4.5vh), 2.7rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
   color: inherit;
   max-width: 16ch;
 }
-
-/* The figure and its line share a baseline row — the number is the loud part
-   and the words hang off it, which is what stops the claim reading as two
-   separate statements stacked on each other. */
-.wsk-fig {
-  display: flex;
-  align-items: baseline;
-  gap: clamp(0.6rem, 1.6vw, 1rem);
-  margin-top: clamp(0.85rem, 2.4vh, 1.5rem);
-}
-.wsk-n {
-  flex: none;
-  font-family: var(--font-statement);
-  font-size: clamp(2.1rem, min(6vw, 7.5vh), 3.6rem);
-  font-weight: 700;
-  line-height: 0.85;
-  letter-spacing: -0.05em;
-  font-variant-numeric: tabular-nums;
-}
-.wsk-lead {
-  font-family: var(--font-display);
-  font-size: clamp(0.8rem, min(1.15vw, 1.6vh), 0.98rem);
-  font-weight: 600;
-  line-height: 1.35;
-  opacity: 0.9;
-}
-
 .wsk-text {
-  margin: clamp(0.7rem, 1.8vh, 1.1rem) 0 clamp(0.35rem, 1vh, 0.7rem);
+  margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(0.78rem, min(1vw, 1.4vh), 0.94rem);
+  font-size: clamp(1rem, min(1.35vw, 1.85vh), 1.22rem);
   line-height: 1.55;
   opacity: 0.76;
+  max-width: 34ch;
 }
 
 /* The receding card darkens as it goes back. --veil is tweened by GSAP; only
@@ -230,7 +254,7 @@
 .wsk-veil {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 4;
   pointer-events: none;
   background: #050f22;
   opacity: var(--veil, 0);
@@ -244,16 +268,16 @@
   padding: clamp(3rem, 6vw, 5rem) 0 clamp(4rem, 8vw, 6.5rem);
 }
 
-/* A phone is already a portrait panel, so the card simply takes the width it
-   is given rather than holding a measure it no longer needs. */
+/* A phone is already a portrait panel, so the card takes the width it is given
+   rather than holding a measure it no longer needs. */
 @media (max-width: 768px) {
   .wsk-card { max-width: none; }
   .wsk-title { max-width: 18ch; }
 }
 
 /* No tipping-back is built under reduced motion, but the stack is CSS and
-   still works — so the section stays exactly as tall and behaves the same,
-   the cards simply arrive flat. */
+   still works — the section stays exactly as tall and behaves the same, the
+   cards simply arrive flat. */
 @media (prefers-reduced-motion: reduce) {
   .wsk-card { transform: none !important; }
   .wsk-veil { display: none; }

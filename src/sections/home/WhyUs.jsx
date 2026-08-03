@@ -4,6 +4,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Reveal from "../../components/Reveal";
 import Button from "../../components/Button";
 import SectionHead from "../../components/SectionHead";
+import Icon from "../../components/Icon";
 import { useUI } from "../../components/UIContext";
 import "./WhyUs.css";
 import asset from "../../asset";
@@ -45,38 +46,88 @@ const SHOT = asset("images/hero/hero-maldives.webp");
 
 /* Figures, not statistics — each is a restatement of a promise this site
    already makes in words, so nothing here claims anything new. */
+/* ---------- The medallions ----------
+ * A travel icon from the site's own set, mounted in a drawn surround: a ring
+ * of dots, a hairline circle, one heavier arc, and an inner circle.
+ *
+ * The icons come from components/icons.js rather than being redrawn here, so
+ * this section cannot drift from the pin, wallet and headset used everywhere
+ * else on the site. What makes them read as artwork rather than as UI chrome
+ * is the surround and the scale, not a different drawing.
+ *
+ * The heavy arc turns a quarter further on each card, so the four medallions
+ * are the same object caught at four different positions instead of four
+ * decorations that happen to look alike.
+ */
+const C = 100;
+const pol = (r, deg) => {
+  const a = (deg - 90) * (Math.PI / 180);
+  return [C + r * Math.cos(a), C + r * Math.sin(a)];
+};
+const f = (n) => n.toFixed(2);
+const arc = (r, a0, a1) => {
+  const [x0, y0] = pol(r, a0);
+  const [x1, y1] = pol(r, a1);
+  return `M ${f(x0)} ${f(y0)} A ${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${f(x1)} ${f(y1)}`;
+};
+
+function Mark({ icon, turn }) {
+  return (
+    <span className="mk-medal">
+      <svg className="mk-ring" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+        {Array.from({ length: 48 }, (_, i) => {
+          const [x, y] = pol(92, (i * 360) / 48);
+          return <circle key={i} cx={f(x)} cy={f(y)} r="1.6" className="mk-seed" />;
+        })}
+        <circle cx={C} cy={C} r="74" className="mk-hair" />
+        <path d={arc(74, turn, turn + 74)} className="mk-line" />
+        <circle cx={C} cy={C} r="55" className="mk-hair" />
+      </svg>
+      <span className="mk-glyph"><Icon name={icon} /></span>
+    </span>
+  );
+}
+
+/* Four surfaces, so the stack reads as four distinct things arriving rather
+   than one panel being redrawn. Every mark is set in currentColor, which is
+   what lets the same drawing sit on a navy card and a paper one without a
+   second palette to keep in step. */
 const CARDS = [
   {
     n: "1",
+    tag: "The designer",
     title: "Human experts, not algorithms",
-    lead: "dedicated trip designer, from your first call to touchdown home",
     text: "No ticket queues, no chatbot. One person who knows your trip, your dates and your family's quirks.",
     tone: "ink",
-    img: asset("images/hero/hero-kerala.webp"),
+    icon: "users",
+    turn: 0,
   },
   {
     n: "100%",
+    tag: "The itinerary",
     title: "Fully customisable itineraries",
-    lead: "of every package is yours to change",
     text: "Stretch it, swap a city, add a night, move the whole thing a month. Every itinerary is a starting point.",
     tone: "flame",
-    img: asset("images/hero/hero-ladakh.webp"),
+    icon: "pin",
+    turn: 90,
   },
   {
     n: "24×7",
+    tag: "The safety net",
     title: "On-trip support that answers",
-    lead: "support for as long as you are travelling",
     text: "Missed connection at 2 AM? One WhatsApp and we're on it — with local partners in the destination.",
     tone: "paper",
-    img: asset("images/hero/hero-kashmir.webp"),
+    icon: "headset",
+    turn: 180,
   },
   {
     n: "0",
+    tag: "The price",
     title: "Zero hidden costs",
-    lead: "surprise line items at checkout",
     text: "What you see is what you pay. Taxes, transfers and the extras other people bill later are already in.",
     tone: "sea",
-    img: asset("images/hero/hero-bali.webp"),
+    icon: "wallet",
+    turn: 270,
   },
 ];
 
@@ -164,26 +215,23 @@ export default function WhyUs() {
                 className={`wsk-card wsk-card--${c.tone}`}
                 ref={(el) => { cards.current[i] = el; }}
               >
-                {/* Takes all the slack in the card's height, so the card
-                    always fills its screen exactly and the type below never
-                    has to be squeezed to make it fit. */}
-                <span className="wsk-shot">
-                  <img src={c.img} alt="" loading="lazy" decoding="async" />
+                {/* The drawing is the card. It gets the whole upper field and
+                    every pixel of slack in the height; the words are a caption
+                    under it, which is the right order — you look, then you
+                    read. */}
+                <span className="wsk-art">
+                  <Mark icon={c.icon} turn={c.turn} />
                 </span>
 
-                <span className="wsk-meta">
-                  <span className="wsk-no">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="wsk-rule" aria-hidden="true" />
+                <span className="wsk-foot">
+                  <span className="wsk-meta">
+                    <span className="wsk-no">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="wsk-n">{c.n}</span>
+                    <span className="wsk-tag">{c.tag}</span>
+                  </span>
+                  <h3 className="wsk-title">{c.title}</h3>
+                  <p className="wsk-text">{c.text}</p>
                 </span>
-
-                <h3 className="wsk-title">{c.title}</h3>
-
-                <span className="wsk-fig">
-                  <span className="wsk-n">{c.n}</span>
-                  <span className="wsk-lead">{c.lead}</span>
-                </span>
-
-                <p className="wsk-text">{c.text}</p>
 
                 {/* Darkens the card as it goes back. Opacity is the one visual
                     change the compositor handles for free, so depth costs no
