@@ -1,0 +1,229 @@
+/* ============================================================
+   SERVICES — the bento.
+   See pages/Services.jsx for the concept.
+   ============================================================ */
+
+.sv { padding: clamp(3.25rem, 7vw, 5.5rem) 0; }
+
+.sv-head { max-width: 44rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
+.sv-head h2 { margin: 0.7rem 0 0.9rem; }
+.sv-head p { font-size: clamp(1rem, 1.5vw, 1.14rem); line-height: 1.6; color: var(--body); max-width: 38rem; }
+
+/* ---- The grid ----
+   Four columns and a fixed row height, which is what lets a tile claim two of
+   either and still land on the same rhythm as its neighbours. The tiles are
+   placed by ordinary auto-flow — each one fits the next gap in order, so the
+   layout is readable straight from the data array with no explicit
+   line numbers to keep in sync. */
+.sv-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: clamp(10.5rem, 14.5vw, 13.5rem);
+  gap: clamp(0.7rem, 1.3vw, 1.125rem);
+}
+.sv-grid > .w2 { grid-column: span 2; }
+.sv-grid > .h2 { grid-row: span 2; }
+
+/* ---- A tile ---- */
+.sv-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1.1rem, 1.9vw, 1.6rem);
+  border-radius: var(--r-lg);
+  background: #fff;
+  border: 0.0625rem solid rgba(19, 26, 42, 0.08);
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    transform 0.5s var(--ease-out),
+    box-shadow 0.5s var(--ease-out),
+    border-color 0.4s ease;
+}
+/* .reveal sets its own transform, and `.reveal.in { transform: none }` is
+   defined later in the cascade at equal specificity — so the resting lift has
+   to be scoped to :hover only, never to the base rule. */
+.sv-tile:hover {
+  transform: translateY(-0.375rem);
+  box-shadow: 0 1.25rem 2.75rem rgba(16, 24, 43, 0.13);
+  border-color: transparent;
+}
+
+.sv-tile-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: auto;
+}
+/* Numbered so the set reads as a set — nine of nine, countable — where nine
+   loose cards read as "some services". */
+.sv-no {
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+.sv-ico {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--r-sm);
+  background: var(--orange-soft);
+  color: var(--orange);
+  flex: none;
+  transition: background-color 0.4s ease, color 0.4s ease, transform 0.5s var(--ease-spring);
+}
+.sv-ico svg { width: 1.25rem; height: 1.25rem; }
+.sv-tile:hover .sv-ico { background: var(--grad-orange); color: #fff; transform: rotate(-6deg); }
+
+.sv-tile h3 {
+  font-size: clamp(1.02rem, 1.5vw, 1.2rem);
+  line-height: 1.22;
+  letter-spacing: -0.012em;
+  margin: 1.25rem 0 0.45rem;
+}
+.sv-tile p {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--body);
+  margin: 0;
+}
+
+.sv-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--blue);
+  align-self: flex-start;
+  cursor: pointer;
+  transition: color 0.3s ease, gap 0.3s var(--ease-out);
+}
+.sv-go svg { width: 0.85rem; height: 0.85rem; }
+/* Tile-wide hit area, hung off the button so the tile itself stays a plain
+   container — the same device as .pkg-go::after in cards.css. */
+.sv-go::after { content: ""; position: absolute; inset: 0; z-index: 2; }
+.sv-tile:hover .sv-go { color: var(--orange); gap: 0.7rem; }
+.sv-go:focus-visible { outline: 0.1875rem solid var(--orange); outline-offset: 0.35rem; border-radius: 0.25rem; }
+
+/* ---- The feature tile ---- */
+.sv-tile--photo { border-color: transparent; color: #fff; }
+.sv-tile-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s var(--ease-out);
+}
+.sv-tile--photo:hover .sv-tile-bg { transform: scale(1.05); }
+/* Weighted to the foot, where the copy is. Left open at the top so the
+   photograph is still a photograph and not a coloured panel. */
+.sv-tile--photo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(4, 14, 32, 0.18) 0%, rgba(4, 14, 32, 0.55) 55%, rgba(4, 14, 32, 0.88) 100%);
+}
+.sv-tile--photo h3 {
+  font-size: clamp(1.4rem, 2.4vw, 2.05rem);
+  color: #fff;
+  text-shadow: 0 0.03em 0.2em rgba(4, 14, 32, 0.5);
+}
+.sv-tile--photo p { color: rgba(255, 255, 255, 0.88); font-size: 0.97rem; max-width: 30ch; }
+.sv-tile--photo .sv-no { color: rgba(255, 255, 255, 0.7); }
+.sv-tile--photo .sv-ico { background: rgba(255, 255, 255, 0.16); color: #fff; backdrop-filter: blur(0.4rem); }
+.sv-tile--photo .sv-go { color: #fff; }
+.sv-tile--photo:hover .sv-go { color: #ffc9ab; }
+
+/* ---- The dark tile ---- */
+.sv-tile--dark { background: var(--blue-ink); border-color: transparent; }
+.sv-tile--dark h3 { color: #fff; }
+.sv-tile--dark p { color: rgba(255, 255, 255, 0.72); }
+.sv-tile--dark .sv-no { color: rgba(255, 255, 255, 0.5); }
+.sv-tile--dark .sv-ico { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.sv-tile--dark .sv-go { color: #fff; }
+.sv-tile--dark:hover .sv-go { color: #ffc9ab; }
+
+/* ---- The accent tile ----
+   The one promise that closes a sale gets the only saturated tile on the page.
+   One is the point — a second would make neither of them mean anything. */
+.sv-tile--accent { background: var(--grad-orange); border-color: transparent; }
+.sv-tile--accent h3 { color: #fff; }
+.sv-tile--accent p { color: rgba(255, 255, 255, 0.9); }
+.sv-tile--accent .sv-no { color: rgba(255, 255, 255, 0.72); }
+.sv-tile--accent .sv-ico { background: rgba(255, 255, 255, 0.2); color: #fff; }
+.sv-tile--accent .sv-go { color: #fff; }
+.sv-tile--accent:hover .sv-go { color: rgba(255, 255, 255, 0.82); }
+.sv-tile--accent:hover .sv-ico { background: #fff; color: var(--orange); }
+
+/* ============================================================
+   FAQ — heading holds, questions move
+   ============================================================ */
+.sv-faq { padding: clamp(3.25rem, 7vw, 5.5rem) 0; background: var(--surface); }
+.sv-faq-grid {
+  display: grid;
+  grid-template-columns: 0.82fr 1.18fr;
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: start;
+}
+/* Sticky rather than centred above the list: the ask ("still stuck? talk to
+   us") is the point of the section, and it should still be on screen at
+   question six — which is exactly where someone gives up reading. */
+.sv-faq-aside { position: sticky; top: 6rem; }
+.sv-faq-aside h2 { margin: 0.7rem 0 0.9rem; }
+.sv-faq-aside p { font-size: 1rem; line-height: 1.6; color: var(--body); max-width: 26rem; }
+.sv-faq-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.5rem; }
+
+.sv-faq-list {
+  background: #fff;
+  border-radius: var(--r-lg);
+  border: 0.0625rem solid rgba(19, 26, 42, 0.07);
+  padding: clamp(0.5rem, 1.5vw, 1rem) clamp(1rem, 2.5vw, 1.75rem);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
+  .sv-faq-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .sv-faq-aside { position: static; }
+  .sv-faq-aside p { max-width: 40rem; }
+}
+
+/* Two columns. The feature keeps its double width — halve it and it stops
+   being the feature, which is the one thing this layout exists to say — but it
+   gives up the double height, since a 2x2 tile on a narrow screen is a full
+   screen of one service. */
+@media (max-width: 900px) {
+  .sv-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: clamp(10rem, 26vw, 13rem); }
+  .sv-grid > .h2 { grid-row: span 1; }
+  .sv-tile--photo { min-height: 16rem; }
+}
+
+@media (max-width: 560px) {
+  /* One up. Every tile spans the single column, so the hierarchy stops being
+     carried by area and is carried by tone and order instead — the feature is
+     still first, still a photograph, still the tallest. */
+  .sv-grid { grid-template-columns: 1fr; grid-auto-rows: auto; }
+  .sv-grid > .w2, .sv-grid > .h2 { grid-column: span 1; grid-row: span 1; }
+  .sv-tile { min-height: 0; }
+  .sv-tile--photo { min-height: 18rem; }
+  .sv-faq-actions .btn { flex: 1 1 12rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sv-tile:hover { transform: none; }
+  .sv-tile--photo:hover .sv-tile-bg { transform: none; }
+  .sv-tile:hover .sv-ico { transform: none; }
+}

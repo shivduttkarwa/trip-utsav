@@ -1,0 +1,120 @@
+/* ============================================================
+   ABOUT — the site's own language, nothing invented.
+
+   Standard page hero, alternating white / bg-surface bands, SectionHead on
+   every section, Reveal staggers, and the shared .stats treatment. The only
+   rules here are the three blocks this page owns: the story split, the value
+   cards and the team cards.
+   ============================================================ */
+
+/* ---------- Story split ----------
+   Two columns, vertically centred, with a wider gutter than .grid's default —
+   an image and a column of prose sitting side by side need the air, and the
+   utility gap is tuned for cards in a row. */
+.ab-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 5vw, 3.75rem);
+  align-items: center;
+}
+@media (max-width: 900px) { .ab-split { grid-template-columns: 1fr; } }
+
+.split-media {
+  position: relative;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+.split-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* The badge overhanging the photograph's corner. Its offsets live here rather
+   than inline on the element, so the mobile rule below can pull it back inside
+   the frame — at narrow widths a card hanging off the right edge is what
+   causes horizontal page scroll. */
+.float-card {
+  position: absolute;
+  right: -1.125rem;
+  bottom: 1.625rem;
+  background: #fff;
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-lg);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8125rem;
+  animation: floaty 5s ease-in-out infinite;
+}
+.float-card .icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.75rem;
+  display: grid;
+  place-items: center;
+  background: var(--orange-soft);
+  color: var(--orange);
+  flex: none;
+}
+.float-card .icon svg { width: 1.375rem; height: 1.375rem; }
+.float-card strong { display: block; color: var(--ink); font-family: var(--font-display); font-size: 1.02rem; }
+.float-card small { color: var(--muted); font-size: 0.78rem; }
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-0.75rem); }
+}
+
+.ab-split-title { margin: 0.875rem 0 1.125rem; }
+
+@media (max-width: 560px) {
+  .float-card { right: 0.75rem; bottom: 0.75rem; padding: 0.75rem 0.875rem; }
+  .float-card .icon { width: 2.25rem; height: 2.25rem; }
+  .float-card strong { font-size: 0.92rem; }
+}
+
+/* ---------- Value cards ----------
+   Same construction as the site's other feature cards: white, hairline, a
+   gradient rule that wipes in across the top on hover, and a small lift. */
+.value-card {
+  height: 100%;
+  background: #fff;
+  border: 0.0625rem solid var(--line);
+  border-radius: var(--r-lg);
+  padding: clamp(1.5rem, 3vw, 2.125rem) clamp(1.25rem, 2.5vw, 1.75rem);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.45s var(--ease-out), box-shadow 0.45s, border-color 0.45s;
+}
+.value-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 0.25rem;
+  background: var(--grad-orange);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s var(--ease-out);
+}
+.value-card:hover { transform: translateY(-0.5rem); box-shadow: var(--shadow-lg); border-color: transparent; }
+.value-card:hover::before { transform: scaleX(1); }
+.value-num { font-family: var(--font-display); font-weight: 800; font-size: 1rem; color: var(--orange); }
+.value-card h3 { margin: 0.5rem 0 0.625rem; font-size: 1.15rem; }
+.value-card p { font-size: 0.94rem; margin: 0; }
+
+/* ---------- Team cards ---------- */
+.team-card { text-align: center; }
+.team-card .photo {
+  aspect-ratio: 1;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-bottom: 1rem;
+  background: rgba(19, 26, 42, 0.05);
+}
+.team-card .photo img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s var(--ease-out); }
+.team-card:hover .photo img { transform: scale(1.07); }
+.team-card h3 { font-size: 1.08rem; margin: 0 0 0.15rem; }
+.team-card small { color: var(--orange); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  .float-card { animation: none; }
+  .value-card:hover { transform: none; }
+  .team-card:hover .photo img { transform: none; }
+}

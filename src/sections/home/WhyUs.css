@@ -3,7 +3,8 @@
    See WhyUs.jsx for why the stacking is CSS and not GSAP pins.
 
    The base .split-media / .float-card rules this section once
-   relied on stay in styles/sections.css — the About page uses them.
+   relied on are gone — About was their last caller and it is now
+   a chronology.
    ============================================================ */
 
 /* Matches .section's own top padding so the heading starts on the same line as

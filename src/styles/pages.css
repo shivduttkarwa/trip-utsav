@@ -43,15 +43,8 @@
 
 .map-frame { border: 0; width: 100%; height: 26.25rem; border-radius: var(--r-lg); box-shadow: var(--shadow-md); filter: saturate(0.9); }
 
-/* About page */
-.team-card { text-align: center; }
-.team-card .photo { aspect-ratio: 1; border-radius: var(--r-lg); overflow: hidden; margin-bottom: 1rem; position: relative; }
-.team-card .photo img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s var(--ease-out); }
-.team-card:hover .photo img { transform: scale(1.07); }
-.team-card h3 { font-size: 1.08rem; }
-.team-card small { color: var(--orange); font-weight: 600; }
-
-.value-num { font-family: var(--font-display); font-weight: 800; font-size: 1rem; color: var(--orange); }
+/* (About page → styles/about.css. The .team-card and .value-num blocks went
+   with the card grids they styled when the page was rebuilt as a chronology.) */
 
 /* skeleton shimmer for images while loading */
 .img-shimmer { background: linear-gradient(100deg, #eef1f6 40%, #f7f9fc 50%, #eef1f6 60%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }

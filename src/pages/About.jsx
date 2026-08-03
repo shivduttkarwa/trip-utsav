@@ -7,16 +7,19 @@ import Reveal from "../components/Reveal";
 import SectionHead from "../components/SectionHead";
 import Stat from "../components/Stat";
 import TestimonialSlider from "../components/TestimonialSlider";
+import CtaBanner from "../components/CtaBanner";
 import { useUI } from "../components/UIContext";
+import "../styles/about.css";
 
 const HERO = asset("images/hero/hero-about.webp");
-const STORY = IMG("photo-1469854523086-cc02fe5d8800", 1000);
+/* The story is about a sea, so the picture beside it is one. */
+const STORY = asset("images/packages/andaman-islands/01-radhanagar-beach.webp");
 
 const VALUES = [
   { num: "01", title: "Travellers First", text: "Every decision starts with one question: is this genuinely better for the traveller? Commissions never pick your hotel — fit does." },
-  { num: "02", title: "Radical Transparency", text: "Line-item quotes, real photos, honest trade-offs. If the sea-view room isn't worth it, we'll tell you." },
-  { num: "03", title: "Celebrate Everything", text: "A trip is never just logistics. Birthdays get cakes, anniversaries get décor, first flights get window seats." },
-  { num: "04", title: "Own the Outcome", text: "If something breaks mid-trip, we fix it first and settle accounts later. Your holiday is the priority." }
+  { num: "02", title: "Radical Transparency", text: "Line-item quotes, real photographs, honest trade-offs. If the sea-view room isn't worth it, we'll tell you before you pay for it." },
+  { num: "03", title: "Celebrate Everything", text: "A trip is never just logistics. Birthdays get cakes, anniversaries get décor, first flights get the window seat." },
+  { num: "04", title: "Own the Outcome", text: "If something breaks mid-trip, we fix it first and settle accounts later. Your holiday is the priority, not the paperwork." }
 ];
 
 const TEAM = [
@@ -49,33 +52,37 @@ export default function About() {
 
       {/* ---------- STORY ---------- */}
       <section className="section">
-        <div className="container grid grid-2" style={{ alignItems: "center", gap: "60px" }}>
+        <div className="container ab-split">
           <Reveal variant="left">
             <div className="split-media">
-              <img src={STORY} alt="A van on a road trip at golden hour" onError={onImgError} />
-              <div className="float-card" style={{ bottom: "26px", right: "-18px" }}>
+              <img src={STORY} alt="A quiet stretch of Indian coastline at low tide" onError={onImgError} />
+              <div className="float-card">
                 <div className="icon"><Icon name="globe" /></div>
                 <div><strong>120+ Destinations</strong><small>and counting</small></div>
               </div>
             </div>
           </Reveal>
+
           <Reveal variant="right">
             <span className="eyebrow">Our Story</span>
-            <h2 className="display-2" style={{ margin: "14px 0 18px" }}>
-              Born From a Trip That <span className="text-grad">Went Wrong</span>
+            <h2 className="display-2 ab-split-title">
+              It Began With a Grandmother and a <span className="text-grad">Sea She'd Never Seen</span>
             </h2>
             <p className="lead mb-2">
-              In 2014, our founder watched a family's dream vacation collapse over one unconfirmed
-              hotel voucher. The agency that sold it had vanished after the payment cleared.
+              In the winter of 2014, our founder spent a year of savings taking his grandmother
+              from Indore to the coast. Eleven hours by road, one night in a room with a rattling
+              fan. She walked down to the water in her sandals and stood in it for the better part
+              of an hour. She was seventy-one, and she had never once seen the sea.
             </p>
             <p className="mb-2">
-              Trip Utsav started as the antidote: a travel company that stays on the trip after
-              the invoice. Twelve years later, that promise is still the whole business model —
-              real humans planning real journeys, reachable at 2 AM, accountable to the end.
+              He handed in his notice the following month. Trip Utsav exists because of that hour —
+              not because travel is a product worth selling, but because somewhere inside every
+              trip there is an hour like it. A first sea, a first snowfall, a fiftieth anniversary
+              somewhere you had only ever seen on a calendar.
             </p>
             <p className="mb-3">
-              The name says the rest. <b>Utsav</b> means festival — because we believe travel
-              isn't an escape from life, it's the celebration of it.
+              The name says the rest. <b>Utsav</b> means festival — because travel isn't an escape
+              from life, it's the celebration of it.
             </p>
             <Button icon="arrow" onClick={() => openEnquiry()}>Plan a Trip With Us</Button>
           </Reveal>
@@ -98,16 +105,16 @@ export default function About() {
       <section className="section">
         <div className="container">
           <SectionHead
-            layout="center"
             eyebrow="What We Stand For"
             title="Four Values, Zero Compromise"
+            text="Twelve years of decisions, and these are the four that never came up for debate."
           />
           <div className="grid grid-2">
             {VALUES.map((v, i) => (
               <Reveal key={v.num} delay={(i % 2) * 0.1}>
-                <div className="icon-card">
+                <div className="value-card">
                   <span className="value-num">{v.num}</span>
-                  <h3 style={{ margin: "8px 0 10px" }}>{v.title}</h3>
+                  <h3>{v.title}</h3>
                   <p>{v.text}</p>
                 </div>
               </Reveal>
@@ -120,16 +127,16 @@ export default function About() {
       <section className="section bg-surface">
         <div className="container">
           <SectionHead
-            layout="center"
             eyebrow="The Humans"
             title="The People Who Pack Your Peace of Mind"
+            text="Every trip on this site is planned by one of them, by name."
           />
           <div className="grid grid-4">
             {TEAM.map((m, i) => (
               <Reveal key={m.name} delay={i * 0.08}>
                 <div className="team-card">
                   <div className="photo">
-                    <img src={m.img} alt={m.name} loading="lazy" onError={onImgError} />
+                    <img src={m.img} alt={m.name} loading="lazy" decoding="async" onError={onImgError} />
                   </div>
                   <h3>{m.name}</h3>
                   <small>{m.role}</small>
@@ -147,6 +154,18 @@ export default function About() {
           <TestimonialSlider />
         </div>
       </section>
+
+      <CtaBanner
+        compact
+        image="images/hero/hero-ladakh.webp"
+        focal="58% 42%"
+        focalM="66% 40%"
+        badge="Twelve years, still answering"
+        title="Let's Plan Yours"
+        text="Tell us the occasion and the rough dates. A real trip designer takes it from there — no obligation, nothing to pay."
+        cta="Start My Trip"
+        secondary={{ label: "Browse Packages", to: "/packages" }}
+      />
     </>
   );
 }

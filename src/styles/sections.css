@@ -1,22 +1,6 @@
 /* ---------- 10. SECTIONS ---------- */
 /* (Steps → sections/home/HowItWorks.css · Check-list → sections/home/WhyUs.css) */
 
-/* Why-us split media (shared: Home WhyUs + About) */
-.split-media { position: relative; border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-lg); }
-.split-media img { width: 100%; height: 100%; object-fit: cover; }
-.float-card {
-  position: absolute;
-  background: #fff;
-  border-radius: var(--r-md);
-  box-shadow: var(--shadow-lg);
-  padding: 1rem 1.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.8125rem;
-  animation: floaty 5s ease-in-out infinite;
-}
-.float-card .icon { width: 2.75rem; height: 2.75rem; border-radius: 0.75rem; display: grid; place-items: center; background: var(--orange-soft); color: var(--orange); flex: none; }
-.float-card .icon svg { width: 1.375rem; height: 1.375rem; }
-.float-card strong { display: block; color: var(--ink); font-family: var(--font-display); font-size: 1.02rem; }
-.float-card small { color: var(--muted); font-size: 0.78rem; }
-@keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-0.75rem); } }
+/* The .split-media / .float-card pair lived here. WhyUs stopped using them when
+   it became stacking cards, and they were kept on solely for the About page's
+   story split — which is now a chronology, so the last caller is gone. */
