@@ -269,7 +269,15 @@
    The perforation is a background layer rather than a positioned
    pseudo-element, so the stub stays unpositioned and .pkg-go::after can
    reach the whole ticket. Its width is the card minus both notches, so
-   the dashes run from one hole to the other. */
+   the dashes run from one hole to the other.
+
+   The stub is a SOLID opaque fill, deliberately. It used to be a gradient
+   fading to var(--surface) — and every section holding these cards is
+   .bg-surface, so the foot of the ticket ended on exactly the page colour
+   and read as see-through, a hole cut in the card rather than paper on top
+   of it. Only the drop-shadow held that edge, and at 0.05-0.06 alpha it
+   does not. Same white as the body above: the ticket is one sheet, and the
+   perforation alone marks the tear. Do not reintroduce a fade here. */
 .pkg-stub {
   flex: none;
   height: var(--stub);
@@ -277,11 +285,16 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0 1.25rem;
+  background-color: var(--white);
   background-image:
-    repeating-linear-gradient(90deg, #c9cfdd 0 0.25rem, transparent 0.25rem 0.5rem),
-    linear-gradient(180deg, #fbfbf8, var(--surface));
-  background-size: calc(100% - var(--notch) * 2) 0.0625rem, 100% 100%;
-  background-position: center top, 0 0;
+    repeating-linear-gradient(90deg, #c9cfdd 0 0.25rem, transparent 0.25rem 0.5rem);
+  /* A real 1px, not 0.0625rem. The root ladder in base.css runs 13-14px on
+     phones and 12px on tablets and >=1440px, so a rem hairline resolves to
+     0.75-0.875px on every one of them and the browser antialiases the dashes
+     down to a grey wash — the perforation reads as smudge, not as a tear line.
+     A perforation is a hairline, not a scaled type element. */
+  background-size: calc(100% - var(--notch) * 2) 1px;
+  background-position: center top;
   background-repeat: no-repeat;
 }
 .pkg-fare { margin-right: auto; display: flex; flex-direction: column; gap: 0.125rem; }
