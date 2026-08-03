@@ -38,7 +38,6 @@ export default function ServicesPreview() {
     <section className="section">
       <div className="container">
         <SectionHead
-          layout="center"
           eyebrow="Beyond Packages"
           title="Every Travel Service, One Roof"
           text="Trip Utsav is a full-service agency — whatever moves you, we arrange it."

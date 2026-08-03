@@ -24,7 +24,7 @@ export default function HowItWorks() {
   return (
     <section className="section bg-surface">
       <div className="container">
-        <SectionHead layout="center" eyebrow="From Enquiry To Boarding" title="How Your Trip Comes Together" />
+        <SectionHead eyebrow="From Enquiry To Boarding" title="How Your Trip Comes Together" />
         <Reveal className="pass">
           {STEPS.map((s, i) => (
             <div
