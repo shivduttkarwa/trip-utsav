@@ -34,16 +34,11 @@
   height: 100svh;
   overflow: hidden;
 }
+/* No scrim. Nothing is set over this photograph — every word in the section
+   lives inside a card with its own opaque surface — so the darkening it used
+   to carry was protecting text that was never there. It runs at full
+   brightness. */
 .wsk-bg-in img { width: 100%; height: 100%; object-fit: cover; display: block; }
-/* The cards are solid and land on top of this, so the picture only has to hold
-   the margins around them — darkened so those read as depth rather than as a
-   second, brighter subject competing with the card in front. */
-.wsk-bg-in::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(5, 15, 34, 0.62) 0%, rgba(5, 15, 34, 0.42) 45%, rgba(5, 15, 34, 0.7) 100%);
-}
 
 .wsk-cards { position: relative; z-index: 1; }
 
@@ -85,7 +80,10 @@
   /* Promoted up front. Left to the browser this happens mid-scroll, and the
      promotion is a repaint of a very large blurred shadow. */
   backface-visibility: hidden;
-  box-shadow: 0 1.25rem 3.5rem rgba(4, 12, 28, 0.38);
+  /* Deeper and tighter than it was, now that the scrim is gone. The card used
+     to separate from the background partly because the background was dark;
+     against a bright, busy photograph the shadow has to do that job alone. */
+  box-shadow: 0 0.25rem 0.75rem rgba(4, 12, 28, 0.2), 0 1.5rem 3.5rem rgba(4, 12, 28, 0.45);
 }
 
 /* --- Surfaces. Graded, not flat: a large area of one solid brand colour reads
