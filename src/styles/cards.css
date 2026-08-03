@@ -1,38 +1,108 @@
 /* ---------- 9. CARDS ---------- */
 
-/* Package card */
+/* ============================================================
+   PACKAGE CARD — the boarding pass
+   ============================================================
+   Three bands printed on one sheet of paper:
+
+     .pkg-media   photo, stamp, wishlist, rating + duration chips
+     .pkg-body    route strip (SRI ✈ PAH), title, tags
+     .pkg-stub    fare, barcode, go — below the perforation
+
+   The ticket silhouette is a mask rather than a border trick: two
+   circles punched out of the left and right edges, positioned a fixed
+   --stub up from the bottom so the notches land exactly on the tear
+   line however tall the card grows. The two mask layers are
+   intersected; where mask-composite is unsupported they simply union
+   to "fully opaque" and the card degrades to a rounded rectangle with
+   no notches — nothing else about it depends on them.
+
+   A mask clips everything the element paints, box-shadow included, so
+   the shadow cannot live on .pkg-ticket. It sits on the .pkg-card
+   wrapper as a drop-shadow filter instead, which has the better
+   behaviour anyway: it traces the punched silhouette rather than a
+   rectangle, so the notches read as holes cut through real paper.
+   ============================================================ */
 .pkg-card {
-  background: #fff;
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  border: 0.0625rem solid var(--line);
+  position: relative;
+  display: flex;
+  /* Contact shadow + ambient shadow, the way a card resting on paper
+     actually casts one. */
+  filter:
+    drop-shadow(0 0.125rem 0.25rem rgba(16, 24, 43, 0.05))
+    drop-shadow(0 0.625rem 1.25rem rgba(16, 24, 43, 0.06));
+  transition: filter 0.5s var(--ease-out);
+}
+.pkg-card:hover {
+  filter:
+    drop-shadow(0 0.25rem 0.5rem rgba(16, 24, 43, 0.07))
+    drop-shadow(0 1.25rem 2.25rem rgba(16, 24, 43, 0.16));
+}
+
+.pkg-ticket {
+  --stub: 4.75rem;
+  --notch: 0.8125rem;
+  /* Two full-bleed layers, each opaque except for one punched circle;
+     intersecting them leaves both holes. The half-pixel between the
+     transparent and opaque stops is the antialiasing on the cut. */
+  --punch:
+    radial-gradient(circle var(--notch) at left  calc(100% - var(--stub)), #0000 var(--notch), #000 calc(var(--notch) + 0.5px)),
+    radial-gradient(circle var(--notch) at right calc(100% - var(--stub)), #0000 var(--notch), #000 calc(var(--notch) + 0.5px));
+  -webkit-mask-image: var(--punch);
+  mask-image: var(--punch);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+
+  /* The lift lives here, not on .pkg-card: .pkg-card is also the
+     .reveal element, whose `.reveal.in { transform: none }` is defined
+     later in the cascade at equal specificity and would win. */
+  position: relative;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  transition: transform 0.5s var(--ease-out), box-shadow 0.5s;
-  will-change: transform;
+  background: var(--white);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  transition: transform 0.5s var(--ease-out);
 }
-.pkg-card:hover { transform: translateY(-0.625rem); box-shadow: var(--shadow-lg); }
-.pkg-media { position: relative; aspect-ratio: 16 / 10.5; overflow: hidden; }
-.pkg-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.9s var(--ease-out); }
-.pkg-card:hover .pkg-media img { transform: scale(1.09); }
-.pkg-media::after { content: ""; position: absolute; inset: 40% 0 0; background: linear-gradient(180deg, transparent, rgba(8, 24, 52, 0.55)); }
-.pkg-media .badge { position: absolute; top: 1rem; left: 1rem; z-index: 2; }
-.pkg-media .pkg-duration {
+.pkg-card:hover .pkg-ticket { transform: translateY(-0.5rem); }
+
+/* ---- Media ---- */
+.pkg-media { position: relative; flex: none; aspect-ratio: 16 / 10.5; overflow: hidden; }
+.pkg-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease-out); }
+.pkg-card:hover .pkg-media img { transform: scale(1.07); }
+.pkg-media::after { content: ""; position: absolute; inset: 34% 0 0; background: linear-gradient(180deg, transparent, rgba(7, 31, 66, 0.62)); }
+
+/* Badge as an inked stamp — set slightly off-square, with the dashed
+   rule struck inside the edge, the way a rubber stamp prints. */
+.pkg-stamp {
   position: absolute;
   z-index: 2;
-  bottom: 0.875rem;
-  left: 1rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4375rem;
+  top: 0.9375rem;
+  left: 0.9375rem;
+  padding: 0.4375rem 0.75rem;
+  border-radius: 0.3125rem;
+  background: var(--grad-orange);
   color: #fff;
-  font-size: 0.84rem;
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: 0.63rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  outline: 0.0625rem dashed rgba(255, 255, 255, 0.6);
+  outline-offset: -0.1875rem;
+  box-shadow: 0 0.375rem 0.875rem rgba(194, 77, 40, 0.32);
+  transform: rotate(-3deg);
+  transition: transform 0.45s var(--ease-spring);
 }
-.pkg-media .pkg-duration svg { width: 0.9375rem; height: 0.9375rem; }
+.pkg-card:hover .pkg-stamp { transform: rotate(0deg); }
+
 .pkg-fav {
   position: absolute;
-  z-index: 2;
+  /* Above the card-wide hit overlay (z-index 3) — saving a trip must
+     stay clickable everywhere the overlay covers. */
+  z-index: 4;
   top: 0.875rem;
   right: 0.875rem;
   width: 2.375rem;
@@ -40,28 +110,242 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: rgba(255, 255, 255, 0.2);
+  /* Tuned to read on its own without the blur: backdrop-filter is the
+     first thing to drop out inside a filtered subtree. */
+  background: rgba(9, 22, 44, 0.32);
+  border: 0.0625rem solid rgba(255, 255, 255, 0.24);
   backdrop-filter: blur(0.5rem);
   color: #fff;
   transition: all 0.3s var(--ease-spring);
 }
 .pkg-fav svg { width: 1.125rem; height: 1.125rem; }
-.pkg-fav:hover, .pkg-fav.active { background: #fff; color: #e63956; transform: scale(1.1); }
+.pkg-fav:hover, .pkg-fav.active { background: #fff; border-color: #fff; color: #e63956; transform: scale(1.1); }
+.pkg-fav.active svg { fill: currentColor; }
 
-.pkg-body { padding: 1.375rem 1.375rem 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; flex: 1; }
-.pkg-meta { display: flex; align-items: center; justify-content: space-between; gap: 0.625rem; }
+.pkg-chips {
+  position: absolute;
+  z-index: 2;
+  inset: auto 0.9375rem 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.pkg-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.3125rem 0.625rem;
+  border-radius: var(--r-pill);
+  background: rgba(9, 22, 44, 0.38);
+  border: 0.0625rem solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(0.625rem);
+  color: #fff;
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.pkg-chip svg { width: 0.8125rem; height: 0.8125rem; }
+.pkg-chip small { font-weight: 500; opacity: 0.7; }
+.pkg-chip--rate svg { color: #ffc23c; }
+
+/* ---- Body ---- */
+.pkg-body { flex: 1; display: flex; flex-direction: column; gap: 0.875rem; padding: 1.25rem 1.25rem 1.125rem; }
+
+/* Route strip. Codes and the flight path sit on row one, city names and
+   the stop count on row two — six flat children, auto-placed, so the
+   dashed line is centred on the codes rather than on the whole block. */
+.pkg-route {
+  display: grid;
+  grid-template-columns: auto minmax(2.5rem, 1fr) auto;
+  align-items: center;
+  column-gap: 0.625rem;
+  row-gap: 0.1875rem;
+  min-height: 2.375rem;
+}
+.pkg-code {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: var(--blue-ink);
+}
+.pkg-code:last-of-type { text-align: right; }
+.pkg-city {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--muted);
+  line-height: 1.2;
+  /* The strip must not be what decides the card's width. */
+  min-width: 0;
+  max-width: 6.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pkg-city:last-of-type { text-align: right; justify-self: end; }
+.pkg-stops {
+  font-style: normal;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.pkg-path { position: relative; height: 1.0625rem; display: grid; place-items: center; }
+.pkg-path::before {
+  content: "";
+  position: absolute;
+  inset: 50% 0 auto;
+  height: 0.09375rem;
+  background-image: repeating-linear-gradient(90deg, #ccd3e2 0 0.1875rem, transparent 0.1875rem 0.4375rem);
+}
+/* White pad so the plane sits on the route rather than in it. */
+.pkg-plane {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding-inline: 0.25rem;
+  background: var(--white);
+  color: var(--orange);
+  transition: transform 0.5s var(--ease-out);
+}
+/* The icon is drawn nose-up-right; 45° puts it on the horizontal. */
+.pkg-plane svg { width: 0.9375rem; height: 0.9375rem; transform: rotate(45deg); }
+.pkg-card:hover .pkg-plane { transform: translateX(0.1875rem); }
+@keyframes pkg-dash { to { background-position-x: 0.4375rem; } }
+.pkg-card:hover .pkg-path::before { animation: pkg-dash 0.6s linear infinite; }
+
+/* Single-destination packages have no city to fly from, so the strip
+   becomes a pinned place name with the route running off it. */
+.pkg-route--single { grid-template-columns: auto minmax(2.5rem, 1fr); }
+.pkg-where {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4375rem;
+  min-width: 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--blue-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pkg-where svg { flex: none; width: 0.9375rem; height: 0.9375rem; color: var(--orange); }
+
+.pkg-title { font-size: 1.18rem; line-height: 1.24; }
+/* Clamped so a two-line title never pushes the tags out of alignment
+   with the card beside it. */
+.pkg-title a {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 0.25s;
+}
+.pkg-card:hover .pkg-title a { color: var(--orange); }
+
+.pkg-tags { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-top: auto; }
+.pkg-tags span {
+  padding: 0.25rem 0.5625rem;
+  border-radius: 0.375rem;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 0.0625rem rgba(19, 26, 42, 0.06);
+  color: var(--body);
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ---- Stub ----
+   Kept at exactly --stub tall: the notch positions are measured from the
+   bottom edge, so this height is what keeps them on the tear line.
+   The perforation is a background layer rather than a positioned
+   pseudo-element, so the stub stays unpositioned and .pkg-go::after can
+   reach the whole ticket. Its width is the card minus both notches, so
+   the dashes run from one hole to the other. */
+.pkg-stub {
+  flex: none;
+  height: var(--stub);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1.25rem;
+  background-image:
+    repeating-linear-gradient(90deg, #c9cfdd 0 0.25rem, transparent 0.25rem 0.5rem),
+    linear-gradient(180deg, #fbfbf8, var(--surface));
+  background-size: calc(100% - var(--notch) * 2) 0.0625rem, 100% 100%;
+  background-position: center top, 0 0;
+  background-repeat: no-repeat;
+}
+.pkg-fare { margin-right: auto; display: flex; flex-direction: column; gap: 0.125rem; }
+.pkg-fare small {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.pkg-fare b {
+  font-family: var(--font-display);
+  font-size: 1.26rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--blue-ink);
+  font-variant-numeric: tabular-nums;
+}
+.pkg-fare del { margin-right: 0.375rem; font-size: 0.78rem; font-weight: 600; color: var(--muted); }
+
+/* Two periods overlaid — an even repeat reads as a pattern, this reads
+   as a barcode. */
+.pkg-barcode {
+  flex: none;
+  width: 3.125rem;
+  height: 1.75rem;
+  opacity: 0.26;
+  background-image:
+    repeating-linear-gradient(90deg, var(--blue-ink) 0 0.0625rem, transparent 0.0625rem 0.1875rem),
+    repeating-linear-gradient(90deg, var(--blue-ink) 0 0.125rem, transparent 0.125rem 0.5rem);
+}
+
+.pkg-go {
+  flex: none;
+  width: 2.625rem;
+  height: 2.625rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--blue);
+  box-shadow: inset 0 0 0 0.0625rem rgba(14, 75, 154, 0.18), var(--shadow-sm);
+  transition: background 0.35s, color 0.35s, box-shadow 0.35s;
+}
+.pkg-go svg { width: 1.0625rem; height: 1.0625rem; transition: transform 0.4s var(--ease-out); }
+/* Card-wide hit area. It hangs off this link rather than the title so
+   that -webkit-line-clamp's `overflow: hidden` cannot clip it, and
+   .pkg-go itself must stay unpositioned and untransformed — either would
+   make it the containing block and shrink the overlay back to the
+   button. Hovering anywhere on the card therefore also lights the
+   button, which is the intent. */
+.pkg-go::after { content: ""; position: absolute; inset: 0; z-index: 3; }
+.pkg-card:hover .pkg-go { background: var(--grad-orange); color: #fff; box-shadow: var(--shadow-orange); }
+.pkg-card:hover .pkg-go svg { transform: translateX(0.125rem); }
+.pkg-go:focus-visible { outline: 0.1875rem solid var(--orange); outline-offset: 0.125rem; }
+
+/* Below this the stub has to hold fare + button in a ~18rem card. */
+@media (max-width: 640px) {
+  .pkg-barcode { display: none; }
+}
+
+/* Package detail hero reuses this one line over its own photography. */
 .pkg-loc { display: inline-flex; align-items: center; gap: 0.375rem; color: var(--muted); font-size: 0.85rem; font-weight: 500; }
 .pkg-loc svg { width: 0.875rem; height: 0.875rem; color: var(--orange); }
-.pkg-body h3 { font-size: 1.16rem; }
-.pkg-body h3 a { transition: color 0.25s; }
-.pkg-body h3 a:hover { color: var(--orange); }
-.pkg-tags { display: flex; gap: 0.4375rem; flex-wrap: wrap; }
-.pkg-tags span { font-size: 0.74rem; font-weight: 600; padding: 0.25rem 0.6875rem; border-radius: var(--r-pill); background: var(--surface); color: var(--body); }
-.pkg-foot { margin-top: auto; padding-top: 1rem; border-top: 0.0625rem dashed var(--line); display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
-.pkg-price small { display: block; font-size: 0.74rem; color: var(--muted); font-weight: 500; }
-.pkg-price .amount { font-family: var(--font-display); font-weight: 800; font-size: 1.3rem; color: var(--blue); }
-.pkg-price .amount span { font-size: 0.8rem; color: var(--muted); font-weight: 500; }
-.pkg-price del { color: var(--muted); font-size: 0.82rem; margin-right: 0.375rem; }
 
 /* Destination card */
 .dest-card {
@@ -105,12 +389,24 @@
    On touch, :hover latches on at the tap and stays until something else is
    tapped, so a lift or a zoom sticks to whichever card was last touched. */
 @media (hover: none) {
-  .pkg-card { transition: none; will-change: auto; }
-  .pkg-card:hover { transform: none; box-shadow: none; }
+  .pkg-ticket { transition: none; }
+  .pkg-card:hover .pkg-ticket { transform: none; }
+  .pkg-card:hover { filter:
+    drop-shadow(0 0.125rem 0.25rem rgba(16, 24, 43, 0.05))
+    drop-shadow(0 0.625rem 1.25rem rgba(16, 24, 43, 0.06)); }
   .pkg-card:hover .pkg-media img { transform: none; }
+  .pkg-card:hover .pkg-stamp { transform: rotate(-3deg); }
+  .pkg-card:hover .pkg-title a { color: var(--ink); }
+  .pkg-card:hover .pkg-plane { transform: none; }
+  .pkg-card:hover .pkg-path::before { animation: none; }
   /* .active is the favourite toggle and must keep working — only the hover half
      of that shared rule is being undone here. */
-  .pkg-fav:hover { background: rgba(255, 255, 255, 0.2); color: #fff; transform: none; }
+  .pkg-fav:hover { background: rgba(9, 22, 44, 0.32); border-color: rgba(255, 255, 255, 0.24); color: #fff; transform: none; }
+  .pkg-fav.active { background: #fff; border-color: #fff; color: #e63956; transform: scale(1.1); }
+  /* The one hover state worth keeping: with no pointer to light it up on
+     approach, the go button is better off permanently in its lit state —
+     it is the card's only CTA. */
+  .pkg-go { background: var(--grad-orange); color: #fff; box-shadow: var(--shadow-orange); }
 
   .dest-card:hover img { transform: none; }
   /* These two only ever existed to be released by hover: the body rests 0.75rem
