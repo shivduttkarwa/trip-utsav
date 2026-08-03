@@ -8,6 +8,7 @@ build/
 # Vite / tool caches
 .vite/
 .cache/
+tmp/
 
 # Logs
 logs/

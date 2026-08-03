@@ -19,7 +19,7 @@ export default function CtaBanner() {
     <section className="cta-full">
       <img
         className="cta-full-bg"
-        src={asset("images/hero/hero-ladakh-4k.webp")}
+        src={asset("images/hero/hero-ladakh.webp")}
         alt=""
         loading="lazy"
         decoding="async"

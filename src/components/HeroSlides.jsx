@@ -29,11 +29,11 @@ import asset from "../asset";
  * same component as the state that drives them. */
 
 const SLIDES = [
-  { pre: "Chase the", word: "Horizon", loc: "Ladakh, India", code: "LEH", city: "Leh", img: asset("images/hero/hero-ladakh-4k.webp") },
-  { pre: "Savour the", word: "Journey", loc: "Kerala Backwaters", code: "COK", city: "Kochi", img: asset("images/hero/hero-kerala-4k.webp") },
-  { pre: "Wander the", word: "Valleys", loc: "Pahalgam, Kashmir", code: "SXR", city: "Srinagar", img: asset("images/hero/hero-kashmir-4k.webp") },
-  { pre: "Escape to", word: "Paradise", loc: "Maldives", code: "MLE", city: "Malé", img: asset("images/hero/hero-maldives-4k.webp") },
-  { pre: "Change your", word: "Perspective", loc: "Bali, Indonesia", code: "DPS", city: "Denpasar", img: asset("images/hero/hero-bali-4k.webp") },
+  { pre: "Chase the", word: "Horizon", loc: "Ladakh, India", code: "LEH", city: "Leh", img: asset("images/hero/hero-ladakh.webp") },
+  { pre: "Savour the", word: "Journey", loc: "Kerala Backwaters", code: "COK", city: "Kochi", img: asset("images/hero/hero-kerala.webp") },
+  { pre: "Wander the", word: "Valleys", loc: "Pahalgam, Kashmir", code: "SXR", city: "Srinagar", img: asset("images/hero/hero-kashmir.webp") },
+  { pre: "Escape to", word: "Paradise", loc: "Maldives", code: "MLE", city: "Malé", img: asset("images/hero/hero-maldives.webp") },
+  { pre: "Change your", word: "Perspective", loc: "Bali, Indonesia", code: "DPS", city: "Denpasar", img: asset("images/hero/hero-bali.webp") },
 ];
 
 /* Stop positions, in % of the track. The bloom origin, the plane keyframes and
@@ -97,9 +97,8 @@ export default function HeroSlides() {
   /* Decode the neighbouring frames during the current slide's dwell.
      `loading="lazy"` buys nothing here — all five slides are full-viewport at
      the top of the page, so they intersect and fetch regardless. The cost is
-     the DECODE: these are ~1.3 MB 4K stills, and decoding one at swap time
-     blocked the main thread for ~290 ms, which swallowed the first third of
-     the bloom. Decoding ahead moves that off the transition. */
+     the DECODE: decoding at swap time can block the main thread and swallow the
+     first part of the bloom. Decoding ahead moves that off the transition. */
   const imgRefs = useRef([]);
   useEffect(() => {
     for (const i of [(active + 1) % N, (active - 1 + N) % N]) {

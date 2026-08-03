@@ -6,10 +6,36 @@
   overflow: hidden;
   padding: clamp(3.75rem, 7.5vw, 6.25rem) 0;
   color: #fff;
+  /* Stays as the floor under the photograph: if the image ever fails to load,
+     the band is still the dark break in the page's rhythm it was designed to
+     be, rather than a bare white strip. */
   background:
     radial-gradient(68% 60% at 12% 0%, rgba(14, 75, 154, 0.5) 0%, transparent 62%),
     radial-gradient(55% 62% at 88% 100%, rgba(224, 97, 58, 0.3) 0%, transparent 64%),
     linear-gradient(170deg, #082448 0%, var(--blue-ink) 52%, #04142c 100%);
+}
+
+/* The photograph, and the scrim that holds it down, in one layer stack — the
+   gradients are listed BEFORE the image because the first background layer
+   paints on top.
+   The scrim is the whole balance of this section. Too light and the cut-out
+   digits stop reading, because a figure showing the same frame as the wall
+   behind it is invisible; too heavy and the picture is a texture rather than a
+   photograph. ~0.8 keeps the band dark enough for white labels while the
+   valley stays legible as a place. */
+.wstats::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    radial-gradient(68% 60% at 12% 0%, rgba(14, 75, 154, 0.42) 0%, transparent 62%),
+    radial-gradient(55% 62% at 88% 100%, rgba(224, 97, 58, 0.26) 0%, transparent 64%),
+    linear-gradient(170deg, rgba(8, 36, 72, 0.78) 0%, rgba(7, 31, 66, 0.82) 52%, rgba(4, 20, 44, 0.88) 100%),
+    var(--shot);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 /* Film grain. Flat gradients at this size band together and read as plastic;
@@ -88,11 +114,17 @@
   color: #fff;
   /* The white wash sits over the photo, both layers clipped to the glyphs. It
      lifts a dark crop clear of the near-black band — without it a shadowed
-     part of a frame can swallow a digit whole. */
-  background-image: linear-gradient(rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.22)), var(--fill);
+     part of a frame can swallow a digit whole. Lifted from 0.22 now that the
+     wall behind the figures is the same photograph: the digits have to beat a
+     picture rather than a flat gradient, and this is the separation. */
+  background-image: linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)), var(--shot);
   background-size: 165% auto;
-  background-position: center;
-  transition: background-size 0.9s var(--ease-out), background-position 0.9s var(--ease-out);
+  /* Set per figure — each one looks at a different part of the same frame. */
+  background-position: var(--pos, center);
+  transition: background-size 0.9s var(--ease-out);
+  /* Follows the clipped glyph shapes, not the box, so it reads as the figures
+     standing off the photograph rather than lying in it. */
+  filter: drop-shadow(0 0.045em 0.28em rgba(2, 10, 26, 0.65));
 }
 /* Guarded: without the clip the transparent fill would leave nothing on screen,
    so the plain white above stands until support is confirmed. */
@@ -104,11 +136,11 @@
     -webkit-text-fill-color: transparent;
   }
 }
-/* The crop drifts and opens slightly — the window looks around. */
-.wstat:hover .wstat-num {
-  background-size: 195% auto;
-  background-position: 40% 45%;
-}
+/* The window opens slightly — it pulls back to show more of the frame. It no
+   longer also drifts: with every figure now looking at its own part of one
+   photograph, a shared hover position would yank all four to the same crop and
+   throw away the thing that distinguishes them. */
+.wstat:hover .wstat-num { background-size: 195% auto; }
 
 /* Solid, so the modifier stays legible at a fraction of the size and gives the
    photograph something to sit against. Archivo has no italic, and a
@@ -141,5 +173,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .wstat-num { transition: none; }
-  .wstat:hover .wstat-num { background-size: 165% auto; background-position: center; }
+  /* Holds each figure at its own crop rather than resetting to centre. */
+  .wstat:hover .wstat-num { background-size: 165% auto; }
 }

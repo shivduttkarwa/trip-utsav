@@ -42,7 +42,7 @@ const DESKTOP_MENUS = [
       title: "Maldives, made effortless",
       copy: "Private villas, blue lagoons and every detail arranged.",
       to: "/packages?search=Maldives",
-      image: asset("images/hero/hero-maldives-4k.webp"),
+      image: asset("images/hero/hero-maldives.webp"),
     },
   },
   {
@@ -77,7 +77,7 @@ const DESKTOP_MENUS = [
       title: "The valleys of Kashmir",
       copy: "Alpine mornings, river trails and stays full of warmth.",
       to: "/packages?search=Kashmir",
-      image: asset("images/hero/hero-kashmir-4k.webp"),
+      image: asset("images/hero/hero-kashmir.webp"),
     },
   },
   {
@@ -112,7 +112,7 @@ const DESKTOP_MENUS = [
       title: "Your trip, not a template",
       copy: "Tell us your pace, passions and budget. We will shape the rest.",
       to: "/contact",
-      image: asset("images/hero/hero-bali-4k.webp"),
+      image: asset("images/hero/hero-bali.webp"),
     },
   },
   {
@@ -146,7 +146,7 @@ const DESKTOP_MENUS = [
       title: "Personal from hello to home",
       copy: "Real experts, honest advice and support whenever you need it.",
       to: "/about",
-      image: asset("images/hero/hero-kerala-4k.webp"),
+      image: asset("images/hero/hero-kerala.webp"),
     },
   },
 ];

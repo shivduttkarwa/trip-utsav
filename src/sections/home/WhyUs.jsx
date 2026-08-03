@@ -22,7 +22,7 @@ const POINTS = [
     text: "A dedicated trip designer from first call to touchdown home.",
     surface: "photo",
     span: "why-tile--wide why-tile--tall",
-    img: asset("images/hero/hero-kerala-4k.webp"),
+    img: asset("images/hero/hero-kerala.webp"),
   },
   {
     idx: "02",
@@ -37,7 +37,7 @@ const POINTS = [
     text: "Missed connection at 2 AM? One WhatsApp and we're on it.",
     surface: "photo",
     span: "",
-    img: asset("images/hero/hero-kashmir-4k.webp"),
+    img: asset("images/hero/hero-kashmir.webp"),
   },
   {
     idx: "04",

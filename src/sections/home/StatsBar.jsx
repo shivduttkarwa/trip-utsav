@@ -3,23 +3,31 @@ import useCountUp from "../../components/useCountUp";
 import "./StatsBar.css";
 import asset from "../../asset";
 
-/* Each figure is filled with a different destination, so the row doubles as a
-   glimpse of the catalogue. Bright, open frames only — a dark or busy crop
-   turns the digits to mud once they are clipped to the glyphs. */
+/* ONE photograph for the whole band — it lies across the section as the
+   background, and the figures are cut out of that same frame. What changes per
+   figure is only WHERE in it each one looks, so the row reads as four windows
+   into a single place rather than four separate postcards.
+
+   `pos` is that window: a background-position into the frame. They are chosen
+   off the picture itself and each one has to be BRIGHT, because a digit is a
+   thin sliver of image and a shadowed crop turns to mud once clipped to the
+   glyphs — the dark left-hand forest is avoided for exactly that reason. */
+const STATS_IMAGE = asset("images/hero/hero-kashmir.webp");
+
 const STATS = [
-  { value: 12, label: "Years of Craft", image: asset("images/hero/hero-ladakh-4k.webp") },
-  { value: 25000, label: "Happy Travellers", image: asset("images/hero/hero-maldives-4k.webp") },
-  { value: 120, label: "Destinations Covered", image: asset("images/hero/hero-kerala-4k.webp") },
-  { value: 4.8, suffix: "★", decimals: 1, label: "Average Rating", image: asset("images/hero/hero-bali-4k.webp") },
+  { value: 12, label: "Years of Craft", pos: "22% 78%" },              /* meadow */
+  { value: 25000, label: "Happy Travellers", pos: "52% 26%" },         /* snow peaks */
+  { value: 120, label: "Destinations Covered", pos: "86% 40%" },       /* sunlit slope */
+  { value: 4.8, suffix: "★", decimals: 1, label: "Average Rating", pos: "62% 82%" },  /* river */
 ];
 
-function StatWindow({ index, value, suffix = "+", decimals = 0, label, image, delay }) {
+function StatWindow({ index, value, suffix = "+", decimals = 0, label, pos, delay }) {
   const [ref, display] = useCountUp(value, decimals);
 
   return (
     <Reveal as="div" className="wstat" delay={delay}>
       <span className="wstat-index">{String(index).padStart(2, "0")}</span>
-      <span className="wstat-num" ref={ref} style={{ "--fill": `url("${image}")` }}>
+      <span className="wstat-num" ref={ref} style={{ "--pos": pos }}>
         {display}
         <span className="wstat-suffix">{suffix}</span>
       </span>
@@ -38,7 +46,12 @@ function StatWindow({ index, value, suffix = "+", decimals = 0, label, image, de
    the About page — nothing here touches it. */
 export default function StatsBar() {
   return (
-    <section className="wstats">
+    /* The photograph is handed to CSS as a variable rather than written into
+       the stylesheet, because it lives in public/ and so needs the base prefix
+       that asset() applies — a bare url() in CSS would resolve against the
+       server root and 404 on GitHub Pages. Same reason the fills used to be
+       set inline. */
+    <section className="wstats" style={{ "--shot": `url("${STATS_IMAGE}")` }}>
       <div className="container">
         <span className="wstats-eyebrow">Trip Utsav in numbers</span>
         <div className="wstats-grid">
