@@ -1,120 +1,340 @@
 /* ============================================================
-   ABOUT — the site's own language, nothing invented.
-
-   Standard page hero, alternating white / bg-surface bands, SectionHead on
-   every section, Reveal staggers, and the shared .stats treatment. The only
-   rules here are the three blocks this page owns: the story split, the value
-   cards and the team cards.
+   ABOUT — "Twelve years, one itinerary."
+   See pages/About.jsx for the concept: the page is laid out as
+   the thing the company sells — a route with stops. The dotted
+   spine is the flight-path line from the back of an in-flight
+   magazine; values are luggage tags; the team are polaroids.
    ============================================================ */
 
-/* ---------- Story split ----------
-   Two columns, vertically centred, with a wider gutter than .grid's default —
-   an image and a column of prose sitting side by side need the air, and the
-   utility gap is tuned for cards in a row. */
-.ab-split {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(2rem, 5vw, 3.75rem);
-  align-items: center;
+/* ---------- The route ----------
+   Each stop draws its own segment of the spine, so the line grows with the
+   stops as they reveal — and simply stops existing after the "you are here"
+   node, which is the concept's closing line made literal. Stops space with
+   padding, not margin, so neighbouring segments touch. */
+.ab-route {
+  --spine: rgba(19, 26, 42, 0.22);
+  max-width: 66rem;
+  margin-inline: auto;
 }
-@media (max-width: 900px) { .ab-split { grid-template-columns: 1fr; } }
 
-.split-media {
+.ab-stop {
   position: relative;
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-lg);
-}
-.split-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-/* The badge overhanging the photograph's corner. Its offsets live here rather
-   than inline on the element, so the mobile rule below can pull it back inside
-   the frame — at narrow widths a card hanging off the right edge is what
-   causes horizontal page scroll. */
-.float-card {
-  position: absolute;
-  right: -1.125rem;
-  bottom: 1.625rem;
-  background: #fff;
-  border-radius: var(--r-md);
-  box-shadow: var(--shadow-lg);
-  padding: 1rem 1.25rem;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 4.5rem 1fr;
   align-items: center;
-  gap: 0.8125rem;
-  animation: floaty 5s ease-in-out infinite;
+  padding-block: clamp(1.6rem, 3.5vw, 2.6rem);
 }
-.float-card .icon {
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 0.75rem;
+.ab-stop::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 0.125rem;
+  transform: translateX(-50%);
+  background-image: linear-gradient(var(--spine) 55%, transparent 0);
+  background-size: 0.125rem 0.8rem;
+}
+/* The line begins at the departure node and ends at the current-location one. */
+.ab-stop--depart::before { top: 50%; }
+.ab-stop--here::before { bottom: 50%; }
+
+.ab-side { grid-column: 1; grid-row: 1; justify-self: end; text-align: right; }
+.ab-node { grid-column: 2; grid-row: 1; justify-self: center; z-index: 1; }
+.ab-body { grid-column: 3; grid-row: 1; }
+.ab-stop--flip .ab-side { grid-column: 3; justify-self: start; text-align: left; }
+.ab-stop--flip .ab-body { grid-column: 1; }
+
+/* Ghost years — the same statement face as the stat numerals, hollowed out so
+   a four-digit numeral this large reads as wayfinding, not as content. */
+.ab-year {
+  font-family: var(--font-statement);
+  font-weight: 500;
+  font-size: clamp(3.4rem, 6.5vw, 5.6rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: rgba(19, 26, 42, 0.09);
+  user-select: none;
+}
+@supports (-webkit-text-stroke: 1px black) {
+  .ab-year {
+    color: transparent;
+    -webkit-text-stroke: 0.09rem rgba(19, 26, 42, 0.22);
+  }
+}
+
+/* Nodes on the line. */
+.ab-node {
+  width: 1.05rem;
+  height: 1.05rem;
+  border-radius: 50%;
+  background: var(--orange);
+  box-shadow: 0 0 0 0.3125rem #fff, 0 0 0 0.375rem var(--line);
+}
+.ab-node--depart {
+  width: 2.9rem;
+  height: 2.9rem;
   display: grid;
   place-items: center;
-  background: var(--orange-soft);
+  background: var(--grad-orange);
+  color: #fff;
+  box-shadow: 0 0 0 0.375rem #fff, var(--shadow-orange);
+}
+.ab-node--depart svg { width: 1.3rem; height: 1.3rem; }
+/* "You are here" — brand blue like a map's current-location dot, with the
+   sonar ring to match. */
+.ab-node--here { position: relative; background: var(--blue); }
+.ab-node--here::after {
+  content: "";
+  position: absolute;
+  inset: -0.45rem;
+  border-radius: 50%;
+  border: 0.125rem solid var(--blue);
+  animation: ab-pulse 2.2s ease-out infinite;
+}
+@keyframes ab-pulse {
+  0% { transform: scale(0.55); opacity: 0.9; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* Stop copy. The mono tag matches .sv-no on Services — the same "countable
+   set" voice across pages. */
+.ab-stop-tag {
+  display: inline-block;
+  margin-bottom: 0.6rem;
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   color: var(--orange);
-  flex: none;
 }
-.float-card .icon svg { width: 1.375rem; height: 1.375rem; }
-.float-card strong { display: block; color: var(--ink); font-family: var(--font-display); font-size: 1.02rem; }
-.float-card small { color: var(--muted); font-size: 0.78rem; }
-@keyframes floaty {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-0.75rem); }
+.ab-body h3 { font-size: clamp(1.3rem, 2vw, 1.6rem); margin: 0 0 0.55rem; }
+.ab-body p { margin: 0; max-width: 34rem; }
+.ab-body p + p { margin-top: 0.8rem; }
+.ab-body .btn { margin-top: 1.35rem; }
+.ab-stop--depart .ab-body h3 { font-size: clamp(1.7rem, 3vw, 2.35rem); }
+
+/* The departure photograph, captioned in the site's handwriting — a scrapbook
+   note rather than a UI label, because this stop is a memory. */
+.ab-photo { margin: 0; }
+.ab-photo img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
+}
+.ab-photo figcaption {
+  margin-top: 0.9rem;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--body);
+  text-align: center;
+  transform: rotate(-1.2deg);
 }
 
-.ab-split-title { margin: 0.875rem 0 1.125rem; }
-
-@media (max-width: 560px) {
-  .float-card { right: 0.75rem; bottom: 0.75rem; padding: 0.75rem 0.875rem; }
-  .float-card .icon { width: 2.25rem; height: 2.25rem; }
-  .float-card strong { font-size: 0.92rem; }
+/* ---------- The trip meter ----------
+   The shared .stats treatment; this label is the only thing the band owns. */
+.ab-meter { text-align: center; margin-bottom: clamp(1.75rem, 4vw, 2.5rem); }
+.ab-meter .eyebrow::after {
+  content: "";
+  width: 1.75rem;
+  height: 0.125rem;
+  background: currentColor;
+  border-radius: 0.125rem;
 }
 
-/* ---------- Value cards ----------
-   Same construction as the site's other feature cards: white, hairline, a
-   gradient rule that wipes in across the top on hover, and a small lift. */
-.value-card {
+/* ---------- Luggage tags ----------
+   One oversized corner radius plus a punched, reinforced eyelet is what makes
+   the card read as a tag; the barcode is set in two misaligned repeating
+   gradients so the bars come out irregular, the way a real one prints. Tilts
+   come from the data (--tilt) and straighten on hover — picked up, read,
+   put back level. */
+.ab-tags {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(1.4rem, 3vw, 2rem);
+  max-width: 62rem;
+  margin-inline: auto;
+}
+.ab-tag {
+  --tilt: 0deg;
+  position: relative;
   height: 100%;
   background: #fff;
   border: 0.0625rem solid var(--line);
-  border-radius: var(--r-lg);
-  padding: clamp(1.5rem, 3vw, 2.125rem) clamp(1.25rem, 2.5vw, 1.75rem);
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.45s var(--ease-out), box-shadow 0.45s, border-color 0.45s;
+  border-radius: 0.9rem;
+  border-top-left-radius: 2.6rem;
+  padding: 1.6rem 1.75rem 3rem;
+  box-shadow: var(--shadow-sm);
+  transform: rotate(var(--tilt));
+  transition: transform 0.5s var(--ease-spring), box-shadow 0.45s, border-color 0.45s;
 }
-.value-card::before {
+.ab-tag:hover {
+  transform: rotate(0deg) translateY(-0.375rem);
+  box-shadow: var(--shadow-lg);
+  border-color: transparent;
+}
+/* The eyelet: a hole showing the page through it, inside a reinforcement ring. */
+.ab-tag-hole {
+  position: absolute;
+  top: 1.15rem;
+  left: 1.3rem;
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: 50%;
+  background: var(--white);
+  box-shadow:
+    inset 0 0.0625rem 0.1875rem rgba(19, 26, 42, 0.2),
+    0 0 0 0.3125rem var(--orange-soft),
+    0 0 0 0.4rem rgba(224, 97, 58, 0.28);
+}
+.ab-tag-num {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.5rem;
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+.ab-tag-num span { color: rgba(139, 147, 165, 0.55); }
+.ab-tag h3 { margin: 1.35rem 0 0.55rem; font-size: 1.18rem; }
+.ab-tag p { margin: 0; font-size: 0.94rem; }
+.ab-tag::after {
   content: "";
   position: absolute;
-  inset: 0 0 auto;
-  height: 0.25rem;
-  background: var(--grad-orange);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.5s var(--ease-out);
+  right: 1.5rem;
+  bottom: 1.15rem;
+  width: 4.6rem;
+  height: 1.35rem;
+  opacity: 0.3;
+  background:
+    repeating-linear-gradient(90deg, var(--ink) 0 0.1rem, transparent 0.1rem 0.3rem),
+    repeating-linear-gradient(90deg, var(--ink) 0 0.06rem, transparent 0.06rem 0.46rem);
 }
-.value-card:hover { transform: translateY(-0.5rem); box-shadow: var(--shadow-lg); border-color: transparent; }
-.value-card:hover::before { transform: scaleX(1); }
-.value-num { font-family: var(--font-display); font-weight: 800; font-size: 1rem; color: var(--orange); }
-.value-card h3 { margin: 0.5rem 0 0.625rem; font-size: 1.15rem; }
-.value-card p { font-size: 0.94rem; margin: 0; }
 
-/* ---------- Team cards ---------- */
-.team-card { text-align: center; }
-.team-card .photo {
-  aspect-ratio: 1;
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  margin-bottom: 1rem;
-  background: rgba(19, 26, 42, 0.05);
+/* ---------- The crew ----------
+   Polaroids on the section's paper-toned band, each held down by a strip of
+   translucent tape and captioned by hand. Same tilt-and-straighten grammar as
+   the tags — one motion language for the whole scrapbook. */
+.ab-crew {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1.4rem, 2.6vw, 2rem);
+  align-items: start;
 }
-.team-card .photo img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s var(--ease-out); }
-.team-card:hover .photo img { transform: scale(1.07); }
-.team-card h3 { font-size: 1.08rem; margin: 0 0 0.15rem; }
-.team-card small { color: var(--orange); font-weight: 600; }
+.ab-pol {
+  --tilt: 0deg;
+  position: relative;
+  margin: 0;
+  background: #fff;
+  padding: 0.7rem 0.7rem 1.05rem;
+  border-radius: 0.45rem;
+  box-shadow: var(--shadow-md);
+  transform: rotate(var(--tilt));
+  transition: transform 0.5s var(--ease-spring), box-shadow 0.45s;
+}
+.ab-pol:hover {
+  transform: rotate(0deg) translateY(-0.45rem);
+  box-shadow: var(--shadow-lg);
+}
+.ab-pol-photo {
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 0.25rem;
+  background: rgba(19, 26, 42, 0.06);
+}
+.ab-pol-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s var(--ease-out);
+}
+.ab-pol:hover .ab-pol-photo img { transform: scale(1.06); }
+.ab-pol figcaption { padding-top: 0.85rem; text-align: center; }
+.ab-pol strong {
+  display: block;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 1.22rem;
+  line-height: 1.25;
+  color: var(--ink);
+}
+.ab-pol small {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--orange);
+}
+.ab-tape {
+  position: absolute;
+  top: -0.72rem;
+  left: 50%;
+  width: 5.4rem;
+  height: 1.5rem;
+  transform: translateX(-50%) rotate(-4deg);
+  background: linear-gradient(100deg, rgba(255, 249, 235, 0.65), rgba(240, 228, 202, 0.78));
+  box-shadow: 0 0.125rem 0.375rem rgba(16, 24, 43, 0.1);
+  /* Slightly off-square, like tape torn by hand. */
+  clip-path: polygon(3% 0, 100% 3%, 97% 97%, 0 100%);
+}
+.ab-crew > .reveal:nth-child(even) .ab-tape { transform: translateX(-50%) rotate(3deg); }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+/* The route folds to a left-hand spine: ghost years disappear (the mono tag
+   already names the year), the photo stacks above the departure story. */
+@media (max-width: 900px) {
+  .ab-stop {
+    grid-template-columns: 2.75rem 1fr;
+    align-items: start;
+    padding-block: clamp(1.4rem, 4vw, 2rem);
+  }
+  .ab-stop::before { left: 1.375rem; transform: none; }
+  .ab-stop .ab-side { display: none; }
+  .ab-stop .ab-node { grid-column: 1; grid-row: 1; margin-top: 0.35rem; }
+  .ab-stop .ab-body { grid-column: 2; grid-row: 1; }
+
+  .ab-stop--depart .ab-side {
+    display: block;
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: stretch;
+    text-align: left;
+    margin-bottom: 1.2rem;
+  }
+  .ab-stop--depart .ab-body { grid-row: 2; }
+  .ab-stop--depart .ab-node { margin-top: 0; }
+  .ab-photo img { aspect-ratio: 16 / 10; }
+
+  /* With the nodes top-aligned, the segment ends move with them. */
+  .ab-stop--depart::before { top: 1.5rem; }
+  .ab-stop--here::before { bottom: auto; height: 1.25rem; }
+}
+
+@media (max-width: 700px) {
+  .ab-tags { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 1024px) {
+  .ab-crew { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .ab-crew { gap: 1.9rem 1rem; }
+  .ab-pol strong { font-size: 1.05rem; }
+  .ab-pol small { font-size: 0.6rem; letter-spacing: 0.1em; }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .float-card { animation: none; }
-  .value-card:hover { transform: none; }
-  .team-card:hover .photo img { transform: none; }
+  .ab-node--here::after { animation: none; }
+  .ab-tag:hover, .ab-pol:hover { transform: rotate(var(--tilt)); box-shadow: var(--shadow-sm); }
+  .ab-pol:hover { box-shadow: var(--shadow-md); }
+  .ab-pol:hover .ab-pol-photo img { transform: none; }
 }
