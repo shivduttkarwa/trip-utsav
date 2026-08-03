@@ -24,7 +24,10 @@
 .empty-state h3 { margin-bottom: 0.5rem; }
 
 /* Package detail */
-.detail-hero { position: relative; height: clamp(23.75rem, 58vh, 35rem); overflow: clip; color: #fff; display: flex; align-items: flex-end; }
+/* +20%, and a straight 1.2x on every term unlike .page-hero: this one is sized
+   by an explicit height rather than by padding, so the number IS the band and
+   there is no content height diluting the scale. */
+.detail-hero { position: relative; height: clamp(28.5rem, 69.6vh, 42rem); overflow: clip; color: #fff; display: flex; align-items: flex-end; }
 .detail-hero .hero-media img { animation-duration: 28s; }
 .detail-hero-inner { position: relative; z-index: 2; padding-bottom: 2.75rem; width: 100%; }
 .detail-hero h1 { color: #fff; font-size: clamp(1.9rem, 4vw, 3.1rem); margin: 0.75rem 0 0.875rem; max-width: 48.75rem; }

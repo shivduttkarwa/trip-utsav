@@ -1,4 +1,5 @@
-/* Closing CTA — full-bleed photograph at full viewport height */
+/* Closing CTA — full-bleed photograph, full viewport height by default.
+   See components/CtaBanner.jsx. */
 
 .cta-full {
   position: relative;
@@ -16,6 +17,16 @@
   background: var(--blue-ink);
 }
 
+/* The listing-page variant. A full screen is right at the end of the homepage,
+   where it is the last beat of a long story. At the foot of a page someone is
+   browsing it reads as a wall — they came to scan a grid, and a screen-height
+   interruption between the last card and the footer costs more than it earns.
+   Sized as a band instead: tall enough to land, short enough to pass. */
+.cta-full--compact {
+  min-height: clamp(21rem, 44vh, 29rem);
+  padding: clamp(3rem, 7vw, 5rem) 0;
+}
+
 .cta-full-bg {
   position: absolute;
   inset: 0;
@@ -23,14 +34,14 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Holds the horizon and the lit ridge in frame as the section gets shorter —
-     centred, the crop drifts down into the road and loses the mountains. */
-  object-position: 58% 42%;
+  /* Set per usage — the right crop is a fact about the photograph, not about
+     the component. */
+  object-position: var(--focal, 50% 45%);
 }
 
 /* Two scrims doing separate jobs: the radial gives the copy something to sit
-   on, the linear weights the foot so the buttons stay legible over the bright
-   road and the section hands off to the footer.
+   on, the linear weights the foot so the buttons stay legible over a bright
+   frame and the section hands off to the footer.
 
    They multiply where they overlap, so the centre is darker than either value
    suggests — these are deliberately light, and the legibility is carried by the
@@ -44,6 +55,15 @@
   background:
     radial-gradient(70% 58% at 50% 46%, rgba(4, 14, 32, 0.34) 0%, rgba(4, 14, 32, 0.14) 60%, transparent 100%),
     linear-gradient(180deg, rgba(4, 14, 32, 0.24) 0%, rgba(4, 14, 32, 0.04) 40%, rgba(4, 14, 32, 0.46) 100%);
+}
+
+/* The band is short enough that the radial's soft centre never fully covers
+   the copy, so it leans harder on the linear and keeps the type off the
+   brightest part of the frame. */
+.cta-full--compact::after {
+  background:
+    radial-gradient(80% 76% at 50% 50%, rgba(4, 14, 32, 0.42) 0%, rgba(4, 14, 32, 0.2) 62%, transparent 100%),
+    linear-gradient(180deg, rgba(4, 14, 32, 0.34) 0%, rgba(4, 14, 32, 0.16) 45%, rgba(4, 14, 32, 0.5) 100%);
 }
 
 .cta-full-inner {
@@ -71,6 +91,10 @@
   color: #fff;
   text-shadow: 0 0.03em 0.09em rgba(4, 14, 32, 0.7), 0 0.06em 0.45em rgba(4, 14, 32, 0.5);
 }
+/* The band has less room between the lead and the buttons than a full screen
+   does, and the type is the first thing that should give it up. */
+.cta-full--compact h2 { margin-bottom: 0.75rem; }
+.cta-full--compact p { margin-bottom: 1.5rem; }
 
 .cta-full-actions {
   display: flex;
@@ -81,8 +105,8 @@
 
 @media (max-width: 640px) {
   /* Portrait crops far tighter than 16:9, so the frame is pulled back towards
-     the ridge or the section fills with nothing but water. */
-  .cta-full-bg { object-position: 66% 40%; }
+     the subject or the section fills with nothing but sky or water. */
+  .cta-full-bg { object-position: var(--focal-m, var(--focal, 50% 42%)); }
   .cta-full-actions { width: 100%; }
   .cta-full-actions .btn { flex: 1 1 12rem; }
 }

@@ -922,7 +922,14 @@
 /* Inner page hero */
 .page-hero {
   position: relative;
-  padding: clamp(5rem, 10vw, 8.125rem) 0;
+  /* Scaled 1.33x, not 1.2x, to make the BAND 20% taller.
+     Padding is only about 60% of this header's height — breadcrumb, h1 and
+     lead account for the rest and none of them move — so scaling the padding
+     by 20% would have bought roughly 12% of the thing actually being measured.
+     All three terms scale together: the vw term governs 1025-1300px, the rem
+     cap governs above that, and the floor governs on phones, so changing only
+     one of them would have grown the hero at some widths and not others. */
+  padding: clamp(6.65rem, 13.3vw, 10.8rem) 0;
   color: #fff;
   overflow: clip;
   background: var(--grad-sunset);

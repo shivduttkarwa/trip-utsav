@@ -8,7 +8,7 @@ import ServicesPreview from "../sections/home/ServicesPreview";
 import WhyUs from "../sections/home/WhyUs";
 import HowItWorks from "../sections/home/HowItWorks";
 import Testimonials from "../sections/home/Testimonials";
-import CtaBanner from "../sections/home/CtaBanner";
+import CtaBanner from "../components/CtaBanner";
 
 export default function Home() {
   return (
@@ -23,7 +23,12 @@ export default function Home() {
       <WhyUs />
       <HowItWorks />
       <Testimonials />
-      <CtaBanner />
+      {/* The Pangong road at last light: the closing image of the homepage is
+          the road itself, which is the thing being sold. The focal points hold
+          the horizon and the lit ridge in frame — centred, the crop drifts down
+          into the road and loses the mountains, and portrait crops tighter
+          still. */}
+      <CtaBanner focal="58% 42%" focalM="66% 40%" />
     </>
   );
 }

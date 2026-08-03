@@ -4,9 +4,8 @@ import { DESTINATIONS } from "../data/destinations";
 import { FALLBACK_IMG, IMG } from "../data/packages";
 import Reveal from "../components/Reveal";
 import SectionHead from "../components/SectionHead";
-import Button from "../components/Button";
 import DestinationCard from "../components/DestinationCard";
-import { useUI } from "../components/UIContext";
+import CtaBanner from "../components/CtaBanner";
 
 const HERO = IMG("photo-1530521954074-e64f6810b32d", 2000);
 
@@ -18,7 +17,6 @@ const FILTERS = [
 
 export default function Destinations() {
   const [filter, setFilter] = useState("");
-  const { openEnquiry } = useUI();
 
   const list = DESTINATIONS.filter((d) => {
     if (!filter) return true;
@@ -69,12 +67,24 @@ export default function Destinations() {
             ))}
           </div>
 
-          <Reveal className="center mt-4">
-            <p className="lead mb-2">Don't see your dream destination?</p>
-            <Button icon="arrow" onClick={() => openEnquiry()}>We'll Plan It Anyway</Button>
-          </Reveal>
         </div>
       </section>
+
+      {/* The in-grid "don't see your destination?" prompt used to live here and
+          has been folded into this band — two invitations to the same modal,
+          one directly above the other, read as a page unsure of its own ask.
+          Secondary points at packages: a visitor on this page has been looking
+          at places, so the useful next step is trips. */}
+      <CtaBanner
+        compact
+        image="images/hero/hero-kerala.webp"
+        focal="50% 52%"
+        badge="12 destinations, endless routes"
+        title="Don't See Your Dream Destination?"
+        text="Name the place — or just the feeling — and we'll build the route around it. No obligation, nothing to pay."
+        cta="We'll Plan It Anyway"
+        secondary={{ label: "Browse Packages", to: "/packages" }}
+      />
     </>
   );
 }

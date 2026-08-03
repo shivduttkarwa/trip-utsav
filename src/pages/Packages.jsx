@@ -5,6 +5,7 @@ import Icon from "../components/Icon";
 import Button from "../components/Button";
 import Reveal from "../components/Reveal";
 import PackageCard from "../components/PackageCard";
+import CtaBanner from "../components/CtaBanner";
 import Select from "../components/Select";
 import { useUI } from "../components/UIContext";
 
@@ -158,6 +159,21 @@ export default function Packages() {
           )}
         </div>
       </section>
+
+      {/* Secondary points at destinations: someone on this page has been
+          reading trips, so the useful next step is places. The empty state
+          above already offers the same modal, but only when there is nothing
+          to show — the two never appear together. */}
+      <CtaBanner
+        compact
+        image="images/hero/hero-bali.webp"
+        focal="50% 48%"
+        badge="Every trip here is customisable"
+        title="None of These Quite Right?"
+        text="Each package is a starting point. Tell us your dates, budget and pace — we'll reshape any of them around you."
+        cta="Request Custom Trip"
+        secondary={{ label: "See Destinations", to: "/destinations" }}
+      />
     </>
   );
 }
