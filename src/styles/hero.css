@@ -429,6 +429,15 @@
    still read as a route.
    --------------------------------------------------------------- */
 @media (max-width: 700px) {
+  /* The WhatsApp float is fixed to the bottom-right and the search card runs
+     the full width, so at the hero's normal bottom padding the float sits
+     squarely on the Search button. Lift the card clear of it rather than
+     moving the float, which belongs to every page equally.
+     0.75 (its offset) + 3 (its height) + 0.5 breathing = 4.25rem — keep this
+     in step with the .wa-float phone rule in components.css. Every rem here is
+     taken off the photograph, so it is derived, not rounded up. */
+  .hero { padding-bottom: 4.25rem; }
+
   .hs-cap {
     top: 33%;
     left: 1rem;
@@ -772,19 +781,130 @@
 .search-field svg { width: 1.125rem; height: 1.125rem; color: var(--orange); flex: none; }
 /* 1rem keeps iOS Safari from auto-zooming the page on field focus */
 .search-field input, .search-field select { border: 0; outline: 0; width: 100%; background: transparent; font-size: 1rem; color: var(--ink); }
+/* Above phone width the three pickers are direct children of the card's grid —
+   the wrapper is markup for the phone layout only and must not form a box here. */
+.search-filters { display: contents; }
 @media (max-width: 1024px) { .search-card { grid-template-columns: repeat(2, 1fr); } .search-card .btn { grid-column: 1 / -1; } }
-/* Phones: proper but tight 2-column search card — "Where to?" full width, the
-   filters two-up, Search full width. Kept short so the submit button clears
-   the on-screen keyboard when a field is focused. */
+
+/* ---------------------------------------------------------------
+   Phone. The card sits at the foot of a full-bleed photograph, so
+   its height is the whole design constraint: every row it takes is
+   a row of the picture it covers.
+
+   The desktop card is a toolbar — four labelled boxes in a line.
+   Shrunk onto a 390px screen that became a 2-column grid with
+   Budget stranded alone in a half row, ~9px labels and 36px
+   controls: three stacked rows of chrome to say very little.
+
+   Here it collapses to three bands instead of four rows. The four
+   LABELS all disappear, because on a phone each one is a whole line
+   spent naming a field that its own icon and value already name —
+   they stay in the accessible tree, just not on screen. What is
+   left is what you actually read: where you're going, the three
+   choices as value-bearing chips, and the button. About 157px
+   against the old 244, and every word in it is bigger.
+
+   Root is 14px here (13px ≤380px), so anything that must land on a
+   true pixel size is written in px: the input has to be a real 16px
+   or iOS Safari zooms the page when it takes focus.
+   --------------------------------------------------------------- */
 @media (max-width: 640px) {
-  .search-card { grid-template-columns: 1fr 1fr; gap: 0.5625rem; padding: 0.8125rem; }
-  .search-card .search-field:first-child { grid-column: 1 / -1; }
-  .search-card .btn { grid-column: 1 / -1; }
-  .search-field label { font-size: 0.64rem; margin-bottom: 0.25rem; }
-  .search-field .control { padding: 0.5625rem 0.6875rem; }
-  .search-card .btn { padding-top: 0.75rem; padding-bottom: 0.75rem; }
-  /* 1rem minimum stops iOS Safari from auto-zooming on field focus */
-  input, select, textarea { font-size: 1rem; }
+  .search-card {
+    /* Overrides the grid above — the card is now a simple stack. */
+    display: flex;
+    flex-direction: column;
+    /* Not inherited-harmless: the card's base rule sets `align-items: end` to
+       bottom-align the fields in the desktop GRID. In a column flex the cross
+       axis is horizontal, so that same value shrink-wraps every child and
+       parks it against the right edge. Must be reset here. */
+    align-items: stretch;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-radius: var(--r-md);
+  }
+
+  /* Every label in the card, kept for assistive tech and off the screen.
+     The pin + placeholder name the input; each chip's icon names its picker. */
+  .search-card .search-field > label {
+    position: absolute;
+    width: 0.0625rem;
+    height: 0.0625rem;
+    margin: -0.0625rem;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* ---- The one field you type into ---- */
+  .search-card > .search-field .control { padding: 0.75rem; }
+  .search-card > .search-field .control svg { width: 1.2rem; height: 1.2rem; }
+  .search-card input { font-size: 16px; }
+
+  /* ---- The three you pick from, as one row of chips ----
+     `flex: auto` rather than equal thirds: "Any" and "Any budget" are very
+     different widths, and equal columns would clip the long one while the
+     short one sat half empty. Sizing from content and sharing the slack means
+     nothing truncates until all three are at their longest at once — at which
+     point min-width lets them shrink to an ellipsis rather than overflow. */
+  .search-filters { display: flex; gap: 0.375rem; }
+  .search-filters .search-field {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 2.7rem;
+    padding: 0 0.5rem;
+    border-radius: var(--r-sm);
+    /* Filled, not outlined: it separates "pick one" from the bordered box you
+       type into, and one less hairline in a card this small. */
+    background: var(--surface-2);
+    transition: background-color 0.2s ease;
+  }
+  /* .control only exists to draw the bordered box on desktop. Stepping it out
+     of layout makes the icon and the select the chip's own flex children. */
+  .search-filters .control { display: contents; }
+  /* Descendant, not `>`: Icon wraps its svg in a display:contents span, so the
+     svg is the chip's flex item but not the wrapper's direct child. */
+  .search-filters .control svg { flex: none; width: 1.05rem; height: 1.05rem; }
+  .search-filters .search-field .tu-select {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    /* select.css makes this relative; static here so the hit area below
+       resolves against the CHIP rather than against the value. Safe because
+       the popup is portalled to <body> and positioned fixed — nothing is
+       anchored to this element. */
+    position: static;
+  }
+  /* Qualified through .tu-select so this outranks `.tu-select--bare
+     .tu-select-btn` in select.css — that rule is the same weight, and which of
+     two equal rules wins would otherwise depend on the bundler's file order. */
+  .search-filters .tu-select .tu-select-btn {
+    gap: 0.25rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  /* The whole chip is the target, not just the word in it. The button is still
+     the only interactive element — role, focus and the component's own
+     outside-click test are unchanged, since a press on a pseudo-element
+     reports the button as its target. */
+  .search-filters .tu-select .tu-select-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+  .search-filters .search-field:focus-within,
+  .search-filters .search-field:has(.tu-select.is-open) { background: var(--orange-soft); }
+
+  .search-card .btn { padding-top: 1rem; padding-bottom: 1rem; font-size: 1rem; }
+
+  /* A real 16px, not 1rem — the root is 14px at this width, and iOS Safari
+     zooms the page on focus for anything under 16 true pixels. */
+  input, select, textarea { font-size: 16px; }
 }
 
 /* Inner page hero */

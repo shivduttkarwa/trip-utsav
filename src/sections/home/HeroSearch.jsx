@@ -42,10 +42,11 @@ export default function HeroSearch() {
         <div className="container">
           <form className="search-card" onSubmit={onSearch}>
             <div className="search-field">
-              <label>Where to?</label>
+              <label htmlFor="hero-q">Where to?</label>
               <div className="control">
                 <Icon name="pin" />
                 <input
+                  id="hero-q"
                   type="text"
                   placeholder="Bali, Kashmir, Europe…"
                   value={search.q}
@@ -53,43 +54,49 @@ export default function HeroSearch() {
                 />
               </div>
             </div>
-            <div className="search-field">
-              <label>Trip Type</label>
-              <div className="control">
-                <Icon name="globe" />
-                <Select
-                  variant="bare"
-                  ariaLabel="Trip type"
-                  options={TRIP_TYPES}
-                  value={search.category}
-                  onChange={(v) => setSearch({ ...search, category: v })}
-                />
+            {/* Wrapper is `display: contents` above 640px, so on desktop and
+                tablet these three stay direct children of the card's grid and
+                lay out exactly as before. On phones it becomes a real box —
+                the bordered list the three pickers sit in. */}
+            <div className="search-filters">
+              <div className="search-field">
+                <label>Trip Type</label>
+                <div className="control">
+                  <Icon name="globe" />
+                  <Select
+                    variant="bare"
+                    ariaLabel="Trip type"
+                    options={TRIP_TYPES}
+                    value={search.category}
+                    onChange={(v) => setSearch({ ...search, category: v })}
+                  />
+                </div>
               </div>
-            </div>
-            <div className="search-field">
-              <label>Travel Month</label>
-              <div className="control">
-                <Icon name="calendar" />
-                <Select
-                  variant="bare"
-                  ariaLabel="Travel month"
-                  options={MONTH_OPTIONS}
-                  value={search.month}
-                  onChange={(v) => setSearch({ ...search, month: v })}
-                />
+              <div className="search-field">
+                <label>Travel Month</label>
+                <div className="control">
+                  <Icon name="calendar" />
+                  <Select
+                    variant="bare"
+                    ariaLabel="Travel month"
+                    options={MONTH_OPTIONS}
+                    value={search.month}
+                    onChange={(v) => setSearch({ ...search, month: v })}
+                  />
+                </div>
               </div>
-            </div>
-            <div className="search-field">
-              <label>Budget / Person</label>
-              <div className="control">
-                <Icon name="wallet" />
-                <Select
-                  variant="bare"
-                  ariaLabel="Budget per person"
-                  options={BUDGET_OPTIONS}
-                  value={search.budget}
-                  onChange={(v) => setSearch({ ...search, budget: v })}
-                />
+              <div className="search-field">
+                <label>Budget / Person</label>
+                <div className="control">
+                  <Icon name="wallet" />
+                  <Select
+                    variant="bare"
+                    ariaLabel="Budget per person"
+                    options={BUDGET_OPTIONS}
+                    value={search.budget}
+                    onChange={(v) => setSearch({ ...search, budget: v })}
+                  />
+                </div>
               </div>
             </div>
             <Button size="lg" icon="search" type="submit">Search</Button>
