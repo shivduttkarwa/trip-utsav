@@ -1,55 +1,343 @@
-/* ---------- 12. FOOTER ---------- */
-.footer { background: var(--blue-ink); color: #b9c8de; position: relative; overflow: hidden; }
-.footer::before {
+/* ---------- 12. FOOTER — WHERE NEXT ---------- */
+
+/* ============================================================
+   See components/Footer.jsx for the concept.
+
+   The whole footer rests on ONE effect: a destination name at colossal scale
+   whose letterforms are cut out of that destination's photograph, so the word
+   is a hole in the page with the place behind it. Everything else here is
+   deliberately quiet — thin rules, small type, a lot of air. The restraint is
+   not timidity, it is what keeps the one loud idea legible.
+
+   Anatomy:
+     .lc-glow    the light behind everything
+     .lc-stage   eyebrow, the word, its blurb, the index that drives it
+     .lc-grid    the quiet half — brand, sitemap, contact, newsletter
+     .lc-base    copyright
+   ============================================================ */
+.footer {
+  position: relative;
+  /* Deeper than --blue-ink. Photography shows through type here, and the
+     darker the ground the more the letters read as an aperture rather than as
+     coloured-in glyphs. */
+  background: #04122a;
+  color: #93a6c4;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* One warm light low and left, one cold one high and right. Placed well
+   outside the frame so neither ever resolves as a visible circle — the job is
+   to stop a large dark area reading as a flat swatch. */
+.lc-glow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(42rem 30rem at 6% 96%, rgba(224, 97, 58, 0.22), transparent 68%),
+    radial-gradient(38rem 28rem at 96% 2%, rgba(14, 75, 154, 0.30), transparent 70%);
+}
+
+/* ============================================================
+   THE WINDOW
+   ============================================================ */
+.lc-stage { padding: clamp(3.5rem, 8vw, 7rem) 0 clamp(2rem, 4vw, 3rem); }
+
+.lc-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.lc-eyebrow {
+  font-family: var(--font-display);
+  font-size: clamp(0.66rem, 1.1vw, 0.76rem);
+  font-weight: 800;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--orange);
+}
+/* A counter, set like one: the live number full strength, the total dimmed,
+   a hairline between them doing the work of a slash. */
+.lc-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: #5a6f92;
+  font-variant-numeric: tabular-nums;
+}
+.lc-count b { color: #fff; font-weight: 700; }
+.lc-count i { width: 1.25rem; height: 0.0625rem; background: rgba(255, 255, 255, 0.22); }
+
+/* ---- The word ----
+   Every destination is rendered at once, stacked in a single grid cell. The
+   tallest sets the height once, so changing word never moves the page, and
+   the change itself is a plain crossfade between two already-painted layers
+   rather than a re-layout. */
+.lc-word {
+  display: grid;
+  margin: clamp(0.75rem, 2vw, 1.5rem) 0 clamp(0.75rem, 2vw, 1.25rem);
+}
+.lc-word span {
+  grid-area: 1 / 1;
+  /* Shrink-wrapped to its own text, which is what makes the background box —
+     and therefore the crop of the photograph — belong to the word rather than
+     to the column it sits in. */
+  justify-self: start;
+  font-family: var(--font-statement);
+  font-weight: 600;
+  /* The rem cap is set far above the vw term on purpose: base.css drops the
+     root to 12px above 1440px, so a snug cap would make this SHRINK on the
+     widest screens, which is exactly where it should be largest. */
+  font-size: clamp(3rem, 15.5vw, 20rem);
+  line-height: 0.82;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.75s var(--ease-fade);
+}
+.lc-word span.is-on { opacity: 1; }
+
+/* The effect itself, and the fallback is the reason it is written this way
+   round: without background-clip the declarations below never apply and the
+   word simply stays solid white above. Committing `color: transparent`
+   unguarded would leave nothing on screen at all. */
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .lc-word span {
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    background-size: cover;
+    background-repeat: no-repeat;
+    /* A slow drift inside the letters. The photograph is barely visible
+       through glyph-shaped holes, so it needs to move to register as a
+       photograph at all — otherwise it reads as a texture fill. */
+    animation: lc-drift 22s ease-in-out infinite alternate;
+    /* Only the word on screen actually drifts. All six are painted at once and
+       an animated background-position on a text-clipped layer is the one
+       genuinely expensive thing in this footer — running five invisible copies
+       of it would be five sixths waste. */
+    animation-play-state: paused;
+  }
+  .lc-word span.is-on { animation-play-state: running; }
+}
+@keyframes lc-drift {
+  from { background-position: 40% 44%; }
+  to { background-position: 60% 56%; }
+}
+
+/* Re-keyed on the destination in the JSX, so React replaces the node and this
+   entrance replays on every change — the line arrives with its word. */
+.lc-blurb {
+  font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+  color: #b7c6de;
+  max-width: 32rem;
+  margin: 0;
+  animation: lc-rise 0.6s var(--ease-out) both;
+}
+@keyframes lc-rise {
+  from { opacity: 0; transform: translateY(0.5rem); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---- The index ----
+   The control surface, set as an editorial contents list: number, place,
+   country. Horizontal and wrapping, so it reads as one line of options rather
+   than as a menu. */
+.lc-index {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem clamp(1.25rem, 3vw, 2.5rem);
+  margin-top: clamp(1.75rem, 4vw, 2.75rem);
+  padding-top: clamp(1.25rem, 3vw, 1.75rem);
+  border-top: 0.0625rem solid rgba(255, 255, 255, 0.1);
+}
+.lc-index a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.35rem 0;
+  color: #8497b6;
+  transition: color 0.3s ease;
+}
+.lc-index b {
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: #4d6288;
+  transition: color 0.3s ease;
+}
+.lc-index span {
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 1.6vw, 1.12rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  position: relative;
+}
+/* Underline grown from the left rather than faded in — on a list this wide
+   the eye needs a direction, not just a state. */
+.lc-index span::after {
   content: "";
   position: absolute;
-  right: -10rem;
-  top: -10rem;
-  width: 26.25rem;
-  height: 26.25rem;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(242, 107, 33, 0.14), transparent 65%);
+  left: 0;
+  right: 0;
+  bottom: -0.28em;
+  height: 0.09375rem;
+  background: var(--orange);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 0.4s var(--ease-out);
 }
-.footer-cta { border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.09); padding: 2.75rem 0; }
-.footer-cta .container { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
-.footer-cta h3 { color: #fff; font-size: clamp(1.3rem, 2.4vw, 1.8rem); }
-.footer-cta p { font-size: 0.95rem; }
-.newsletter { display: flex; background: rgba(255, 255, 255, 0.08); border: 0.0625rem solid rgba(255, 255, 255, 0.14); border-radius: var(--r-pill); padding: 0.375rem; min-width: min(26.875rem, 100%); }
-.newsletter input { flex: 1; background: transparent; border: 0; outline: 0; padding: 0 1.125rem; color: #fff; min-width: 0; }
-.newsletter input::placeholder { color: #8fa3c0; }
+.lc-index em {
+  font-style: normal;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #4d6288;
+  transition: color 0.3s ease;
+}
+.lc-index a:hover,
+.lc-index a.is-on { color: #fff; }
+.lc-index a:hover b,
+.lc-index a.is-on b { color: var(--orange); }
+.lc-index a:hover em,
+.lc-index a.is-on em { color: #7d90b0; }
+.lc-index a.is-on span::after,
+.lc-index a:hover span::after { transform: scaleX(1); }
+.lc-index a:focus-visible { outline: 0.125rem solid var(--orange); outline-offset: 0.35rem; border-radius: 0.25rem; }
 
-.footer-main { padding: 4rem 0 2.5rem; position: relative; }
-.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.3fr; gap: 2.5rem; }
-@media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 560px) { .footer-grid { grid-template-columns: 1fr; } }
-.footer-brand img { height: 3.25rem; background: #fff; padding: 0.375rem 0.75rem; border-radius: var(--r-sm); margin-bottom: 1.125rem; }
-.footer-brand p { font-size: 0.92rem; max-width: 18.75rem; }
-.socials { display: flex; gap: 0.625rem; margin-top: 1.375rem; }
-.socials a {
-  width: 2.5rem; height: 2.5rem;
-  border-radius: 50%;
+/* ============================================================
+   THE QUIET HALF
+   ============================================================ */
+.lc-grid {
+  display: grid;
+  grid-template-columns: 1.55fr 0.85fr 1.1fr 1.2fr;
+  gap: clamp(1.75rem, 4vw, 3.25rem);
+  padding: clamp(2.5rem, 5vw, 4rem) 0;
+  border-top: 0.0625rem solid rgba(255, 255, 255, 0.1);
+}
+
+.lc-brand img {
+  height: 3.25rem;
+  background: #fff;
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--r-sm);
+  margin-bottom: 1.125rem;
+}
+.lc-brand p { font-size: 0.9rem; max-width: 24rem; margin: 0; }
+
+.lc-socials { display: flex; gap: 0.5rem; margin-top: 1.5rem; }
+.lc-socials a {
+  width: 2.375rem;
+  height: 2.375rem;
   display: grid;
   place-items: center;
-  background: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  border: 0.0625rem solid rgba(255, 255, 255, 0.14);
   color: #fff;
-  transition: all 0.35s var(--ease-spring);
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.4s var(--ease-out);
 }
-.socials a:hover { background: var(--orange); transform: translateY(-0.25rem) rotate(6deg); box-shadow: var(--shadow-orange); }
-.socials svg { width: 1.0625rem; height: 1.0625rem; }
+.lc-socials a:hover {
+  background: var(--orange);
+  border-color: var(--orange);
+  transform: translateY(-0.1875rem);
+}
+.lc-socials svg { width: 1rem; height: 1rem; }
 
-.footer h4 { color: #fff; font-size: 1rem; margin-bottom: 1.25rem; letter-spacing: 0.02em; }
-.footer-links { display: grid; gap: 0.6875rem; }
-.footer-links a { font-size: 0.92rem; display: inline-flex; align-items: center; gap: 0.5rem; transition: color 0.25s, gap 0.25s; }
-.footer-links a::before { content: "→"; color: var(--orange); font-size: 0.8rem; opacity: 0; margin-left: -0.875rem; transition: all 0.25s; }
-.footer-links a:hover { color: #fff; }
-.footer-links a:hover::before { opacity: 1; margin-left: 0; }
+.footer h4 {
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-bottom: 1.15rem;
+}
 
+.lc-nav ul { display: grid; gap: 0.7rem; }
+.lc-nav a {
+  font-size: 0.92rem;
+  transition: color 0.25s ease, padding-left 0.3s var(--ease-out);
+}
+.lc-nav a:hover { color: #fff; padding-left: 0.3rem; }
+
+/* Shared with the Contact page aside, which is the same dark ground — kept as
+   it was so this redesign cannot reach that page. */
 .footer-contact { display: grid; gap: 0.9375rem; }
-.footer-contact li { display: flex; gap: 0.75rem; font-size: 0.92rem; align-items: flex-start; }
+.footer-contact li { display: flex; gap: 0.75rem; font-size: 0.9rem; align-items: flex-start; }
 .footer-contact svg { width: 1.0625rem; height: 1.0625rem; color: var(--orange); flex: none; margin-top: 0.1875rem; }
 .footer-contact a:hover { color: #fff; }
 
-.footer-bottom { border-top: 0.0625rem solid rgba(255, 255, 255, 0.09); padding: 1.25rem 0; font-size: 0.84rem; }
-.footer-bottom .container { display: flex; justify-content: space-between; gap: 0.875rem; flex-wrap: wrap; }
-.footer-bottom a:hover { color: #fff; }
-.footer-bottom .legal { display: flex; gap: 1.25rem; }
+.lc-sub p { font-size: 0.88rem; margin: 0 0 1.1rem; }
+/* Underline, not a box. A pill input in a corner this quiet becomes the
+   loudest object in it and starts competing with the word. */
+.lc-sub form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.22);
+  padding-bottom: 0.5rem;
+  transition: border-color 0.3s ease;
+}
+.lc-sub form:focus-within { border-color: var(--orange); }
+.lc-sub input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: #fff;
+  font-size: 0.95rem;
+  padding: 0.25rem 0;
+}
+.lc-sub input::placeholder { color: #566b8e; }
+
+/* ============================================================
+   BASE
+   ============================================================ */
+.lc-base {
+  border-top: 0.0625rem solid rgba(255, 255, 255, 0.1);
+  padding: 1.25rem 0;
+  font-size: 0.8rem;
+  color: #6d82a4;
+}
+.lc-base .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.875rem;
+  flex-wrap: wrap;
+}
+.lc-legal { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+.lc-legal a { transition: color 0.25s ease; }
+.lc-legal a:hover { color: #fff; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
+  .lc-grid { grid-template-columns: 1fr 1fr; }
+  .lc-brand { grid-column: 1 / -1; }
+}
+
+@media (max-width: 640px) {
+  .lc-grid { grid-template-columns: 1fr; }
+  .lc-brand { grid-column: auto; }
+
+  /* The index stops being one editorial line at this width and becomes a
+     list, so the country drops — at two items per row it is the field that
+     pushes the place name to wrap. */
+  .lc-index { gap: 0.25rem 1.5rem; }
+  .lc-index em { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lc-word span { animation: none; }
+  .lc-blurb { animation: none; }
+  .lc-socials a:hover { transform: none; }
+}
