@@ -32,20 +32,11 @@ export default function MagicFX() {
       });
     }
 
-    /* 2. 3D tilt on destination cards */
-    document.querySelectorAll(".dest-card").forEach((card) => {
-      bind(card, "pointermove", (e) => {
-        const r = card.getBoundingClientRect();
-        const px = (e.clientX - r.left) / r.width - 0.5;
-        const py = (e.clientY - r.top) / r.height - 0.5;
-        card.style.setProperty("--ry", `${(px * 9).toFixed(2)}deg`);
-        card.style.setProperty("--rx", `${(-py * 7).toFixed(2)}deg`);
-      });
-      bind(card, "pointerleave", () => {
-        card.style.setProperty("--rx", "0deg");
-        card.style.setProperty("--ry", "0deg");
-      });
-    });
+    /* The 3D pointer tilt that used to live here went with the destination
+       card's rectangle. The card is a perforated stamp now, and its edge is a
+       masked silhouette lit by a drop-shadow — rotating that in perspective
+       just bends its own notches. The card's hover is entirely CSS now; see
+       .dest-card in cards.css. */
 
     return () => cleanups.forEach((fn) => fn());
   }, [pathname]);

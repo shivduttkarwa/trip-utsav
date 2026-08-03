@@ -64,7 +64,7 @@ export default function Destinations() {
           <div className="grid grid-4">
             {list.map((d, i) => (
               <Reveal key={d.name} delay={(i % 4) * 0.07}>
-                <DestinationCard dest={d} showCountry />
+                <DestinationCard dest={d} />
               </Reveal>
             ))}
           </div>
