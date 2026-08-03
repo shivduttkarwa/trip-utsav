@@ -10,30 +10,55 @@
   padding: 0 0 clamp(1.375rem, 3.5vh, 2.5rem);
 }
 
-/* ===== Hero slider — crossfade =====
-   Everything cross-dissolves on opacity. Nothing is clipped, so there is never
-   a hard edge travelling across the frame and never two washes stacked
-   mid-transition. Type rules are scoped `.hs-cap .hs-*` rather than by element:
+/* ===== Hero slider — "the flight" =====
+   The preloader plots a route on a map; the package cards are boarding passes
+   with dotted routes and codes; the hero is the leg between them. A dashed
+   route runs across the foot of the photograph, the autoplay timer is a plane
+   flying the current leg, and when it lands the next destination BLOOMS out of
+   the landing point instead of crossfading. Navigation, timer and transition
+   are one mechanic.
+
+   Type rules are scoped `.hs-cap .hs-*` rather than by element:
    `:is(.hero, .cta-content) h1` further down is (0,1,1) and would otherwise win
    the margin and text-shadow off a bare `.hs-word`. */
 .hs { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
 
+/* Slides no longer fade at all. The outgoing frame holds perfectly still
+   underneath (z 1) while the incoming one (z 2) opens over it as a circle
+   anchored at its own stop on the route — --bx is set inline per slide from
+   the same array that positions the stops, and the vertical anchor matches
+   where the route bar sits in the composition. Rest slides wait invisible
+   below both. */
 .hs-slide {
   position: absolute;
   inset: 0;
   opacity: 0;
   transition: none;
 }
-.hs-slide.is-in { opacity: 1; transition: opacity 1.05s var(--ease-fade); }
-.hs-slide.is-out { opacity: 0; transition: opacity 1.05s var(--ease-fade); }
+.hs-slide.is-out { opacity: 1; z-index: 1; }
+.hs-slide.is-in {
+  opacity: 1;
+  z-index: 2;
+  animation: hs-bloom 1.3s var(--ease-out) both;
+}
+/* 0.5rem, not 0: the circle spends its first frames visibly ON the landing
+   point, so the eye catches where the new place came from. 150% of the
+   diagonal-ish reference comfortably covers the frame from a point near the
+   bottom edge. */
+@keyframes hs-bloom {
+  from { clip-path: circle(0.5rem at var(--bx, 50%) 86%); }
+  to { clip-path: circle(150% at var(--bx, 50%) 86%); }
+}
+/* No outgoing frame underneath (first paint, or a dwell after release):
+   nothing to bloom over, so don't. */
+.hs-slide.is-in.is-first { animation: none; }
 .hs-slide img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.14); }
 /* A push-in on a very front-loaded curve: most of the 1.14 -> 1 travel is spent
    in the first second, then it creeps for the rest of the slide. One transition
-   does the job of a settle plus a ken-burns drift, and because the outgoing
-   slide keeps going PAST 1 rather than rewinding to rest, the two layers never
-   visibly move in opposite directions mid-crossfade. */
+   does the job of a settle plus a ken-burns drift. The outgoing slide is being
+   covered rather than counter-animated, so it simply freezes where the bloom
+   caught it. */
 .hs-slide.is-in img { transform: scale(1); transition: transform 7.5s cubic-bezier(0.16, 1, 0.3, 1); }
-.hs-slide.is-out img { transform: scale(0.965); transition: transform 1.4s var(--ease-out); }
 
 /* One wash for the whole stack — it belongs to the slider, not to each slide. */
 .hs-scrim {
@@ -49,15 +74,32 @@
       rgba(5, 17, 38, 0) 62%),
     linear-gradient(180deg, rgba(5, 17, 38, 0.28) 0%, rgba(5, 17, 38, 0) 22%, rgba(5, 17, 38, 0) 46%, rgba(5, 17, 38, 0.8) 100%);
 }
+/* Film grain over the wash. A near-invisible layer of noise is most of the
+   difference between "photo with a gradient on it" and cinema — and it also
+   breaks up the banding the scrim's long gradients otherwise show on soft
+   skies. Tiled SVG turbulence, no network request. */
+.hs-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.11;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 7.5rem 7.5rem;
+}
 
-/* ---- Captions: stacked on one anchor, cross-dissolving ---- */
+/* ---- Captions: stacked on one anchor, cross-dissolving ----
+   Anchored to BOTH gutters: the title hangs from the left edge while the
+   location tag sits alone against the right, so the two ends of the frame
+   answer each other instead of everything queueing up on the left. */
 .hs-cap {
   position: absolute;
   z-index: 3;
   left: clamp(1.375rem, 5vw, 5.25rem);
+  right: clamp(1.375rem, 5vw, 5.25rem);
   top: 44%;
   transform: translateY(-50%);
-  max-width: min(72rem, calc(100% - 2.75rem));
   pointer-events: none;
 }
 
@@ -103,21 +145,15 @@
 }
 .hs-cap .hs-word span { display: inline-block; }
 
-/* Caption typography — Comic Neue italic over Archivo.
+/* Caption typography — one family, two sizes.
  *
- * The pairing works because the two faces are doing opposite jobs: a light
- * informal script carrying the phrase, then a wide neutral grotesque carrying
- * the noun. Neither is pushed to its heaviest — the earlier setting used a
- * 900-weight condensed word under the script, and two shouting faces in one
- * eyeline is what made it read as generic stock-hero. Contrast here comes from
- * scale and from tone, not from weight.
- *
- * Order is location → lead → word: the small tracked line on top gives the
- * block a lid to hang from. */
+ * Both title lines are set in Archivo and the hierarchy is carried by scale
+ * alone: a half-size line over a full-size one, same weight step apart. One
+ * voice at two volumes reads as a single statement; the location tag on the
+ * opposite edge is the only other element allowed in the eyeline. */
 .hs-cap .hs-loc {
   display: flex;
-  align-items: center;
-  gap: 0.875rem;
+  justify-content: flex-end;
   margin-bottom: 1.35rem;
   font-family: var(--font-display);
   font-size: clamp(0.68rem, 0.85vw, 0.78rem);
@@ -127,44 +163,25 @@
   color: rgba(255, 255, 255, 0.86);
   text-shadow: 0 0.06em 0.25em rgba(5, 17, 38, 0.6);
 }
-/* A hairline, not a bar. The old 3px glowing slab was the heaviest thing in the
-   composition after the headline. */
-.hs-cap .hs-loc::before {
-  content: "";
-  width: 0;
-  height: 0.0625rem;
-  background: var(--orange);
-  flex: none;
-  transition: none;
-}
-/* Draws itself out from the gutter as the caption lands. */
-.hs-cap.is-in .hs-loc::before { width: 2.5rem; transition: width 0.9s var(--ease-out) 0.14s; }
-/* Lead-in — the script face sitting light against the mass of the word below,
-   in the same white so the two lines read as one statement rather than as an
-   accent plus a headline. Italic: Comic Neue's upright is close enough to the
-   roman below that the pairing needs the slant to separate. The Edu VIC metric
-   hacks that used to live here (word-spacing for its hairline space glyph,
-   bottom padding for its swash descenders) are gone — Comic Neue is normally
-   proportioned. */
+/* Lead-in — the word's own face a step down: half the size, one weight
+   lighter, tracking eased open where the word's is pulled tight. */
 .hs-cap .hs-lead {
   display: block;
-  font-family: var(--font-hand);
-  font-style: italic;
-  /* Comic Neue ships 300/400/700 only — no variable axis. A computed 560 would
-     round back up to 700 and change nothing, so 400 is the real step down. */
+  font-family: var(--font-statement);
   font-weight: 400;
   /* Display sizes are capped in rem far above the vw term on purpose. The root
      ladder in base.css drops to 12px at >=1440px, so a snug rem cap makes the
      headline SHRINK on wider screens — 98px at 1400, 73px at 1440. Keeping the
      cap out of reach lets vw govern smoothly across every desktop width. */
-  font-size: clamp(2rem, 4.375vw, 5.625rem);
-  line-height: 1.14;
-  /* em, so it tracks the size. Keep changes here at 0.01em or coarser — at this
-     display size 0.002em works out to a tenth of a pixel and looks like the
-     property is being ignored. */
-  letter-spacing: -0.022em;
-  color: #fff;
-  margin: 0 0 0.06em -0.03em;            /* -0.03em = optical align w/ the word */
+  font-size: clamp(1.4rem, 3.1vw, 4.25rem);
+  line-height: 1.16;
+  letter-spacing: -0.01em;
+  /* Uppercase closes up the gaps between words; without this the line reads
+     as one run-together word at display size. */
+  word-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.94);
+  margin: 0 0 0.12em;
   text-shadow:
     0 0.03em 0.055em rgba(5, 17, 38, 0.75),
     0 0.06em 0.24em rgba(5, 17, 38, 0.45);
@@ -188,7 +205,7 @@
     0 0.04em 0.16em rgba(5, 17, 38, 0.32);
 }
 
-/* ---- Controls: pagination rail left, counter + arrows right ----
+/* ---- The route bar ----
    In flow above .hero-foot, inside a .container, so it aligns to the same
    gutter as the search card at every breakpoint. */
 .hs-ui {
@@ -197,59 +214,159 @@
   flex: none;
   margin-bottom: clamp(0.875rem, 2.4vh, 1.75rem);
 }
-.hs-ui .container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.25rem;
+.hr { display: flex; align-items: center; gap: clamp(1rem, 3vw, 2.25rem); }
+
+/* Geometry. Everything on the track hangs off --hr-y, the altitude of the
+   route line: code above it, city below it, dot / trail / plane dead on it.
+   The stop slots are fixed-height so the dot maths cannot drift:
+   code (1.25) + dot gap (0.15625) + half the dot (0.28125) = 1.6875. */
+.hr-track {
+  position: relative;
+  flex: 1;
+  --hr-y: 1.6875rem;
+  height: 3.5rem;
+}
+.hr-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--hr-y);
+  /* --hr-y is the CENTRELINE the dots and plane sit on, not a top edge. */
+  transform: translateY(-50%);
+  height: 0.09375rem;
+  background-image: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.38) 0 0.25rem, transparent 0.25rem 0.625rem);
+  /* The line can cross open water or sky, where low-alpha white vanishes. */
+  filter: drop-shadow(0 0.0625rem 0.125rem rgba(5, 17, 38, 0.5));
 }
 
-.hs-dots { display: flex; align-items: center; gap: 0.625rem; }
-.hs-dot {
-  position: relative;
-  width: 1.625rem;
-  height: 0.1875rem;
+/* The flown part of the route. Same keyframe clock as the plane, so the two
+   cannot separate: the trail's right edge IS wherever the plane is. */
+.hr-trail {
+  position: absolute;
+  left: 2%;
+  top: var(--hr-y);
+  transform: translateY(-50%);
+  height: 0.125rem;
+  background: linear-gradient(90deg, rgba(224, 97, 58, 0.25), var(--orange));
+  box-shadow: 0 0 0.5rem rgba(224, 97, 58, 0.55);
+  animation: hr-trail linear forwards;
+}
+@keyframes hr-trail {
+  from { width: calc(var(--sx) - 2%); }
+  to { width: calc(var(--et) - 2%); }
+}
+
+.hr-plane {
+  position: absolute;
+  top: var(--hr-y);
+  left: var(--sx);
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  filter: drop-shadow(0 0.125rem 0.25rem rgba(5, 17, 38, 0.65));
+  animation: hr-fly linear forwards;
+}
+/* The icon is drawn nose-up-right; 45° puts it level, flying right. */
+.hr-plane svg { width: 1.375rem; height: 1.375rem; transform: rotate(45deg); }
+@keyframes hr-fly {
+  from { left: var(--sx); }
+  to { left: var(--ex); }
+}
+/* The wrap leg: the plane carries on past the last stop and off the end of the
+   route, fading out as it goes, while the trail completes to the final stop —
+   and the first destination blooms back in behind it. */
+.hr-plane.is-loop { animation-name: hr-fly, hr-vanish; }
+@keyframes hr-vanish {
+  0%, 82% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.hr-plane.is-parked { animation: none; }
+
+/* Frozen mid-air, not reset — the JS timer banks its remaining time to match. */
+.hs-ui:hover .hr-plane,
+.hs-ui:hover .hr-trail,
+.hs-ui:focus-within .hr-plane,
+.hs-ui:focus-within .hr-trail { animation-play-state: paused; }
+
+/* ---- Stops ---- */
+.hr-stop {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--x);
+  transform: translateX(-50%);
+  width: 7.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 0;
   border: 0;
-  border-radius: 0.125rem;
-  background: rgba(255, 255, 255, 0.45);
-  /* The rail can land on a bright frame (open water, sky), where flat white at
-     low alpha disappears. A contact shadow holds it on any slide. */
-  box-shadow: 0 0.0625rem 0.1875rem rgba(5, 17, 38, 0.45);
+  background: none;
   cursor: pointer;
-  overflow: hidden;
-  transition: width 0.55s var(--ease-out), background 0.35s ease;
 }
-/* The bar is 3px tall; this gives it a real touch target without moving it. */
-.hs-dot::before { content: ""; position: absolute; inset: -0.75rem -0.25rem; }
-.hs-dot:hover { background: rgba(255, 255, 255, 0.75); }
-.hs-dot.is-active { width: 4.25rem; background: rgba(255, 255, 255, 0.34); }
-/* The fill runs the autoplay interval, so the rail doubles as the timer. */
-.hs-dot i {
+/* The slot heights ARE the dot maths — if the column ever runs a pixel over
+   the track, flex-shrink takes it out of the dot and floats it off the line.
+   Nothing here is allowed to shrink; the city line overflows instead. */
+.hr-stop > * { flex: none; }
+.hr-code {
+  height: 1.25rem;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.55);
+  text-shadow: 0 0.0625rem 0.25rem rgba(5, 17, 38, 0.6);
+  transition: color 0.35s;
+}
+.hr-dot {
+  position: relative;
+  width: 0.5625rem;
+  height: 0.5625rem;
+  margin-top: 0.15625rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 0.0625rem 0.1875rem rgba(5, 17, 38, 0.5);
+  transition: background 0.35s, transform 0.35s var(--ease-spring);
+}
+/* Touchdown ripple. Lives on a fresh element each activation (each stop is its
+   own node), so re-landing on the same route always replays it. */
+.hr-dot::after {
+  content: "";
   position: absolute;
   inset: 0;
-  display: block;
-  border-radius: inherit;
-  background: var(--orange);
-  transform-origin: left center;
-  animation: hs-fill linear forwards;
+  border-radius: 50%;
+  border: 0.09375rem solid var(--orange);
+  opacity: 0;
 }
-/* Frozen in place, not reset — the JS timer banks its remaining time to match. */
-.hs-ui:hover .hs-dot i,
-.hs-ui:focus-within .hs-dot i { animation-play-state: paused; }
-@keyframes hs-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-
-.hs-nav { display: flex; align-items: center; gap: 0.75rem; }
-.hs-count {
+.hr-city {
+  margin-top: 0.4375rem;
   font-family: var(--font-display);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  font-variant-numeric: tabular-nums;
-  color: rgba(255, 255, 255, 0.55);
-  margin-right: 0.25rem;
+  font-size: 0.68rem;
+  /* The body's 1.7 is a reading measure; at caption size it just makes the
+     column taller than the track. */
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.45);
+  text-shadow: 0 0.0625rem 0.25rem rgba(5, 17, 38, 0.6);
+  transition: color 0.35s;
 }
-.hs-count b { color: #fff; }
+
+.hr-stop:hover .hr-code { color: rgba(255, 255, 255, 0.9); }
+.hr-stop:hover .hr-city { color: rgba(255, 255, 255, 0.75); }
+.hr-stop.is-active .hr-code { color: #fff; }
+.hr-stop.is-active .hr-city { color: rgba(255, 255, 255, 0.85); }
+.hr-stop.is-active .hr-dot { background: var(--orange); transform: scale(1.25); box-shadow: 0 0 0.625rem rgba(224, 97, 58, 0.7); }
+.hr-stop.is-active .hr-dot::after { animation: hr-ping 1s var(--ease-out) 0.1s; }
+@keyframes hr-ping {
+  0% { transform: scale(0.6); opacity: 0.9; }
+  100% { transform: scale(3.4); opacity: 0; }
+}
+.hr-stop:focus-visible { outline: 0.125rem solid var(--orange); outline-offset: 0.25rem; border-radius: 0.5rem; }
+
+/* ---- Arrows ---- */
+.hr-nav { display: flex; align-items: center; gap: 0.75rem; }
 .hs-arrow {
   width: 2.625rem;
   height: 2.625rem;
@@ -267,18 +384,33 @@
 .hs-arrow svg { width: 1.0625rem; height: 1.0625rem; }
 .hs-arrow:hover { background: rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.6); }
 .hs-arrow:active { transform: scale(0.93); }
-.hs-dot:focus-visible,
 .hs-arrow:focus-visible { outline: 0.125rem solid var(--orange); outline-offset: 0.25rem; }
 
-/* No travel, no defocus, no push-in — just a short dissolve. */
+/* No bloom, no defocus, no flight — just a short dissolve, with the plane
+   parked at the active stop (the component renders it parked; the belt-and-
+   braces rules cover any straggler animation). */
 @media (prefers-reduced-motion: reduce) {
-  .hs-slide.is-in, .hs-slide.is-out { transition-duration: 0.25s; }
-  .hs-slide img, .hs-slide.is-in img, .hs-slide.is-out img { transform: none; transition: none; }
+  .hs-slide.is-in { animation: none; transition: opacity 0.25s ease; }
+  .hs-slide img, .hs-slide.is-in img { transform: none; transition: none; }
+  .hr-plane, .hr-trail { animation: none; }
+  .hr-trail { width: calc(var(--sx, 2%) - 2%); }
+  .hr-stop.is-active .hr-dot::after { animation: none; }
   .hs-cap .hs-anim { transform: none; filter: none; }
   .hs-cap.is-in .hs-anim { transition: opacity 0.25s ease; transition-delay: 0s; }
   .hs-cap.is-out .hs-anim { transform: none; filter: none; transition: opacity 0.25s ease; transition-delay: 0s; }
-  .hs-cap.is-in .hs-loc::before { transition: none; }
 }
+/* Short viewports (laptops around 720-760px and squatter). The caption is
+   anchored at 44% of the frame and the word is sized against the WIDTH, so a
+   wide-but-short screen lets the statement descend into the route bar and the
+   fare tag print over its glyphs. Lift the anchor and let the height cap the
+   word instead — 46rem in a media query resolves against the initial 16px, not
+   the root ladder, so this is a true 736px. */
+@media (max-height: 46rem) {
+  .hs-cap { top: 38%; }
+  .hs-cap .hs-lead { font-size: clamp(1.2rem, 2.4vw, 3.25rem); }
+  .hs-cap .hs-word { font-size: clamp(2rem, 5vw, 6.5rem); }
+}
+
 /* Mobile: lift the caption and cap the title so long words never bleed. */
 /* ---------------------------------------------------------------
    Phone. The caption was set at desktop proportions scaled down,
@@ -291,25 +423,26 @@
    with no break opportunity, so the word governs the size, not the
    frame. At 12.5vw it measures about 313px inside a 358px gutter on
    a 390px screen — anything larger overflows on that one slide.
+
+   The route slims down to codes on the line: cities and fares are
+   detail a thumb-width track cannot afford, and the codes alone
+   still read as a route.
    --------------------------------------------------------------- */
 @media (max-width: 700px) {
   .hs-cap {
     top: 33%;
     left: 1rem;
-    max-width: calc(100% - 2rem);
+    right: 1rem;
   }
-  .hs-cap .hs-loc { margin-bottom: 0.75rem; font-size: 0.66rem; letter-spacing: 0.2em; gap: 0.5rem; }
-  .hs-cap .hs-loc::before { width: 1.5rem; }
+  .hs-cap .hs-loc { margin-bottom: 0.75rem; font-size: 0.66rem; letter-spacing: 0.2em; }
 
-  /* Comic Neue at 400 is a hairline once it is down at 28px over a
-     photograph — it reads as a caption sitting near the headline rather than
-     as the first half of it. The family ships 300/400/700 and nothing in
-     between, so 700 is the only step that holds at this size. */
+  /* One weight up from desktop: 400 uppercase at ~20px over a busy photograph
+     thins out, and the line has to hold its own directly above a 12.5vw word. */
   .hs-cap .hs-lead {
-    font-weight: 700;
-    font-size: clamp(1.6rem, 7.6vw, 2.6rem);
-    letter-spacing: -0.015em;
-    margin-bottom: 0.1em;
+    font-weight: 500;
+    font-size: clamp(1.15rem, 5.4vw, 1.9rem);
+    letter-spacing: -0.005em;
+    margin-bottom: 0.14em;
     text-shadow:
       0 0.03em 0.06em rgba(5, 17, 38, 0.8),
       0 0.06em 0.3em rgba(5, 17, 38, 0.5);
@@ -336,10 +469,14 @@
         rgba(5, 17, 38, 0.82) 100%);
   }
 
-  .hs-ui .container { gap: 0.75rem; }
-  .hs-count { display: none; }
-  .hs-dot { width: 1.25rem; }
-  .hs-dot.is-active { width: 2.75rem; }
+  .hr { gap: 0.875rem; }
+  /* code (1.125) + dot gap (0.25) + half the dot (0.25) = 1.625 */
+  .hr-track { --hr-y: 1.625rem; height: 2rem; }
+  .hr-city { display: none; }
+  .hr-code { height: 1.125rem; font-size: 0.62rem; letter-spacing: 0.12em; }
+  .hr-dot { width: 0.5rem; height: 0.5rem; margin-top: 0.25rem; }
+  .hr-stop { width: 3.5rem; }
+  .hr-plane svg { width: 1.125rem; height: 1.125rem; }
   .hs-arrow { width: 2.25rem; height: 2.25rem; }
   .hs-arrow svg { width: 0.9375rem; height: 0.9375rem; }
 }
