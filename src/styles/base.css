@@ -26,11 +26,17 @@
   --body: #545d70;
   --muted: #8b93a5;
   --line: #ebedf3;
-  /* The section band tone. Deliberately a clear step below white: the package
-     ticket's stub is solid --white, and .pass-stub in HowItWorks punches its
-     notches by painting circles in this exact colour, so anything that reads
-     as "nearly white" makes both of those dissolve into the band. */
-  --surface: #ecece7;
+  /* The section band tone — a gold-tinted paper rather than a neutral grey,
+     which puts the bands in the same warm family as --orange (#e0613a) and
+     --orange-soft instead of reading as an unrelated cool wash behind them.
+
+     Two things are keyed to this value and break quietly if it moves toward
+     white: .pass-stub in HowItWorks punches its notches by painting circles in
+     this exact colour, and the destination stamp's .dest-paper (#fdf8ec) is a
+     warm cream chosen to sit ON this band — its perforations are a real mask,
+     so the band shows through them and the two must stay far enough apart to
+     read as holes. */
+  --surface: #f6f3ec;
   --surface-2: #f1f2f6;
   --white: #ffffff;
 

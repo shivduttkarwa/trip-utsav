@@ -479,16 +479,27 @@
         rgba(5, 17, 38, 0.82) 100%);
   }
 
+  /* The arrows go. Every stop on the route is already a labelled button, so
+     the route IS the navigation and the pair of chevrons was a second set of
+     controls competing for a track a thumb wide. Dropping them also hands
+     their width back to the route, which is what the sizes below spend. */
+  .hr-nav { display: none; }
+
   .hr { gap: 0.875rem; }
-  /* code (1.125) + dot gap (0.25) + half the dot (0.25) = 1.625 */
-  .hr-track { --hr-y: 1.625rem; height: 2rem; }
+  /* Same formula as the desktop track, re-derived for the sizes below —
+     code (1.4) + dot gap (0.25) + half the dot (0.3125) = 1.9625.
+     Track height clears the column: 1.4 + 0.25 + 0.625 = 2.275. */
+  .hr-track { --hr-y: 1.9625rem; height: 2.375rem; }
   .hr-city { display: none; }
-  .hr-code { height: 1.125rem; font-size: 0.62rem; letter-spacing: 0.12em; }
-  .hr-dot { width: 0.5rem; height: 0.5rem; margin-top: 0.25rem; }
+  .hr-code { height: 1.4rem; font-size: 0.78rem; letter-spacing: 0.12em; }
+  .hr-dot { width: 0.625rem; height: 0.625rem; margin-top: 0.25rem; }
   .hr-stop { width: 3.5rem; }
-  .hr-plane svg { width: 1.125rem; height: 1.125rem; }
-  .hs-arrow { width: 2.25rem; height: 2.25rem; }
-  .hs-arrow svg { width: 0.9375rem; height: 0.9375rem; }
+  .hr-plane svg { width: 1.4rem; height: 1.4rem; }
+  /* The rails scale with the traffic on them — at the old hairline weights a
+     heavier plane and fatter dots read as flying along a thread. The trail
+     stays a step above the line so the flown leg still reads as the lit one. */
+  .hr-line { height: 0.125rem; }
+  .hr-trail { height: 0.1875rem; }
 }
 
 /* Search card + marquee live at the bottom of the hero (no page-pulling margins) */

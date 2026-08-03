@@ -6,7 +6,7 @@ import { DESTINATIONS } from "../../data/destinations";
 
 export default function DestinationsGrid() {
   return (
-    <section className="section">
+    <section className="section bg-surface">
       <div className="container">
         <SectionHead
           layout="split"

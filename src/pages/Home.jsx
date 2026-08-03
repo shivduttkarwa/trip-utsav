@@ -17,8 +17,8 @@ export default function Home() {
       <Marquee />
       <FeaturedPackages />
       <StatsBar />
-      <DestinationsGrid />
       <MapCta />
+      <DestinationsGrid />
       <ServicesPreview />
       <WhyUs />
       <HowItWorks />

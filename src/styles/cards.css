@@ -354,6 +354,16 @@
 /* Below this the stub has to hold fare + button in a ~18rem card. */
 @media (max-width: 640px) {
   .pkg-barcode { display: none; }
+
+  /* Taller cards on the swipe track (~+15% overall).
+     The height has to come out of the photograph, because it is the only
+     band that can be given one: .pkg-stub is pinned to --stub so the punched
+     notches stay on the tear line, and .pkg-body is sized by its own content.
+     16/10.5 -> 8/7 adds about two thirds of a rem-ladder line to a card
+     that is 80vw wide, which on a 390px screen is ~68px on a ~440px card.
+     Near-square reads better here than the desktop crop anyway — a phone has
+     vertical room to spend and the cinematic ratio wastes it. */
+  .pkg-media { aspect-ratio: 8 / 7; }
 }
 
 /* Package detail hero reuses this one line over its own photography. */
