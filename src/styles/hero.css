@@ -163,17 +163,18 @@
   color: rgba(255, 255, 255, 0.86);
   text-shadow: 0 0.06em 0.25em rgba(5, 17, 38, 0.6);
 }
-/* Lead-in — the word's own face a step down: half the size, one weight
-   lighter, tracking eased open where the word's is pulled tight. */
+/* Lead-in — the word's own face a step down: smaller, tracking eased open
+   where the word's is pulled tight. Weight now matches the statement at 500,
+   so scale and tracking carry the hierarchy on their own. */
 .hs-cap .hs-lead {
   display: block;
   font-family: var(--font-statement);
-  font-weight: 400;
+  font-weight: 500;
   /* Display sizes are capped in rem far above the vw term on purpose. The root
      ladder in base.css drops to 12px at >=1440px, so a snug rem cap makes the
      headline SHRINK on wider screens — 98px at 1400, 73px at 1440. Keeping the
      cap out of reach lets vw govern smoothly across every desktop width. */
-  font-size: clamp(1.4rem, 3.1vw, 4.25rem);
+  font-size: clamp(1.925rem, 4.26vw, 5.84rem);
   line-height: 1.16;
   letter-spacing: -0.01em;
   /* Uppercase closes up the gaps between words; without this the line reads
@@ -407,7 +408,7 @@
    the root ladder, so this is a true 736px. */
 @media (max-height: 46rem) {
   .hs-cap { top: 38%; }
-  .hs-cap .hs-lead { font-size: clamp(1.2rem, 2.4vw, 3.25rem); }
+  .hs-cap .hs-lead { font-size: clamp(1.65rem, 3.3vw, 4.47rem); }
   .hs-cap .hs-word { font-size: clamp(2rem, 5vw, 6.5rem); }
 }
 
@@ -445,11 +446,11 @@
   }
   .hs-cap .hs-loc { margin-bottom: 0.75rem; font-size: 0.66rem; letter-spacing: 0.2em; }
 
-  /* One weight up from desktop: 400 uppercase at ~20px over a busy photograph
+  /* One weight up from desktop: uppercase at this size over a busy photograph
      thins out, and the line has to hold its own directly above a 12.5vw word. */
   .hs-cap .hs-lead {
-    font-weight: 500;
-    font-size: clamp(1.15rem, 5.4vw, 1.9rem);
+    font-weight: 600;
+    font-size: clamp(1.58rem, 7.43vw, 2.61rem);
     letter-spacing: -0.005em;
     margin-bottom: 0.14em;
     text-shadow:
