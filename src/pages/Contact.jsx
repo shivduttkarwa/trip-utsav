@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { FALLBACK_IMG, IMG } from "../data/packages";
+import { FALLBACK_IMG } from "../data/packages";
 import { SITE } from "../data/site";
+import asset from "../asset";
 import { useUI } from "../components/UIContext";
 import Icon from "../components/Icon";
 import Button from "../components/Button";
@@ -17,7 +18,7 @@ const SUBJECTS = [
     .map((l) => ({ value: l, label: l })),
 ];
 
-const HERO = IMG("photo-1521295121783-8a321d551ad2", 2000);
+const HERO = asset("images/hero/hero-contact.webp");
 
 const CARDS = [
   { icon: "phone", title: "Call Us", line1: SITE.phone, line2: "Mon–Sat, 9:30 AM – 7:30 PM", href: SITE.phoneHref, cta: "Call now" },

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { FALLBACK_IMG, IMG } from "../data/packages";
+import asset from "../asset";
 import Icon from "../components/Icon";
 import Button from "../components/Button";
 import Reveal from "../components/Reveal";
@@ -8,7 +9,7 @@ import Stat from "../components/Stat";
 import TestimonialSlider from "../components/TestimonialSlider";
 import { useUI } from "../components/UIContext";
 
-const HERO = IMG("photo-1488646953014-85cb44e25828", 2000);
+const HERO = asset("images/hero/hero-about.webp");
 const STORY = IMG("photo-1469854523086-cc02fe5d8800", 1000);
 
 const VALUES = [

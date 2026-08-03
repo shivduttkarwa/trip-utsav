@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { FALLBACK_IMG, IMG } from "../data/packages";
+import { FALLBACK_IMG } from "../data/packages";
+import asset from "../asset";
 import Icon from "../components/Icon";
 import Button from "../components/Button";
 import Reveal from "../components/Reveal";
@@ -8,7 +9,7 @@ import IconCard from "../components/IconCard";
 import Accordion from "../components/Accordion";
 import { useUI } from "../components/UIContext";
 
-const HERO = IMG("photo-1436491865332-7a61a109cc05", 2000);
+const HERO = asset("images/hero/hero-services.webp");
 
 const SERVICES = [
   { icon: "plane", title: "Flight Bookings", text: "Domestic and international fares with smart routing, meal preferences and web check-in handled for you." },

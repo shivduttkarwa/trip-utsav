@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { DESTINATIONS } from "../data/destinations";
-import { FALLBACK_IMG, IMG } from "../data/packages";
+import { FALLBACK_IMG } from "../data/packages";
+import asset from "../asset";
 import Reveal from "../components/Reveal";
 import SectionHead from "../components/SectionHead";
 import DestinationCard from "../components/DestinationCard";
 import CtaBanner from "../components/CtaBanner";
 
-const HERO = IMG("photo-1530521954074-e64f6810b32d", 2000);
+const HERO = asset("images/hero/hero-destinations.webp");
 
 const FILTERS = [
   { value: "", label: "All" },

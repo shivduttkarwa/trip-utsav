@@ -1,0 +1,483 @@
+/* ============================================================
+   PACKAGE DETAIL — the trip, told as a journey.
+   See pages/PackageDetail.jsx for the concept.
+
+   Anatomy:
+     .detail-hero   full-bleed frame, title, the trip as four facts
+     .tr-open       the case: summary + numbered highlights
+     .tr-route      THE SPINE — sticky stage, days scrolling past it
+     .tr-ledger     what the price covers
+     .tr-shots      the photographs
+     .tr-bar        booking, pinned to the foot of the window
+   ============================================================ */
+
+/* ---------- HERO ----------
+   Class kept as .detail-hero because Navbar.jsx matches it by name to decide
+   when the bar is over a hero and should go transparent. */
+.detail-hero {
+  position: relative;
+  height: clamp(28.5rem, 69.6vh, 42rem);
+  overflow: clip;
+  color: #fff;
+  display: flex;
+  align-items: flex-end;
+}
+.detail-hero .hero-media img { animation-duration: 28s; }
+
+.tr-hero-inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding-bottom: clamp(1.75rem, 3.5vw, 3rem);
+}
+/* Editorial scale, and tight. A trip name is the largest thing on the page
+   because it is the only thing on the page that is a title. */
+.detail-hero h1 {
+  color: #fff;
+  font-size: clamp(2.1rem, 5.2vw, 4.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  margin: 0.75rem 0 clamp(1.25rem, 3vw, 2rem);
+  max-width: 20ch;
+  text-shadow: 0 0.015em 0.04em rgba(4, 14, 32, 0.5), 0 0.04em 0.3em rgba(4, 14, 32, 0.4);
+}
+
+/* The four facts, on one rule. Set as a <dl> because that is what it is —
+   label and value — and the label is the small print, not the headline. */
+.tr-facts {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  justify-content: start;
+  gap: clamp(1.25rem, 4vw, 3.5rem);
+  padding-top: clamp(1rem, 2vw, 1.5rem);
+  border-top: 0.0625rem solid rgba(255, 255, 255, 0.25);
+}
+.tr-facts dt {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.62);
+  margin-bottom: 0.35rem;
+}
+.tr-facts dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(0.88rem, 1.3vw, 1rem);
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0.03em 0.12em rgba(4, 14, 32, 0.55);
+}
+.tr-facts dd small { font-weight: 500; color: rgba(255, 255, 255, 0.7); }
+.tr-facts-price { color: #ffc9ab; }
+
+/* ---------- THE CASE ---------- */
+.tr-open { padding: clamp(3rem, 7vw, 5.5rem) 0 clamp(1rem, 2vw, 2rem); }
+.tr-open-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: clamp(2rem, 6vw, 5rem);
+  align-items: start;
+}
+/* The summary is the one paragraph anyone actually reads, so it is set at
+   lead size and given a measure short enough to stay readable at it. */
+.tr-open-lead p {
+  font-size: clamp(1.1rem, 1.9vw, 1.45rem);
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 1rem 0 1.5rem;
+  max-width: 34ch;
+}
+.tr-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.tr-tags span {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--body);
+  padding: 0.4rem 0.75rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: var(--r-pill);
+}
+
+.tr-hi h2 {
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1.25rem;
+}
+/* Numbered, hairline-ruled, no icons. Six identical orange stars down a list
+   is texture; numbers say there are six of them and let the eye count. */
+.tr-hi ol { display: grid; }
+.tr-hi li {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  gap: 0.75rem;
+  align-items: baseline;
+  padding: 0.85rem 0;
+  border-top: 0.0625rem solid var(--line);
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.tr-hi li:last-child { border-bottom: 0.0625rem solid var(--line); }
+.tr-hi b {
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--orange);
+  letter-spacing: 0.08em;
+}
+
+/* ---------- SECTION HEADS ---------- */
+.tr-route-head { margin-bottom: clamp(1.75rem, 4vw, 2.75rem); }
+.tr-route-head h2 { margin-top: 0.6rem; }
+
+/* ============================================================
+   THE ROUTE — the spine
+   ============================================================ */
+.tr-route { padding: clamp(3rem, 7vw, 5.5rem) 0; }
+.tr-route-grid {
+  display: grid;
+  grid-template-columns: 0.85fr 1fr;
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: start;
+}
+
+/* Sticky, and short enough that a laptop still shows the top of the day being
+   read beside it — a stage the full height of the viewport pins the reader's
+   eye level to the middle of a picture instead of to the text. */
+.tr-stage {
+  position: sticky;
+  top: 6rem;
+  display: grid;
+  gap: 1rem;
+}
+.tr-stage-frame {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: 0 1.25rem 3rem rgba(16, 24, 43, 0.16);
+}
+/* Every frame is stacked and only one is opaque, so a change is a crossfade
+   between two decoded images rather than a swap of src — which would flash
+   white on the first pass through the trip. */
+.tr-stage-frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.06);
+  transition: opacity 0.7s var(--ease-fade), transform 1.6s var(--ease-out);
+}
+.tr-stage-frame img.is-on { opacity: 1; transform: scale(1); }
+
+/* Weighted at the foot so the numeral and the day title have something to sit
+   on without dimming the whole photograph. */
+.tr-stage-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 45%, rgba(4, 14, 32, 0.72) 100%);
+}
+/* Outlined, not filled: a solid numeral this size becomes the subject of the
+   picture, an outlined one stays a caption on top of it. */
+.tr-stage-num {
+  position: absolute;
+  left: clamp(1rem, 2vw, 1.5rem);
+  bottom: clamp(0.5rem, 1.5vw, 1rem);
+  z-index: 1;
+  font-family: var(--font-statement);
+  font-size: clamp(4rem, 9vw, 7.5rem);
+  font-weight: 700;
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 0.09375rem rgba(255, 255, 255, 0.85);
+  pointer-events: none;
+}
+.tr-stage-place {
+  position: absolute;
+  right: clamp(1rem, 2vw, 1.5rem);
+  bottom: clamp(1.25rem, 2.5vw, 1.85rem);
+  left: 45%;
+  z-index: 1;
+  text-align: right;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #fff;
+  text-shadow: 0 0.06em 0.3em rgba(4, 14, 32, 0.8);
+}
+
+.tr-rail { display: flex; align-items: center; gap: 0.875rem; }
+.tr-rail i {
+  flex: 1;
+  height: 0.125rem;
+  background: var(--line);
+  position: relative;
+  border-radius: 0.0625rem;
+}
+.tr-rail i::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--p, 0%);
+  background: var(--orange);
+  border-radius: inherit;
+  transition: width 0.6s var(--ease-out);
+}
+.tr-rail b {
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- The days ---- */
+.tr-days { display: grid; }
+.tr-days li {
+  padding: clamp(1.75rem, 4vw, 2.75rem) 0;
+  border-top: 0.0625rem solid var(--line);
+}
+.tr-days li:first-child { border-top: 0; padding-top: 0; }
+.tr-day-no {
+  display: inline-block;
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.4s ease;
+}
+.tr-days h3 {
+  font-size: clamp(1.25rem, 2.2vw, 1.7rem);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  margin: 0.6rem 0 0.6rem;
+  transition: color 0.4s ease;
+}
+.tr-days p {
+  font-size: 1rem;
+  line-height: 1.65;
+  max-width: 46ch;
+  margin: 0;
+}
+/* The day being read is stated, not spotlit — dimming the others would make
+   the page look broken on the way past. Only the marker and the title move. */
+.tr-days li.is-on .tr-day-no { color: var(--orange); }
+.tr-days li.is-on h3 { color: var(--blue); }
+
+/* Carried by the sticky stage above 900px, so the inline frame is redundant
+   there and would double every photograph on the page. */
+.tr-day-shot { display: none; }
+
+/* ============================================================
+   THE LEDGER
+   ============================================================ */
+.tr-ledger { padding: clamp(3rem, 7vw, 5.5rem) 0; background: var(--surface); }
+.tr-ledger-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.25rem, 3vw, 2rem);
+}
+.tr-col {
+  background: #fff;
+  border-radius: var(--r-lg);
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  border: 0.0625rem solid rgba(19, 26, 42, 0.06);
+}
+.tr-col h3 {
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 0.0625rem solid var(--line);
+}
+.tr-col--in h3 { color: #16a34a; }
+.tr-col--out h3 { color: #b0553a; }
+.tr-col ul { display: grid; gap: 0.85rem; }
+.tr-col li { display: flex; gap: 0.75rem; align-items: flex-start; font-size: 0.95rem; line-height: 1.5; }
+.tr-col svg { width: 1rem; height: 1rem; flex: none; margin-top: 0.25rem; }
+.tr-col--in svg { color: #16a34a; }
+.tr-col--out svg { color: #c96a4a; }
+.tr-col--out li { color: var(--muted); }
+
+.tr-assure {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem clamp(1.25rem, 3vw, 2.5rem);
+  margin-top: clamp(1.5rem, 3vw, 2.25rem);
+  padding-top: clamp(1.25rem, 3vw, 1.75rem);
+  border-top: 0.0625rem solid rgba(19, 26, 42, 0.1);
+}
+.tr-assure span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--body);
+}
+.tr-assure svg { width: 1rem; height: 1rem; color: var(--orange); flex: none; }
+
+/* ============================================================
+   PHOTOGRAPHS
+   Deliberately not a uniform grid: five equal tiles read as a contact sheet,
+   and one frame given room reads as a photograph.
+   ============================================================ */
+.tr-shots-wrap { padding: clamp(3rem, 7vw, 5.5rem) 0; }
+.tr-shots {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: clamp(8rem, 13vw, 12.5rem);
+  gap: 0.75rem;
+}
+.tr-shots li:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+.tr-shots li:nth-child(4) { grid-column: span 2; }
+.tr-shots li:nth-child(5) { grid-column: span 4; }
+.tr-shots a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--surface);
+}
+.tr-shots img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s var(--ease-out); }
+.tr-shots a:hover img { transform: scale(1.06); }
+.tr-shots a:focus-visible { outline: 0.1875rem solid var(--orange); outline-offset: 0.1875rem; }
+
+/* ============================================================
+   BOOKING BAR
+   ============================================================ */
+.tr-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 900;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(1rem);
+  -webkit-backdrop-filter: blur(1rem);
+  border-top: 0.0625rem solid var(--line);
+  box-shadow: 0 -0.5rem 2rem rgba(16, 24, 43, 0.1);
+  padding: 0.75rem 0;
+  /* Parked below the edge and inert until the hero leaves — `visibility`
+     rather than opacity alone so it cannot take a click while invisible. */
+  transform: translateY(105%);
+  visibility: hidden;
+  transition: transform 0.45s var(--ease-out), visibility 0.45s;
+}
+.tr-bar.is-on { transform: none; visibility: visible; }
+.tr-bar .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.tr-bar-price small {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.tr-bar-price b {
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
+  font-weight: 800;
+  color: var(--blue-ink);
+  line-height: 1.2;
+}
+.tr-bar-price del { font-size: 0.85rem; font-weight: 600; color: var(--muted); margin-right: 0.4rem; }
+.tr-bar-price span { font-size: 0.78rem; font-weight: 600; color: var(--muted); margin-left: 0.35rem; }
+.tr-bar-actions { display: flex; gap: 0.625rem; }
+
+/* The two floats sit bottom-right and the bar would land under them.
+   Matched through :has() on <body> rather than a sibling combinator, because
+   they are rendered by Chrome.jsx in a different subtree from the page — a
+   `~ .wa-float` here would never match anything. Both are lifted by the bar's
+   height so the stack keeps its own spacing: .to-top rides directly above
+   .wa-float and the pair has to move as one.
+   Bar height is padding (0.75 x 2) + a button (~2.6) = ~4.1rem; 5.25 clears it
+   with a gap. Keep in step with .tr-bar's padding above. */
+body:has(.tr-bar.is-on) .wa-float { bottom: 5.25rem; }
+body:has(.tr-bar.is-on) .to-top { bottom: 9.625rem; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1024px) {
+  .tr-open-grid { grid-template-columns: 1fr; gap: 2.25rem; }
+  .tr-open-lead p { max-width: 46ch; }
+}
+
+/* The stage goes at the point where two columns stop leaving either of them
+   enough width — a 40%-wide sticky photograph beside a 20-character measure
+   serves neither. Each day takes its own frame instead. */
+@media (max-width: 900px) {
+  .tr-route-grid { grid-template-columns: 1fr; gap: 0; }
+  .tr-stage { display: none; }
+  .tr-day-shot {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: var(--r-md);
+    margin-top: 1.25rem;
+  }
+  .tr-days p { max-width: none; }
+}
+
+@media (max-width: 700px) {
+  .tr-facts { grid-template-columns: repeat(2, auto); gap: 1rem 2rem; }
+  .tr-ledger-grid { grid-template-columns: 1fr; }
+
+  /* Two up, with the lead frame across the top. */
+  .tr-shots { grid-template-columns: repeat(2, 1fr); grid-auto-rows: clamp(7rem, 30vw, 10rem); }
+  .tr-shots li:nth-child(1) { grid-column: span 2; grid-row: span 1; }
+  .tr-shots li:nth-child(4) { grid-column: span 1; }
+  .tr-shots li:nth-child(5) { grid-column: span 2; }
+
+  /* The price label is the first thing to go — the number carries it. */
+  .tr-bar-price small { display: none; }
+  .tr-bar-price del { display: none; }
+  .tr-bar .container { gap: 0.75rem; }
+  .tr-bar-actions .btn span { white-space: nowrap; }
+
+  /* The floats are smaller and sit tighter here (components.css), so the lift
+     is measured from their phone positions, not the desktop ones. */
+  body:has(.tr-bar.is-on) .wa-float { bottom: 4.75rem; }
+  body:has(.tr-bar.is-on) .to-top { bottom: 8.5rem; }
+}
+
+/* Below this the bar cannot hold a price and two buttons, so WhatsApp drops —
+   the site-wide float already offers it. */
+@media (max-width: 520px) {
+  .tr-bar-actions .btn:first-child { display: none; }
+  .tr-bar-price b span { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tr-stage-frame img,
+  .tr-stage-frame img.is-on { transform: none; transition: opacity 0.25s ease; }
+  .tr-shots a:hover img { transform: none; }
+  .tr-bar { transition: none; }
+}

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { PACKAGES, FALLBACK_IMG, IMG } from "../data/packages";
+import { PACKAGES, FALLBACK_IMG } from "../data/packages";
+import asset from "../asset";
 import Icon from "../components/Icon";
 import Button from "../components/Button";
 import Reveal from "../components/Reveal";
@@ -9,7 +10,7 @@ import CtaBanner from "../components/CtaBanner";
 import Select from "../components/Select";
 import { useUI } from "../components/UIContext";
 
-const HERO = IMG("photo-1500835556837-99ac94a94552", 2000);
+const HERO = asset("images/hero/hero-packages.webp");
 
 const DURATIONS = [
   { value: "", label: "Any duration" },
