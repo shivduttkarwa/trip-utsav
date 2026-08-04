@@ -34,9 +34,19 @@
   color: var(--ink);
   border: 0.1875rem solid var(--ink);
   border-radius: 0.75rem;
-  opacity: 0.92;
-  transform: rotate(var(--tilt));
-  transition: transform 0.45s var(--ease-spring);
+  /* Pressed, not placed — the same press as the home services spread: each
+     stamp waits oversized and over-rotated, then lands hard on its own angle
+     when the page scrolls in, one after another. */
+  opacity: 0;
+  transform: rotate(calc(var(--tilt) * 3)) scale(1.34);
+  transition:
+    opacity 0.14s linear,
+    transform 0.42s cubic-bezier(0.2, 1.25, 0.35, 1),
+    color 0.35s ease,
+    border-color 0.35s ease;
+  /* Colour shifts (the reserved slot's hover) stay instant — only the press
+     itself is staggered. */
+  transition-delay: calc(var(--i, 0) * 0.13s), calc(var(--i, 0) * 0.13s), 0s, 0s;
 }
 .ab-stamp::before {
   content: "";
@@ -46,9 +56,14 @@
   border-radius: 0.45rem;
   pointer-events: none;
 }
+/* Landed. The overshoot in the curve is the press bouncing off the paper. */
+.ab-stamps.in .ab-stamp {
+  opacity: 0.92;
+  transform: rotate(var(--tilt)) scale(1);
+}
 /* Stamps are ink — permanent. Hover presses them again; it never straightens
    them. */
-.ab-stamp:hover { transform: rotate(var(--tilt)) scale(1.05); }
+.ab-stamps.in .ab-stamp:hover { transform: rotate(var(--tilt)) scale(1.05); }
 
 .ab-stamp--round {
   aspect-ratio: 1;
@@ -95,18 +110,20 @@
   max-width: 22ch;
 }
 
-/* The reserved slot — the only stamp that is also a button. */
+/* The reserved slot — the only stamp that is also a button. It shares the
+   press (transition inherited from .ab-stamp), but its ink lands solid. */
 .ab-stamp--reserved {
-  --ink: var(--muted);
+  /* Body-grey, not muted-grey: it must read as an empty slot next to the
+     inked stamps, but at --muted it read as barely there at all. */
+  --ink: var(--body);
   border-style: dashed;
-  opacity: 1;
   background: rgba(255, 255, 255, 0.55);
   cursor: pointer;
-  transition: transform 0.45s var(--ease-spring), color 0.35s ease, border-color 0.35s ease;
 }
+.ab-stamps.in .ab-stamp--reserved { opacity: 1; }
 .ab-stamp--reserved::before { border-style: dashed; }
-.ab-stamp--reserved:hover,
-.ab-stamp--reserved:focus-visible {
+.ab-stamps.in .ab-stamp--reserved:hover,
+.ab-stamps.in .ab-stamp--reserved:focus-visible {
   --ink: var(--orange);
   transform: rotate(0deg) scale(1.04);
 }
@@ -122,7 +139,10 @@
   .ab-stamp--round { max-width: 15.5rem; }
 }
 
+/* The press is the whole idea, so it is not removed — only shortened to the
+   point where nothing travels far enough to read as motion. */
 @media (prefers-reduced-motion: reduce) {
-  .ab-stamp:hover { transform: rotate(var(--tilt)); }
-  .ab-stamp--reserved:hover { transform: rotate(0deg); }
+  .ab-stamp { transition-duration: 0.01ms; transition-delay: 0s; }
+  .ab-stamps.in .ab-stamp:hover { transform: rotate(var(--tilt)); }
+  .ab-stamps.in .ab-stamp--reserved:hover { transform: rotate(0deg); }
 }

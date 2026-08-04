@@ -937,6 +937,10 @@
   background: var(--grad-sunset);
 }
 .page-hero .hero-media img { animation-duration: 30s; }
+/* Anchor the frame to the top of the photograph: with the default centre
+   position, cover-cropping shaves skies and summits off the top — the part
+   these hero shots lead with. The crop comes off the bottom instead. */
+.page-hero .hero-media > img { object-position: top; }
 /* Phones only: the band grows ~40% (two compounded 20% steps on the total,
    which is ~1.7x on the padding since the type inside doesn't move). */
 @media (max-width: 640px) {

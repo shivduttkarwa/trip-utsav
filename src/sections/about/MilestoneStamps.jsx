@@ -26,31 +26,35 @@ export default function MilestoneStamps() {
           title="Every Year Leaves a Mark"
           text="Our milestones, recorded the way a passport records them — in ink, at odd angles, with no room for modesty."
         />
-        <div className="ab-stamps">
+        {/* One Reveal for the whole page of stamps: each lands from oversized
+            and over-rotated on its own stagger — pressed, not placed — the
+            same press as the home services spread. */}
+        <Reveal className="ab-stamps">
           {STAMPS.map((s, i) => (
-            <Reveal key={s.year} variant="zoom" delay={i * 0.09}>
-              <div
-                className={`ab-stamp ab-stamp--${s.shape} ab-stamp--${s.ink}`}
-                style={{ "--tilt": s.tilt }}
-              >
-                <span className="ab-stamp-org">VoyageNest · Immigration of Joy</span>
-                <span className="ab-stamp-year">{s.year}</span>
-                <strong>{s.title}</strong>
-                <em>{s.detail}</em>
-              </div>
-            </Reveal>
+            <div
+              key={s.year}
+              className={`ab-stamp ab-stamp--${s.shape} ab-stamp--${s.ink}`}
+              style={{ "--tilt": s.tilt, "--i": i }}
+            >
+              <span className="ab-stamp-org">VoyageNest · Immigration of Joy</span>
+              <span className="ab-stamp-year">{s.year}</span>
+              <strong>{s.title}</strong>
+              <em>{s.detail}</em>
+            </div>
           ))}
 
           {/* The blank slot the whole page walks toward. */}
-          <Reveal variant="zoom" delay={STAMPS.length * 0.09}>
-            <button className="ab-stamp ab-stamp--reserved" onClick={() => openEnquiry()}>
-              <span className="ab-stamp-org">VoyageNest · Immigration of Joy</span>
-              <span className="ab-stamp-year">20__</span>
-              <strong>Space Reserved</strong>
-              <em>your trip goes here — tap to claim it</em>
-            </button>
-          </Reveal>
-        </div>
+          <button
+            className="ab-stamp ab-stamp--reserved"
+            style={{ "--i": STAMPS.length }}
+            onClick={() => openEnquiry()}
+          >
+            <span className="ab-stamp-org">VoyageNest · Immigration of Joy</span>
+            <span className="ab-stamp-year">20__</span>
+            <strong>Space Reserved</strong>
+            <em>your trip goes here — tap to claim it</em>
+          </button>
+        </Reveal>
       </div>
     </section>
   );
