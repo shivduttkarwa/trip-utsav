@@ -16,18 +16,23 @@ const BUDGET_OPTIONS = [
   ...asOptions(["Under ₹20,000", "₹20,000 – ₹50,000", "₹50,000 – ₹1,00,000", "₹1,00,000+"]),
 ];
 
-const EMPTY = { name: "", phone: "", email: "", destination: "", month: "", pax: "2", budget: "", message: "" };
+const EMPTY = { name: "", phone: "", destination: "", month: "", pax: "2", budget: "", message: "" };
 
 export default function EnquiryModal() {
   const { enquiry, closeEnquiry, showToast } = useUI();
   const [form, setForm] = useState(EMPTY);
   const [errors, setErrors] = useState({});
+  /* The trip-shape fields are optional and start folded away: the promise is
+     a call-back, so name + phone is the whole ask. Keen planners can open
+     the rest; everyone else sends a three-field form. */
+  const [more, setMore] = useState(false);
 
   /* pick up the package prefill each time the modal opens */
   useEffect(() => {
     if (enquiry.open) {
       setForm((f) => ({ ...f, destination: enquiry.prefill || f.destination }));
       setErrors({});
+      setMore(false);
     }
   }, [enquiry.open, enquiry.prefill]);
 
@@ -50,7 +55,6 @@ export default function EnquiryModal() {
     const er = {};
     if (!form.name.trim()) er.name = true;
     if (!/^[0-9+\s-]{10,15}$/.test(form.phone.trim())) er.phone = true;
-    if (form.email.trim() && !/^\S+@\S+\.\S+$/.test(form.email.trim())) er.email = true;
     setErrors(er);
     if (Object.keys(er).length) return;
 
@@ -71,7 +75,7 @@ export default function EnquiryModal() {
         <div className="modal-head">
           <div>
             <h3 id="enquiryTitle">Plan My Trip</h3>
-            <p>Tell us a little about your dream trip — our travel expert will call you back within 30 minutes.</p>
+            <p>A travel expert calls you back within 30 minutes.</p>
           </div>
           <button className="modal-close" onClick={closeEnquiry} aria-label="Close">✕</button>
         </div>
@@ -87,33 +91,45 @@ export default function EnquiryModal() {
             <input type="tel" value={form.phone} onChange={set("phone")} placeholder="10-digit mobile" />
             <span className="error-msg">Enter a valid phone number</span>
           </div>
-          <div className={`field full${errors.email ? " error" : ""}`}>
-            <label>Email</label>
-            <input type="email" value={form.email} onChange={set("email")} placeholder="you@example.com" />
-            <span className="error-msg">Enter a valid email</span>
-          </div>
-          <div className="field">
-            <label>Destination / Package</label>
+          <div className="field full">
+            <label>Destination</label>
             <input type="text" value={form.destination} onChange={set("destination")} placeholder="e.g. Bali, Kashmir…" />
           </div>
-          <div className="field">
-            <label>Travel Month</label>
-            <Select ariaLabel="Travel month" options={MONTH_OPTIONS} value={form.month} onChange={setVal("month")} />
+
+          <button
+            type="button"
+            className="form-more full"
+            onClick={() => setMore((m) => !m)}
+            aria-expanded={more}
+          >
+            <i aria-hidden="true" /> {more ? "Hide trip details" : "Add trip details"} <small>(optional)</small>
+          </button>
+
+          {/* Kept mounted so the 0fr → 1fr row can animate the growth; when
+              closed it is invisible AND unfocusable (visibility, not display). */}
+          <div className={`form-details full${more ? " open" : ""}`}>
+            <div className="form-grid form-details-inner">
+              <div className="field third">
+                <label>Month</label>
+                <Select ariaLabel="Travel month" options={MONTH_OPTIONS} value={form.month} onChange={setVal("month")} />
+              </div>
+              <div className="field third">
+                <label>Travellers</label>
+                <Select ariaLabel="Travellers" options={PAX_OPTIONS} value={form.pax} onChange={setVal("pax")} />
+              </div>
+              <div className="field third">
+                <label>Budget / person</label>
+                <Select ariaLabel="Budget per person" options={BUDGET_OPTIONS} value={form.budget} onChange={setVal("budget")} />
+              </div>
+              <div className="field full">
+                <label>Anything else?</label>
+                <textarea value={form.message} onChange={set("message")} placeholder="Honeymoon? Kids? Veg meals? Tell us everything…" />
+              </div>
+            </div>
           </div>
-          <div className="field">
-            <label>Travellers</label>
-            <Select ariaLabel="Travellers" options={PAX_OPTIONS} value={form.pax} onChange={setVal("pax")} />
-          </div>
-          <div className="field">
-            <label>Budget (per person)</label>
-            <Select ariaLabel="Budget per person" options={BUDGET_OPTIONS} value={form.budget} onChange={setVal("budget")} />
-          </div>
-          <div className="field full">
-            <label>Anything else?</label>
-            <textarea value={form.message} onChange={set("message")} placeholder="Honeymoon? Kids? Veg meals? Tell us everything…" />
-          </div>
+
           <div className="full">
-            <Button type="submit" size="lg" block icon="arrow">Send Enquiry</Button>
+            <Button type="submit" block icon="arrow">Send Enquiry</Button>
           </div>
         </form>
       </div>

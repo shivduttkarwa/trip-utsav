@@ -1,25 +1,98 @@
-/* ---------- 11. FORMS ---------- */
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.125rem; }
+/* ---------- 11. FORMS (the enquiry modal is the only consumer) ---------- */
+/* Six tracks so a row can hold two halves OR three thirds — which is what
+   keeps the modal short: the three small selects share one line. */
+.form-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.85rem 0.9rem; }
+.form-grid > * { grid-column: span 3; }
 .form-grid .full { grid-column: 1 / -1; }
-@media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
+.form-grid .third { grid-column: span 2; }
+@media (max-width: 640px) {
+  .form-grid > * { grid-column: 1 / -1; }
+  /* The short selects stay paired even on a phone — they are the fields that
+     least deserve a full row each. */
+  .form-grid .third { grid-column: span 3; }
+}
 
 .field { position: relative; }
-.field label { display: block; font-size: 0.86rem; font-weight: 600; color: var(--ink); margin-bottom: 0.4375rem; }
+.field label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--ink); margin-bottom: 0.3rem; }
 .field label .req { color: var(--orange); }
 .field input, .field select, .field textarea {
   width: 100%;
   border: 0.09375rem solid var(--line);
   border-radius: var(--r-sm);
-  padding: 0.8125rem 1rem;
+  padding: 0.65rem 0.85rem;
   background: #fff;
   outline: 0;
   transition: border-color 0.25s, box-shadow 0.25s;
 }
-.field textarea { min-height: 8.125rem; resize: vertical; }
+.field textarea { min-height: 4.75rem; resize: vertical; }
 .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 0.25rem rgba(15, 76, 156, 0.1); }
 .field.error input, .field.error select, .field.error textarea { border-color: #e63946; }
-.field .error-msg { display: none; font-size: 0.78rem; color: #e63946; margin-top: 0.3125rem; }
+.field .error-msg { display: none; font-size: 0.74rem; color: #e63946; margin-top: 0.25rem; }
 .field.error .error-msg { display: block; }
+
+/* The optional-details disclosure: a text control, not another field. */
+.form-more {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.1rem 0;
+  border: 0;
+  background: none;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--blue);
+  cursor: pointer;
+  transition: color 0.25s;
+}
+.form-more:hover { color: var(--orange); }
+/* The plus is drawn, not typed — a glyph centres on its baseline, these bars
+   centre on the circle. */
+.form-more i {
+  position: relative;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 0.09375rem solid currentColor;
+  border-radius: 50%;
+  transition: transform 0.35s var(--ease-out);
+}
+.form-more i::before,
+.form-more i::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.55rem;
+  height: 0.09375rem;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+}
+.form-more i::after { transform: translate(-50%, -50%) rotate(90deg); }
+.form-more[aria-expanded="true"] i { transform: rotate(45deg); }
+.form-more small { font-weight: 500; color: var(--muted); }
+
+/* The optional fields grow open rather than appearing: a grid row animating
+   0fr → 1fr, which needs no measured heights. The negative margin hands back
+   the grid gap the empty row would otherwise hold open between the toggle and
+   the submit button; visibility keeps the closed fields out of the tab order. */
+.form-details {
+  display: grid;
+  grid-template-rows: 0fr;
+  margin-top: -0.85rem;
+  visibility: hidden;
+  transition: grid-template-rows 0.45s var(--ease-out), margin-top 0.45s var(--ease-out), visibility 0.45s;
+}
+.form-details.open {
+  grid-template-rows: 1fr;
+  margin-top: 0;
+  visibility: visible;
+}
+.form-details-inner { overflow: hidden; min-height: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .form-details, .form-more i { transition: none; }
+}
 
 /* Modal */
 .modal-overlay {
@@ -37,22 +110,22 @@
 }
 .modal-overlay.open { opacity: 1; pointer-events: auto; }
 .modal {
-  width: min(35rem, 100%);
+  width: min(34rem, 100%);
   max-height: 90vh;
   overflow: auto;
   background: #fff;
   border-radius: var(--r-lg);
-  padding: 2.125rem;
+  padding: clamp(1.4rem, 4vw, 1.75rem);
   transform: translateY(1.625rem) scale(0.97);
   transition: transform 0.45s var(--ease-out);
 }
 .modal-overlay.open .modal { transform: none; }
 .modal-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.375rem; }
-.modal-head h3 { font-size: 1.45rem; }
-.modal-head p { font-size: 0.92rem; color: var(--muted); }
+.modal-head h3 { font-size: 1.3rem; }
+.modal-head p { font-size: 0.88rem; color: var(--muted); }
 .modal-close {
   flex: none;
-  width: 2.375rem; height: 2.375rem;
+  width: 2.1rem; height: 2.1rem;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -62,7 +135,7 @@
   transition: all 0.3s;
 }
 .modal-close:hover { background: var(--orange); color: #fff; transform: rotate(90deg); }
-.modal form { margin-top: 1.25rem; }
+.modal form { margin-top: 1rem; }
 
 /* Toast */
 .toast {

@@ -8,6 +8,7 @@ import Button from "../components/Button";
 import Reveal from "../components/Reveal";
 import PackageCard from "../components/PackageCard";
 import CtaBanner from "../components/CtaBanner";
+import Lightbox from "../components/Lightbox";
 import NotFound from "./NotFound";
 import "../styles/package-detail.css";
 
@@ -41,8 +42,9 @@ export default function PackageDetail() {
   const pkg = PACKAGES.find((p) => p.id === id);
 
   const [day, setDay] = useState(0);
-  const [barOn, setBarOn] = useState(false);
-  const heroRef = useRef(null);
+  const [ready, setReady] = useState(false);      /* booking bar: small pause after arriving */
+  const [atFooter, setAtFooter] = useState(false); /* booking bar: stood down at the footer */
+  const [shot, setShot] = useState(null);   /* gallery lightbox: open index, null = closed */
   const dayEls = useRef([]);
 
   const related = useMemo(() => {
@@ -50,16 +52,27 @@ export default function PackageDetail() {
     return PACKAGES.filter((p) => p.id !== pkg.id && p.category === pkg.category).slice(0, 3);
   }, [pkg]);
 
-  /* The booking bar appears the moment the hero leaves. While the hero is on
-     screen the page is still making its case and its own buttons are in view;
-     a bar over the top of that is just chrome. */
+  /* The booking bar arrives on its own, a beat after the page does — not on
+     scroll. The pause lets the hero land first; then the bar slides up and
+     stays in reach for the whole read. */
   useEffect(() => {
-    const el = heroRef.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => setBarOn(!e.isIntersecting), { threshold: 0 });
-    io.observe(el);
+    setReady(false);
+    const t = setTimeout(() => setReady(true), 1200);
+    return () => clearTimeout(t);
+  }, [pkg?.id]);
+
+  /* …and stands down at the footer: once the site's own closing furniture is
+     on screen the page has ended, and a bar over it is just in the way. The
+     footer lives outside this page's subtree, hence the query. */
+  useEffect(() => {
+    const footer = document.querySelector(".footer");
+    if (!footer) return;
+    const io = new IntersectionObserver(([e]) => setAtFooter(e.isIntersecting), { threshold: 0 });
+    io.observe(footer);
     return () => io.disconnect();
   }, [pkg?.id]);
+
+  const barOn = ready && !atFooter;
 
   /* Which day the stage is showing.
    *
@@ -98,7 +111,7 @@ export default function PackageDetail() {
   return (
     <>
       {/* ---------- HERO ---------- */}
-      <header className="detail-hero" ref={heroRef}>
+      <header className="detail-hero">
         <div className="hero-media">
           <img src={pkg.image} alt={pkg.imageAlt ?? pkg.title} onError={onImgError} />
         </div>
@@ -266,7 +279,7 @@ export default function PackageDetail() {
           <ul className="tr-shots">
             {gallery.map(({ src, alt }, i) => (
               <li key={src}>
-                <a href={src} target="_blank" rel="noopener noreferrer">
+                <button type="button" onClick={() => setShot(i)} aria-label={`View photo ${i + 1} of ${gallery.length}`}>
                   <img
                     src={src}
                     alt={alt || `${pkg.title} — photo ${i + 1}`}
@@ -274,10 +287,13 @@ export default function PackageDetail() {
                     decoding="async"
                     onError={onImgError}
                   />
-                </a>
+                </button>
               </li>
             ))}
           </ul>
+          {shot != null && (
+            <Lightbox images={gallery} index={shot} onIndex={setShot} onClose={() => setShot(null)} />
+          )}
         </div>
       </section>
 
@@ -292,7 +308,7 @@ export default function PackageDetail() {
               </div>
               <Button variant="ghost" icon="arrow" to="/packages">All packages</Button>
             </Reveal>
-            <div className="grid grid-3">
+            <div className="grid grid-3 swipe-m">
               {related.map((p, i) => <PackageCard key={p.id} pkg={p} delay={i * 0.09} />)}
             </div>
           </div>

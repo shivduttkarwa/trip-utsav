@@ -38,7 +38,7 @@
 .tu-select--field .tu-select-btn {
   border: 0.09375rem solid var(--line);
   border-radius: var(--r-sm);
-  padding: 0.8125rem 1rem;
+  padding: 0.65rem 0.85rem;
   background: #fff;
   transition: border-color 0.25s, box-shadow 0.25s;
 }
@@ -89,7 +89,23 @@
   background: #fff;
   box-shadow: var(--shadow-lg);
   animation: tu-pop 0.2s var(--ease-out);
+  /* The stock scrollbar reads as a hole punched in the card — thin it and
+     tint it like the hairlines. Standard properties where supported… */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(19, 26, 42, 0.25) transparent;
 }
+/* …and the -webkit- fallback for engines that predate them (ignored wherever
+   scrollbar-width above already won). The transparent border + padding-box
+   clip floats the thumb off the rounded corner. */
+.tu-select-pop::-webkit-scrollbar { width: 0.75rem; }
+.tu-select-pop::-webkit-scrollbar-track { background: transparent; }
+.tu-select-pop::-webkit-scrollbar-thumb {
+  background-color: rgba(19, 26, 42, 0.25);
+  border-radius: 0.5rem;
+  border: 0.25rem solid transparent;
+  background-clip: padding-box;
+}
+.tu-select-pop::-webkit-scrollbar-thumb:hover { background-color: rgba(19, 26, 42, 0.4); }
 @keyframes tu-pop {
   from { opacity: 0; transform: translateY(-0.375rem); }
 }
