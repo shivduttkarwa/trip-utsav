@@ -63,10 +63,12 @@
 /* ---- The address half ---- */
 .cp-side { display: flex; flex-direction: column; gap: 1.05rem; }
 
-/* The stamp corner. Idle it is the printed "place stamp here" box every
-   postcard carries; hover or focus inks it in — perforations included
-   (the dotted white outline) — because pressing the stamp IS sending. */
+/* The stamp corner. Idle it is already inked — a pale orange stamp that
+   plainly reads as THE button — and hover only deepens the ink and lifts it
+   slightly. One angle throughout: the old hover flipped the tilt and swapped
+   in a gradient, both of which read as a jolt rather than a press. */
 .cp-stamp {
+  position: relative;
   align-self: flex-end;
   width: 6.9rem;
   min-height: 7.7rem;
@@ -76,13 +78,29 @@
   justify-content: center;
   gap: 0.3rem;
   margin-bottom: 0.4rem;
-  border: 0.125rem dashed rgba(19, 26, 42, 0.35);
+  border: 0.125rem dashed var(--blue);
   border-radius: 0.3rem;
-  background: transparent;
-  color: var(--muted);
+  background: var(--blue-soft);
+  color: var(--blue);
   cursor: pointer;
   transform: rotate(2deg);
-  transition: all 0.35s var(--ease-out);
+  transition:
+    background-color 0.35s ease,
+    border-color 0.35s ease,
+    color 0.35s ease,
+    box-shadow 0.4s ease;
+}
+/* The perforation, drawn once and faded in — an outline cannot transition,
+   which was half the jolt. */
+.cp-stamp::after {
+  content: "";
+  position: absolute;
+  inset: 0.32rem;
+  border: 0.14rem dotted rgba(255, 255, 255, 0.85);
+  border-radius: 0.2rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
 }
 .cp-stamp svg { width: 1.7rem; height: 1.7rem; }
 .cp-stamp b {
@@ -99,16 +117,18 @@
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
+/* No transform change on hover: animating a fractional scale re-rasterises
+   the glyphs every frame and the lettering visibly shivers. The ink, the
+   shadow and the perforation carry the feedback instead. */
 .cp-stamp:hover,
 .cp-stamp:focus-visible {
-  background: var(--grad-orange);
-  border-color: transparent;
+  background: var(--blue);
+  border-color: var(--blue);
   color: #fff;
-  outline: 0.2rem dotted #fff;
-  outline-offset: -0.55rem;
-  transform: rotate(-2deg) scale(1.05);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-blue);
 }
+.cp-stamp:hover::after,
+.cp-stamp:focus-visible::after { opacity: 1; }
 
 /* Sender fields: a postcard has no boxes, just lines to write on. */
 .cp-field label {
@@ -185,9 +205,12 @@
   .cp-grid { grid-template-columns: 1fr; }
   .cp-divider { border-left: 0; border-top: 0.0625rem dashed rgba(19, 26, 42, 0.25); }
   .cp-msg textarea { min-height: 12rem; }
+  /* Stacked, the stamp signs off at the END of the card — a submit above the
+     fields it submits reads backwards on a phone. */
+  .cp-stamp { order: 9; margin: 0.8rem 0 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cp-stamp { transition: none; }
+  .cp-stamp, .cp-stamp::after { transition: none; }
   .cp-stamp:hover, .cp-stamp:focus-visible { transform: rotate(2deg); }
 }
