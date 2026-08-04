@@ -93,7 +93,8 @@
 html { font-size: 16px; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 /* Root font-size scales the whole UI (everything is in rem). One ladder from
    small phones up to ultra-wide screens. Base (16px) covers ~1025–1439px. */
-@media (max-width: 1024px) { html { font-size: 16px; } }   /* tablets       ~94% */
+@media (max-width: 1366px) { html { font-size: 13px; } }   /* laptops       ~94% */
+@media (max-width: 1024px) { html { font-size: 14px; } }   /* tablets       ~88% */
 @media (max-width: 640px)  { html { font-size: 16px; } }   /* phones        100% */
 @media (max-width: 380px)  { html { font-size: 15px; } }   /* small phones  ~94% */
 @media (min-width: 1440px) { html { font-size: 17px; } }   /* large desktop ~106% */

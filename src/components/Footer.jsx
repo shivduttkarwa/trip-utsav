@@ -38,15 +38,17 @@ const WANT = ["Kashmir", "Ladakh", "Bali", "Maldives", "Dubai", "Europe"];
  *
  * The frame that reads best inside letterforms is not the frame that reads
  * best on a card: a card shows a whole composition, the word shows a handful
- * of vertical slices of it. Our own hero photography is shot wide and open,
- * which survives that treatment where a busier stock frame turns to noise.
- * Only the word is overridden — the destination card and the Kashmir postcard
- * still take DESTINATIONS.image, so nothing else on the site moves.
- *
- * Hero art also exists for Ladakh, Bali, Kerala and Maldives if these want
- * pulling across too. */
+ * of vertical slices of it. These extra-wide frames were composed specifically
+ * for the text mask, with the landmark detail held through the middle band that
+ * remains visible while the background drifts. Only the word is overridden;
+ * destination cards continue to use DESTINATIONS.image. */
 const ART = {
-  Kashmir: "images/hero/hero-kashmir.webp"
+  Kashmir: "images/footer/destinations/kashmir.webp",
+  Ladakh: "images/footer/destinations/ladakh.webp",
+  Bali: "images/footer/destinations/bali.webp",
+  Maldives: "images/footer/destinations/maldives.webp",
+  Dubai: "images/footer/destinations/dubai.webp",
+  Europe: "images/footer/destinations/europe.webp",
 };
 
 const PICKS = WANT.map((n) => DESTINATIONS.find((d) => d.name === n))
