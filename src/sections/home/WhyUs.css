@@ -281,3 +281,15 @@
   .wsk-card { transform: none !important; }
   .wsk-veil { display: none; }
 }
+
+/* Firefox runs the deck flat too. Gecko mis-composites the tipped card — the
+   perspective + rotateX layer rasterises at the wrong scale over the sticky
+   stack (giant, blurry card painted over later sections), where Blink and
+   WebKit flatten it correctly. The stack itself is pure CSS and is fine
+   everywhere; only the depth tip is browser-gated. `!important` outranks the
+   GSAP inline transform, so no JS sniffing is needed. */
+@supports (-moz-appearance: none) {
+  .wsk-wrap { perspective: none; }
+  .wsk-card { transform: none !important; }
+  .wsk-veil { display: none; }
+}

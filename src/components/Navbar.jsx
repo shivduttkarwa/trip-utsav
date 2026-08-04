@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { SITE } from "../data/site";
 import Icon from "./Icon";
+import Button from "./Button";
 import "../styles/navbar.css";
 import asset from "../asset";
 
@@ -356,16 +357,21 @@ export default function Navbar() {
           </div>
 
           {/* Outside .desktop-nav-wrap so the nav can centre between the brand
-              and this, rather than the whole group hugging the right edge. */}
-          <Link
+              and this, rather than the whole group hugging the right edge.
+              The shared blue Button — same control as everywhere else on the
+              site; .desktop-nav-cta only carries the navbar's layout rules. */}
+          <Button
+            variant="secondary"
+            size="sm"
+            icon="arrow"
             className="desktop-nav-cta"
             to="/contact"
             onMouseEnter={closeDesktopPanel}
             onFocus={closeDesktopPanel}
             onClick={closeDesktopPanel}
           >
-            Plan my trip <Icon name="arrow" />
-          </Link>
+            Plan my trip
+          </Button>
 
           <button
             className={`nav-burger${open ? " active" : ""}`}
