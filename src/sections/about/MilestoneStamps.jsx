@@ -7,7 +7,7 @@ import "./MilestoneStamps.css";
    empty — reserved — and clicking it opens the enquiry form, because the
    whole page has been walking the reader toward that blank space. */
 const STAMPS = [
-  { year: "2014", shape: "round", ink: "blue", tilt: "-7deg", title: "Founded", detail: "Indore · one desk, one phone" },
+  { year: "2014", shape: "round", ink: "blue", tilt: "-7deg", title: "Founded", detail: "Mumbai · one desk, one phone" },
   { year: "2017", shape: "rect", ink: "green", tilt: "2.5deg", title: "Borders Crossed", detail: "first passports on the desk — the visa team is born" },
   { year: "2020", shape: "rect", ink: "rust", tilt: "-3.5deg", title: "Rescheduled, Not Abandoned", detail: "every locked-down trip honoured, rebooked or refunded" },
   { year: "2022", shape: "round", ink: "green", tilt: "6deg", title: "Destination №100", detail: "Ha Long Bay, since you ask" },

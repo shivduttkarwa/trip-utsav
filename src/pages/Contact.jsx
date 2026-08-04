@@ -1,7 +1,7 @@
 import ContactHero from "../sections/contact/ContactHero";
 import ContactChannels from "../sections/contact/ContactChannels";
 import ContactPostcard from "../sections/contact/ContactPostcard";
-import StudioFinder from "../sections/contact/StudioFinder";
+import StudioPostcard from "../sections/contact/StudioPostcard";
 
 /* Each section lives in sections/contact/ with its own stylesheet.
    See ContactPostcard.jsx for the page's concept — the enquiry form as the
@@ -12,7 +12,7 @@ export default function Contact() {
       <ContactHero />
       <ContactChannels />
       <ContactPostcard />
-      <StudioFinder />
+      <StudioPostcard />
     </>
   );
 }

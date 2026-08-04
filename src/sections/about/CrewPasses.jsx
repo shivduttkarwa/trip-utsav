@@ -8,7 +8,7 @@ const TEAM = [
   {
     name: "James Carter", role: "Founder & Chief Explorer", img: IMG("photo-1560250097-0b93528c311a", 600),
     fields: [["On the road since", "2014"], ["Known for", "Replying at 2 a.m."]],
-    mrz: ["P<VNEST<<<JAMES<CARTER<<<<<<<<<<<<<<<<<<<<<", "FOUNDER<<SINCE2014<<INDORE<<<<<<<<<<<<<<<01"]
+    mrz: ["P<VNEST<<<JAMES<CARTER<<<<<<<<<<<<<<<<<<<<<", "FOUNDER<<SINCE2014<<MUMBAI<<<<<<<<<<<<<<<01"]
   },
   {
     name: "Meera Nair", role: "Head of Itineraries", img: IMG("photo-1573496359142-b8d87734a5a2", 600),

@@ -9,7 +9,7 @@ export const SITE = {
   whatsappNumber: "919876543210",
   whatsapp:
     "https://wa.me/919876543210?text=Hi%20VoyageNest!%20I%27d%20like%20to%20plan%20a%20trip.",
-  address: "2nd Floor, VoyageNest House, MG Road, Indore, MP 452001"
+  address: "2nd Floor, VoyageNest House, Linking Road, Bandra West, Mumbai 400050"
 };
 
 export const NAV_LINKS = [
