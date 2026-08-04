@@ -6,6 +6,7 @@ import CustomsDeclaration from "../sections/about/CustomsDeclaration";
 import CrewPasses from "../sections/about/CrewPasses";
 import InkTestimonials from "../sections/about/InkTestimonials";
 import CtaBanner from "../components/CtaBanner";
+import StatsBar from "../sections/home/StatsBar";
 
 /* THE PAGE IS A PASSPORT.
  *
@@ -24,7 +25,7 @@ export default function About() {
       <AboutHero />
       <FirstEntry />
       <MilestoneStamps />
-      <EntryRecord />
+      <StatsBar />
       <CustomsDeclaration />
       <CrewPasses />
       <InkTestimonials />
