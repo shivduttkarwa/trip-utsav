@@ -430,14 +430,15 @@
    still read as a route.
    --------------------------------------------------------------- */
 @media (max-width: 700px) {
-  /* The WhatsApp float is fixed to the bottom-right and the search card runs
-     the full width, so at the hero's normal bottom padding the float sits
-     squarely on the Search button. Lift the card clear of it rather than
-     moving the float, which belongs to every page equally.
-     0.75 (its offset) + 3 (its height) + 0.5 breathing = 4.25rem — keep this
-     in step with the .wa-float phone rule in components.css. Every rem here is
-     taken off the photograph, so it is derived, not rounded up. */
-  .hero { padding-bottom: 4.25rem; }
+  /* The float stack (call over WhatsApp) is fixed to the bottom-right and the
+     search card runs the full width, so at the hero's normal bottom padding
+     the stack sits squarely on the Search button. Lift the card clear of it
+     rather than moving the floats, which belong to every page equally.
+     Call's top edge = 3.7 (offset) + 2.6 (height) = 6.3, + 0.45 breathing
+     = 6.75rem — keep this in step with the phone float rules in
+     components.css. Every rem here is taken off the photograph, so it is
+     derived, not rounded up. */
+  .hero { padding-bottom: 6.75rem; }
 
   .hs-cap {
     top: 33%;

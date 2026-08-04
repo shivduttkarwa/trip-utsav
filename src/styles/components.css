@@ -174,58 +174,100 @@
 
 /* (CTA banner → styles/cta.css) */
 
-/* WhatsApp float */
+/* Floating stack, right edge, top to bottom: call · WhatsApp · to-top.
+   WhatsApp anchors one slot up; the to-top ring owns the corner slot and the
+   talk pair steps up when it arrives. Bottom transitions keep the steps
+   smooth. */
 .wa-float {
   position: fixed;
   right: 1.375rem;
   bottom: 1.375rem;
   z-index: 950;
-  width: 3.625rem;
-  height: 3.625rem;
+  width: 3rem;
+  height: 3rem;
   border-radius: 50%;
   display: grid;
   place-items: center;
   background: #25d366;
   color: #fff;
   box-shadow: 0 0.875rem 1.875rem rgba(37, 211, 102, 0.45);
-  transition: transform 0.35s var(--ease-spring);
+  transition: transform 0.35s var(--ease-spring), bottom 0.45s var(--ease-out);
 }
 .wa-float:hover { transform: scale(1.1) rotate(8deg); }
-.wa-float svg { width: 1.75rem; height: 1.75rem; }
-.wa-float::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 0.125rem solid #25d366;
-  animation: wa-pulse 2s ease-out infinite;
-}
-@keyframes wa-pulse {
-  from { transform: scale(1); opacity: 0.8; }
-  to { transform: scale(1.55); opacity: 0; }
-}
+.wa-float svg { width: 1.45rem; height: 1.45rem; }
 
-/* Back to top */
+/* Call — top of the stack. The pulse stays WhatsApp's alone: two heartbeats
+   is noise. */
+.call-float {
+  position: fixed;
+  right: 1.375rem;
+  bottom: 4.85rem;
+  z-index: 950;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--blue);
+  color: #fff;
+  box-shadow: var(--shadow-blue);
+  transition: transform 0.35s var(--ease-spring), bottom 0.45s var(--ease-out);
+}
+.call-float:hover { transform: scale(1.1) rotate(-8deg); }
+.call-float svg { width: 1.35rem; height: 1.35rem; }
+
+/* When the ring takes the corner, the talk pair steps one slot up. */
+body:has(.to-top.show) .wa-float { bottom: 4.85rem; }
+body:has(.to-top.show) .call-float { bottom: 8.35rem; }
+
+/* Back to top — how far you've read, drawn as a ring around the way back.
+   The ring's --p is written by Chrome.jsx on scroll; pathLength=100 makes the
+   dash arithmetic read as a percentage. */
 .to-top {
   position: fixed;
   right: 1.375rem;
-  bottom: 5.75rem;
+  bottom: 1.375rem;
   z-index: 940;
-  width: 2.875rem;
-  height: 2.875rem;
+  width: 3.1rem;
+  height: 3.1rem;
   border-radius: 50%;
-  background: var(--blue);
-  color: #fff;
+  background: #fff;
+  color: var(--ink);
+  border: 0.0625rem solid var(--line);
   display: grid;
   place-items: center;
-  box-shadow: var(--shadow-blue);
+  box-shadow: var(--shadow-md);
   opacity: 0;
   pointer-events: none;
-  transform: translateY(0.875rem);
-  transition: all 0.35s var(--ease-out);
+  transform: translateY(0.875rem) scale(0.92);
+  transition: opacity 0.4s ease, transform 0.45s var(--ease-spring), color 0.3s;
 }
 .to-top.show { opacity: 1; pointer-events: auto; transform: none; }
-.to-top svg { width: 1.125rem; height: 1.125rem; }
+/* An absolutely-positioned SVG does NOT stretch to its inset box — with auto
+   width it falls back to the default replaced size, which left the arc
+   floating past the corner. Sized explicitly so the ring hugs the button. */
+.to-top-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);   /* progress starts at 12 o'clock */
+}
+.to-top-ring circle { fill: none; stroke-width: 2.75; }
+.to-top-track { stroke: rgba(19, 26, 42, 0.08); }
+.to-top-progress {
+  stroke: var(--orange);
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: calc(100 - var(--p, 0) * 100);
+}
+.to-top svg:not(.to-top-ring) {
+  width: 1.05rem;
+  height: 1.05rem;
+  transition: transform 0.35s var(--ease-spring);
+}
+.to-top:hover { color: var(--orange); }
+.to-top:hover svg:not(.to-top-ring) { transform: translateY(-0.15rem); }
 
 /* Phones: tuck the float stack tighter into the corner. It is not decoration
    here — the hero's search card is full-width and ends near the bottom of the
@@ -237,9 +279,21 @@
   .wa-float {
     right: 0.75rem;
     bottom: 0.75rem;
-    width: 3rem;
-    height: 3rem;
+    width: 2.6rem;
+    height: 2.6rem;
   }
-  .wa-float svg { width: 1.5rem; height: 1.5rem; }
-  .to-top { right: 0.75rem; bottom: 4.5rem; width: 2.5rem; height: 2.5rem; }
+  .wa-float svg { width: 1.3rem; height: 1.3rem; }
+  .call-float {
+    right: 0.75rem;
+    bottom: 3.7rem;
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+  .call-float svg { width: 1.2rem; height: 1.2rem; }
+  .to-top { right: 0.75rem; bottom: 0.75rem; width: 2.75rem; height: 2.75rem; }
+  /* Phone slots are shorter — restate the step-up with phone arithmetic.
+     The hero card's clearance in hero.css is derived from the two-button
+     stack (call top edge = 3.7 + 2.6 = 6.3rem); keep them in step. */
+  body:has(.to-top.show) .wa-float { bottom: 3.85rem; }
+  body:has(.to-top.show) .call-float { bottom: 6.8rem; }
 }

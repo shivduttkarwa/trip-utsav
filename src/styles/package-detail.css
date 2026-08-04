@@ -428,8 +428,12 @@
    .wa-float and the pair has to move as one.
    Bar height is padding (0.75 x 2) + a button (~2.6) = ~4.1rem; 5.25 clears it
    with a gap. Keep in step with .tr-bar's padding above. */
+body:has(.tr-bar.is-on) .to-top { bottom: 5.25rem; }
 body:has(.tr-bar.is-on) .wa-float { bottom: 5.25rem; }
-body:has(.tr-bar.is-on) .to-top { bottom: 9.625rem; }
+body:has(.tr-bar.is-on) .call-float { bottom: 8.75rem; }
+/* Bar AND ring both up: the whole stack rides the bar's lift. */
+body:has(.tr-bar.is-on):has(.to-top.show) .wa-float { bottom: 8.75rem; }
+body:has(.tr-bar.is-on):has(.to-top.show) .call-float { bottom: 12.25rem; }
 
 /* ============================================================
    RESPONSIVE
@@ -474,8 +478,11 @@ body:has(.tr-bar.is-on) .to-top { bottom: 9.625rem; }
 
   /* The floats are smaller and sit tighter here (components.css), so the lift
      is measured from their phone positions, not the desktop ones. */
+  body:has(.tr-bar.is-on) .to-top { bottom: 4.75rem; }
   body:has(.tr-bar.is-on) .wa-float { bottom: 4.75rem; }
-  body:has(.tr-bar.is-on) .to-top { bottom: 8.5rem; }
+  body:has(.tr-bar.is-on) .call-float { bottom: 7.7rem; }
+  body:has(.tr-bar.is-on):has(.to-top.show) .wa-float { bottom: 7.85rem; }
+  body:has(.tr-bar.is-on):has(.to-top.show) .call-float { bottom: 10.8rem; }
 }
 
 /* Below this the bar cannot hold a price and two buttons, so WhatsApp drops —

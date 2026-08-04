@@ -19,23 +19,48 @@ export function ToastHost() {
 
 export function FloatingButtons() {
   const [showTop, setShowTop] = useState(false);
+  const topRef = useRef(null);
 
+  /* Read progress drives the to-top ring. Written as a CSS var straight onto
+     the button so scrolling never re-renders the component — the only state
+     change is the show/hide toggle. */
   useEffect(() => {
-    const onScroll = () => setShowTop(window.scrollY > 600);
+    const onScroll = () => {
+      setShowTop(window.scrollY > 600);
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      topRef.current?.style.setProperty("--p", max > 0 ? String(Math.min(window.scrollY / max, 1)) : "0");
+    };
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, []);
 
   return (
     <>
+      {/* One right-edge stack, top to bottom: call, WhatsApp, back-to-top.
+          The talk pair sits a slot high; when the to-top ring arrives in the
+          corner the pair steps up to make room (see the :has rules). */}
+      <a className="call-float" href={SITE.phoneHref} aria-label="Call us">
+        <Icon name="phone" />
+      </a>
       <a className="wa-float" href={SITE.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
         <Icon name="whatsapp" />
       </a>
+      {/* Back to top, with how far you've read drawn around it as a ring. */}
       <button
+        ref={topRef}
         className={`to-top${showTop ? " show" : ""}`}
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         aria-label="Back to top"
       >
+        <svg className="to-top-ring" viewBox="0 0 44 44" aria-hidden="true">
+          <circle className="to-top-track" cx="22" cy="22" r="20" />
+          <circle className="to-top-progress" cx="22" cy="22" r="20" pathLength="100" />
+        </svg>
         <Icon name="up" />
       </button>
     </>
