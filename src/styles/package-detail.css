@@ -22,6 +22,11 @@
   display: flex;
   align-items: flex-end;
 }
+/* Phones: 20% shorter — the itinerary is the product here, and a tall
+   portrait hero pushes it a full screen away. */
+@media (max-width: 640px) {
+  .detail-hero { height: clamp(22.8rem, 55.7vh, 33.6rem); }
+}
 .detail-hero .hero-media img { animation-duration: 28s; }
 
 .tr-hero-inner {

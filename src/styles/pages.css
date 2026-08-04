@@ -47,8 +47,11 @@
 }
 .filter-mini::-webkit-scrollbar { display: none; }
 .filter-mini.on { transform: none; opacity: 1; visibility: visible; }
-.filter-mini .tu-select--pill { flex: none; }
-.filter-mini .tu-select--pill .tu-select-btn { padding: 0.45rem 0.85rem; white-space: nowrap; }
+/* Three equal shares of the row — sized to the screen, not to the labels, so
+   nothing can poke past the edge; a long label ("Most popular") ellipsizes
+   via the trigger's own truncation instead. */
+.filter-mini .tu-select--pill { flex: 1 1 0; min-width: 0; }
+.filter-mini .tu-select--pill .tu-select-btn { padding: 0.45rem 0.7rem; font-size: 0.85rem; white-space: nowrap; }
 
 @media (max-width: 700px) {
   /* The full bar rides out with the scroll — the mini rail replaces it. */

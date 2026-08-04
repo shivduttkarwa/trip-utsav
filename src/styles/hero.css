@@ -929,13 +929,19 @@
      by 20% would have bought roughly 12% of the thing actually being measured.
      All three terms scale together: the vw term governs 1025-1300px, the rem
      cap governs above that, and the floor governs on phones, so changing only
-     one of them would have grown the hero at some widths and not others. */
+     one of them would have grown the hero at some widths and not others.
+     (Phones take a taller band still — see the 640px rule below.) */
   padding: clamp(6.65rem, 13.3vw, 10.8rem) 0;
   color: #fff;
   overflow: clip;
   background: var(--grad-sunset);
 }
 .page-hero .hero-media img { animation-duration: 30s; }
+/* Phones only: the band grows ~40% (two compounded 20% steps on the total,
+   which is ~1.7x on the padding since the type inside doesn't move). */
+@media (max-width: 640px) {
+  .page-hero { padding: 11.3rem 0; }
+}
 .page-hero h1 { color: #fff; margin: 0.875rem 0 0.625rem; }
 .page-hero p { color: rgba(255, 255, 255, 0.85); max-width: 35rem; }
 .page-hero .eyebrow { color: #ffd9bf; }

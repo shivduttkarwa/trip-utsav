@@ -107,6 +107,12 @@
   /* Portrait crops far tighter than 16:9, so the frame is pulled back towards
      the subject or the section fills with nothing but sky or water. */
   .cta-full-bg { object-position: var(--focal-m, var(--focal, 50% 42%)); }
+  /* One phone height for every variant: 80svh — a full screen of CTA is a
+     wall, and the compact band reads too shallow on a portrait screen. This
+     overrides the compact cap by source order. */
+  .cta-full { min-height: 80svh; }
   .cta-full-actions { width: 100%; }
-  .cta-full-actions .btn { flex: 1 1 12rem; }
+  /* Natural width, centred — grown to fill, the pair read as bars, not
+     buttons. */
+  .cta-full-actions .btn { flex: 0 1 auto; }
 }
