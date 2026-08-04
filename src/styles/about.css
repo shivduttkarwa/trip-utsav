@@ -1,142 +1,258 @@
 /* ============================================================
-   ABOUT — "Twelve years, one itinerary."
-   See pages/About.jsx for the concept: the page is laid out as
-   the thing the company sells — a route with stops. The dotted
-   spine is the flight-path line from the back of an in-flight
-   magazine; values are luggage tags; the team are polaroids.
+   ABOUT — the passport.
+   See pages/About.jsx for the concept: navy cover, first-entry
+   story, milestone years as visa stamps, values on a customs
+   declaration, the team as crew passes with MRZ strips. Gold
+   exists only on the cover — foil belongs on covers, not pages.
    ============================================================ */
 
-/* ---------- The route ----------
-   Each stop draws its own segment of the spine, so the line grows with the
-   stops as they reveal — and simply stops existing after the "you are here"
-   node, which is the concept's closing line made literal. Stops space with
-   padding, not margin, so neighbouring segments touch. */
-.ab-route {
-  --spine: rgba(19, 26, 42, 0.22);
-  max-width: 66rem;
+/* ---------- The cover ---------- */
+.ab-cover {
+  --gold: #d3b273;
+  background: var(--blue-ink);
+  padding: clamp(3.25rem, 7vw, 5rem) 0;
+}
+.ab-cover-frame {
+  max-width: 42rem;
   margin-inline: auto;
-}
-
-.ab-stop {
+  text-align: center;
+  padding: clamp(2.5rem, 5vw, 3.75rem) clamp(1.5rem, 4vw, 3rem);
+  border: 0.0625rem solid rgba(211, 178, 115, 0.55);
+  border-radius: var(--r-lg);
   position: relative;
-  display: grid;
-  grid-template-columns: 1fr 4.5rem 1fr;
-  align-items: center;
-  padding-block: clamp(1.6rem, 3.5vw, 2.6rem);
 }
-.ab-stop::before {
+/* The second rule of the engraved double frame. */
+.ab-cover-frame::before {
   content: "";
   position: absolute;
-  left: 50%;
-  top: 0;
-  bottom: 0;
-  width: 0.125rem;
-  transform: translateX(-50%);
-  background-image: linear-gradient(var(--spine) 55%, transparent 0);
-  background-size: 0.125rem 0.8rem;
+  inset: 0.45rem;
+  border: 0.0625rem solid rgba(211, 178, 115, 0.28);
+  border-radius: calc(var(--r-lg) - 0.45rem);
+  pointer-events: none;
 }
-/* The line begins at the departure node and ends at the current-location one. */
-.ab-stop--depart::before { top: 50%; }
-.ab-stop--here::before { bottom: 50%; }
-
-.ab-side { grid-column: 1; grid-row: 1; justify-self: end; text-align: right; }
-.ab-node { grid-column: 2; grid-row: 1; justify-self: center; z-index: 1; }
-.ab-body { grid-column: 3; grid-row: 1; }
-.ab-stop--flip .ab-side { grid-column: 3; justify-self: start; text-align: left; }
-.ab-stop--flip .ab-body { grid-column: 1; }
-
-/* Ghost years — the same statement face as the stat numerals, hollowed out so
-   a four-digit numeral this large reads as wayfinding, not as content. */
-.ab-year {
-  font-family: var(--font-statement);
-  font-weight: 500;
-  font-size: clamp(3.4rem, 6.5vw, 5.6rem);
-  line-height: 1;
-  letter-spacing: -0.03em;
-  color: rgba(19, 26, 42, 0.09);
-  user-select: none;
-}
-@supports (-webkit-text-stroke: 1px black) {
-  .ab-year {
-    color: transparent;
-    -webkit-text-stroke: 0.09rem rgba(19, 26, 42, 0.22);
-  }
-}
-
-/* Nodes on the line. */
-.ab-node {
-  width: 1.05rem;
-  height: 1.05rem;
-  border-radius: 50%;
-  background: var(--orange);
-  box-shadow: 0 0 0 0.3125rem #fff, 0 0 0 0.375rem var(--line);
-}
-.ab-node--depart {
-  width: 2.9rem;
-  height: 2.9rem;
-  display: grid;
+.ab-cover-emblem {
+  display: inline-grid;
   place-items: center;
-  background: var(--grad-orange);
-  color: #fff;
-  box-shadow: 0 0 0 0.375rem #fff, var(--shadow-orange);
-}
-.ab-node--depart svg { width: 1.3rem; height: 1.3rem; }
-/* "You are here" — brand blue like a map's current-location dot, with the
-   sonar ring to match. */
-.ab-node--here { position: relative; background: var(--blue); }
-.ab-node--here::after {
-  content: "";
-  position: absolute;
-  inset: -0.45rem;
+  width: 3.6rem;
+  height: 3.6rem;
+  margin-bottom: 1.4rem;
+  border: 0.0625rem solid rgba(211, 178, 115, 0.6);
   border-radius: 50%;
-  border: 0.125rem solid var(--blue);
-  animation: ab-pulse 2.2s ease-out infinite;
+  color: var(--gold);
 }
-@keyframes ab-pulse {
-  0% { transform: scale(0.55); opacity: 0.9; }
-  100% { transform: scale(1.8); opacity: 0; }
-}
-
-/* Stop copy. The mono tag matches .sv-no on Services — the same "countable
-   set" voice across pages. */
-.ab-stop-tag {
-  display: inline-block;
-  margin-bottom: 0.6rem;
-  font-family: ui-monospace, "Courier New", monospace;
+.ab-cover-emblem svg { width: 1.7rem; height: 1.7rem; }
+.ab-cover-type {
+  display: block;
+  font-family: var(--font-display);
   font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.55em;
+  text-indent: 0.55em; /* recentre what the tracking pushes right */
   text-transform: uppercase;
-  color: var(--orange);
+  color: rgba(211, 178, 115, 0.85);
 }
-.ab-body h3 { font-size: clamp(1.3rem, 2vw, 1.6rem); margin: 0 0 0.55rem; }
-.ab-body p { margin: 0; max-width: 34rem; }
-.ab-body p + p { margin-top: 0.8rem; }
-.ab-body .btn { margin-top: 1.35rem; }
-.ab-stop--depart .ab-body h3 { font-size: clamp(1.7rem, 3vw, 2.35rem); }
+/* The one h2 on the site that must not be handwritten: passport covers are
+   engraved, so this reverts to the serif. */
+.ab-cover-name {
+  font-family: var(--font-heading);
+  font-size: clamp(2.2rem, 4.5vw, 3.2rem);
+  letter-spacing: 0.04em;
+  color: #ecd9ac;
+  margin: 0.5rem 0 0.25rem;
+}
+.ab-cover-motto {
+  display: block;
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 1.02rem;
+  color: rgba(211, 178, 115, 0.75);
+}
+.ab-cover-frame > p {
+  margin: 1.1rem auto 0;
+  max-width: 26rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+.ab-cover-row {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  margin-top: 1.6rem;
+  padding-top: 1.25rem;
+  border-top: 0.0625rem solid rgba(211, 178, 115, 0.25);
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(211, 178, 115, 0.8);
+}
 
-/* The departure photograph, captioned in the site's handwriting — a scrapbook
-   note rather than a UI label, because this stop is a memory. */
-.ab-photo { margin: 0; }
-.ab-photo img {
+/* ---------- Page 01 — the first entry ---------- */
+.ab-story {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: clamp(2rem, 5vw, 3.75rem);
+  align-items: center;
+}
+.ab-story-title { margin: 0.875rem 0 1.125rem; }
+.ab-story-media { position: relative; }
+.ab-story-media > img {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 4 / 3.4;
   object-fit: cover;
   border-radius: var(--r-lg);
   box-shadow: var(--shadow-lg);
 }
-.ab-photo figcaption {
-  margin-top: 0.9rem;
-  font-family: var(--font-hand);
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: var(--body);
+/* The arrival stamp, half off the photograph's corner — a paper disc under
+   orange ink so it stays legible over the picture. */
+.ab-story-stamp {
+  position: absolute;
+  right: -1.2rem;
+  bottom: 1.6rem;
+  width: 9.5rem;
+  aspect-ratio: 1;
+  display: grid;
+  place-content: center;
+  gap: 0.15rem;
   text-align: center;
-  transform: rotate(-1.2deg);
+  padding: 0.8rem;
+  background: rgba(253, 250, 243, 0.94);
+  border: 0.1875rem solid var(--orange-dark);
+  border-radius: 50%;
+  color: var(--orange-dark);
+  transform: rotate(-10deg);
+  box-shadow: var(--shadow-md);
+}
+.ab-story-stamp::before {
+  content: "";
+  position: absolute;
+  inset: 0.4rem;
+  border: 0.0625rem solid var(--orange-dark);
+  border-radius: 50%;
+}
+.ab-story-stamp b {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.ab-story-stamp i { font-family: var(--font-heading); font-style: italic; font-size: 0.74rem; }
+
+/* ---------- The stamps ---------- */
+/* Faint guilloché rings, the security pattern of a visa page. */
+.ab-pages {
+  background-color: var(--surface);
+  background-image:
+    repeating-radial-gradient(circle at 12% -10%, transparent 0 2.1rem, rgba(14, 75, 154, 0.04) 2.1rem calc(2.1rem + 1px)),
+    repeating-radial-gradient(circle at 105% 55%, transparent 0 2.6rem, rgba(224, 97, 58, 0.035) 2.6rem calc(2.6rem + 1px));
+}
+.ab-stamps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1.5rem, 3.5vw, 2.5rem);
+  align-items: center;
+  max-width: 62rem;
+  margin-inline: auto;
+}
+.ab-stamp {
+  --ink: var(--blue);
+  --tilt: 0deg;
+  position: relative;
+  width: 100%;
+  min-height: 11rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  text-align: center;
+  padding: 1.5rem 1.4rem;
+  color: var(--ink);
+  border: 0.1875rem solid var(--ink);
+  border-radius: 0.75rem;
+  opacity: 0.92;
+  transform: rotate(var(--tilt));
+  transition: transform 0.45s var(--ease-spring);
+}
+.ab-stamp::before {
+  content: "";
+  position: absolute;
+  inset: 0.35rem;
+  border: 0.0625rem solid var(--ink);
+  border-radius: 0.45rem;
+  pointer-events: none;
+}
+/* Stamps are ink — permanent. Hover presses them again; it never straightens
+   them. */
+.ab-stamp:hover { transform: rotate(var(--tilt)) scale(1.05); }
+
+.ab-stamp--round {
+  aspect-ratio: 1;
+  min-height: 0;
+  max-width: 15.5rem;
+  margin-inline: auto;
+  border-radius: 50%;
+  padding: 1.9rem;
+}
+.ab-stamp--round::before { border-radius: 50%; }
+
+.ab-stamp--green { --ink: #2e7d5b; }
+.ab-stamp--rust { --ink: #b8432a; }
+
+.ab-stamp-org {
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+.ab-stamp-year {
+  font-family: var(--font-statement);
+  font-weight: 500;
+  font-size: clamp(2.1rem, 3vw, 2.7rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+.ab-stamp strong {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+.ab-stamp em {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  opacity: 0.85;
+  max-width: 22ch;
 }
 
-/* ---------- The trip meter ----------
-   The shared .stats treatment; this label is the only thing the band owns. */
+/* The reserved slot — the only stamp that is also a button. */
+.ab-stamp--reserved {
+  --ink: var(--muted);
+  border-style: dashed;
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  transition: transform 0.45s var(--ease-spring), color 0.35s ease, border-color 0.35s ease;
+}
+.ab-stamp--reserved::before { border-style: dashed; }
+.ab-stamp--reserved:hover,
+.ab-stamp--reserved:focus-visible {
+  --ink: var(--orange);
+  transform: rotate(0deg) scale(1.04);
+}
+.ab-stamp--reserved:focus-visible { outline: 0.1875rem solid var(--orange); outline-offset: 0.375rem; }
+.ab-stamp--reserved em { text-transform: none; }
+
+/* ---------- Entry record ---------- */
 .ab-meter { text-align: center; margin-bottom: clamp(1.75rem, 4vw, 2.5rem); }
 .ab-meter .eyebrow::after {
   content: "";
@@ -146,195 +262,232 @@
   border-radius: 0.125rem;
 }
 
-/* ---------- Luggage tags ----------
-   One oversized corner radius plus a punched, reinforced eyelet is what makes
-   the card read as a tag; the barcode is set in two misaligned repeating
-   gradients so the bars come out irregular, the way a real one prints. Tilts
-   come from the data (--tilt) and straighten on hover — picked up, read,
-   put back level. */
-.ab-tags {
+/* ---------- Customs declaration ---------- */
+.ab-form {
+  max-width: 56rem;
+  margin-inline: auto;
+  background: #fff;
+  border: 0.0625rem solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+.ab-form-head {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  padding: 1.1rem clamp(1.4rem, 3vw, 2rem);
+  border-bottom: 0.0625rem dashed rgba(19, 26, 42, 0.25);
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.ab-form-intro {
+  padding: 1.4rem clamp(1.4rem, 3vw, 2rem) 0;
+  margin: 0;
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--body);
+}
+.ab-form-rows {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.25rem, 3vw, 1.9rem) clamp(1.5rem, 3.5vw, 2.75rem);
+  padding: clamp(1.4rem, 3vw, 1.9rem) clamp(1.4rem, 3vw, 2rem);
+}
+.ab-decl { display: flex; gap: 0.95rem; }
+.ab-box {
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-top: 0.2rem;
+  display: grid;
+  place-items: center;
+  border: 0.125rem solid rgba(19, 26, 42, 0.7);
+  border-radius: 0.25rem;
+  color: var(--orange);
+}
+/* A tick never lands square in its box. */
+.ab-box svg { width: 1.05rem; height: 1.05rem; transform: rotate(-6deg) translateY(-0.05rem); }
+.ab-decl h3 { font-size: 1.05rem; margin: 0 0 0.3rem; }
+.ab-decl p { font-size: 0.92rem; margin: 0; }
+
+.ab-form-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1.25rem 2rem;
+  padding: 1.3rem clamp(1.4rem, 3vw, 2rem) 1.6rem;
+  border-top: 0.0625rem dashed rgba(19, 26, 42, 0.25);
+}
+.ab-sign-name {
+  display: inline-block;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 1.8rem;
+  line-height: 1;
+  color: var(--blue-ink);
+  transform: rotate(-2deg);
+}
+.ab-sign small {
+  display: block;
+  margin-top: 0.45rem;
+  padding-top: 0.45rem;
+  border-top: 0.0625rem solid var(--line);
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.ab-form-seal {
+  flex: none;
+  width: 6.4rem;
+  aspect-ratio: 1;
+  display: grid;
+  place-content: center;
+  position: relative;
+  padding: 0.7rem;
+  text-align: center;
+  border: 0.15rem solid var(--orange);
+  border-radius: 50%;
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.6;
+  color: var(--orange);
+  opacity: 0.85;
+  transform: rotate(8deg);
+}
+.ab-form-seal::before {
+  content: "";
+  position: absolute;
+  inset: 0.3rem;
+  border: 0.0625rem solid var(--orange);
+  border-radius: 50%;
+}
+
+/* ---------- Crew passes ---------- */
+.ab-crew {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: clamp(1.4rem, 3vw, 2rem);
+  gap: clamp(1.4rem, 2.6vw, 2rem);
   max-width: 62rem;
   margin-inline: auto;
 }
-.ab-tag {
-  --tilt: 0deg;
-  position: relative;
-  height: 100%;
+.ab-id {
   background: #fff;
   border: 0.0625rem solid var(--line);
-  border-radius: 0.9rem;
-  border-top-left-radius: 2.6rem;
-  padding: 1.6rem 1.75rem 3rem;
-  box-shadow: var(--shadow-sm);
-  transform: rotate(var(--tilt));
-  transition: transform 0.5s var(--ease-spring), box-shadow 0.45s, border-color 0.45s;
-}
-.ab-tag:hover {
-  transform: rotate(0deg) translateY(-0.375rem);
-  box-shadow: var(--shadow-lg);
-  border-color: transparent;
-}
-/* The eyelet: a hole showing the page through it, inside a reinforcement ring. */
-.ab-tag-hole {
-  position: absolute;
-  top: 1.15rem;
-  left: 1.3rem;
-  width: 0.95rem;
-  height: 0.95rem;
-  border-radius: 50%;
-  background: var(--white);
-  box-shadow:
-    inset 0 0.0625rem 0.1875rem rgba(19, 26, 42, 0.2),
-    0 0 0 0.3125rem var(--orange-soft),
-    0 0 0 0.4rem rgba(224, 97, 58, 0.28);
-}
-.ab-tag-num {
-  position: absolute;
-  top: 1.25rem;
-  right: 1.5rem;
-  font-family: ui-monospace, "Courier New", monospace;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  color: var(--muted);
-}
-.ab-tag-num span { color: rgba(139, 147, 165, 0.55); }
-.ab-tag h3 { margin: 1.35rem 0 0.55rem; font-size: 1.18rem; }
-.ab-tag p { margin: 0; font-size: 0.94rem; }
-.ab-tag::after {
-  content: "";
-  position: absolute;
-  right: 1.5rem;
-  bottom: 1.15rem;
-  width: 4.6rem;
-  height: 1.35rem;
-  opacity: 0.3;
-  background:
-    repeating-linear-gradient(90deg, var(--ink) 0 0.1rem, transparent 0.1rem 0.3rem),
-    repeating-linear-gradient(90deg, var(--ink) 0 0.06rem, transparent 0.06rem 0.46rem);
-}
-
-/* ---------- The crew ----------
-   Polaroids on the section's paper-toned band, each held down by a strip of
-   translucent tape and captioned by hand. Same tilt-and-straighten grammar as
-   the tags — one motion language for the whole scrapbook. */
-.ab-crew {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: clamp(1.4rem, 2.6vw, 2rem);
-  align-items: start;
-}
-.ab-pol {
-  --tilt: 0deg;
-  position: relative;
-  margin: 0;
-  background: #fff;
-  padding: 0.7rem 0.7rem 1.05rem;
-  border-radius: 0.45rem;
-  box-shadow: var(--shadow-md);
-  transform: rotate(var(--tilt));
-  transition: transform 0.5s var(--ease-spring), box-shadow 0.45s;
-}
-.ab-pol:hover {
-  transform: rotate(0deg) translateY(-0.45rem);
-  box-shadow: var(--shadow-lg);
-}
-.ab-pol-photo {
-  aspect-ratio: 1;
+  border-radius: var(--r-md);
   overflow: hidden;
-  border-radius: 0.25rem;
-  background: rgba(19, 26, 42, 0.06);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.45s var(--ease-out), box-shadow 0.45s;
 }
-.ab-pol-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.7s var(--ease-out);
-}
-.ab-pol:hover .ab-pol-photo img { transform: scale(1.06); }
-.ab-pol figcaption { padding-top: 0.85rem; text-align: center; }
-.ab-pol strong {
-  display: block;
-  font-family: var(--font-hand);
+.ab-id:hover { transform: translateY(-0.375rem); box-shadow: var(--shadow-lg); }
+.ab-id-strip {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 1.4rem;
+  background: var(--blue-soft);
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.6rem;
   font-weight: 700;
-  font-size: 1.22rem;
-  line-height: 1.25;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--blue);
+}
+.ab-id-main { display: flex; gap: 1.3rem; padding: 1.3rem 1.4rem 1.4rem; }
+.ab-id-photo {
+  flex: none;
+  width: 6.6rem;
+  aspect-ratio: 3 / 3.7;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 0.0625rem solid var(--line);
+  background: rgba(19, 26, 42, 0.05);
+}
+.ab-id-photo img { width: 100%; height: 100%; object-fit: cover; }
+.ab-id dl {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem 1rem;
+  align-content: start;
+  margin: 0;
+}
+.ab-id-wide { grid-column: 1 / -1; }
+.ab-id dt {
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.15rem;
+}
+.ab-id dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.9rem;
+  line-height: 1.35;
   color: var(--ink);
 }
-.ab-pol small {
-  font-family: var(--font-display);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--orange);
+.ab-id-name { font-size: 1.15rem; }
+.ab-mrz {
+  padding: 0.75rem 1.4rem;
+  background: #f2f3f6;
+  border-top: 0.0625rem solid var(--line);
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.76rem;
+  letter-spacing: 0.13em;
+  line-height: 1.55;
+  color: #4c5468;
+  white-space: nowrap;
+  overflow: hidden;
 }
-.ab-tape {
-  position: absolute;
-  top: -0.72rem;
-  left: 50%;
-  width: 5.4rem;
-  height: 1.5rem;
-  transform: translateX(-50%) rotate(-4deg);
-  background: linear-gradient(100deg, rgba(255, 249, 235, 0.65), rgba(240, 228, 202, 0.78));
-  box-shadow: 0 0.125rem 0.375rem rgba(16, 24, 43, 0.1);
-  /* Slightly off-square, like tape torn by hand. */
-  clip-path: polygon(3% 0, 100% 3%, 97% 97%, 0 100%);
-}
-.ab-crew > .reveal:nth-child(even) .ab-tape { transform: translateX(-50%) rotate(3deg); }
+.ab-mrz span { display: block; }
 
 /* ============================================================
    RESPONSIVE
    ============================================================ */
-/* The route folds to a left-hand spine: ghost years disappear (the mono tag
-   already names the year), the photo stacks above the departure story. */
 @media (max-width: 900px) {
-  .ab-stop {
-    grid-template-columns: 2.75rem 1fr;
-    align-items: start;
-    padding-block: clamp(1.4rem, 4vw, 2rem);
-  }
-  .ab-stop::before { left: 1.375rem; transform: none; }
-  .ab-stop .ab-side { display: none; }
-  .ab-stop .ab-node { grid-column: 1; grid-row: 1; margin-top: 0.35rem; }
-  .ab-stop .ab-body { grid-column: 2; grid-row: 1; }
-
-  .ab-stop--depart .ab-side {
-    display: block;
-    grid-column: 2;
-    grid-row: 1;
-    justify-self: stretch;
-    text-align: left;
-    margin-bottom: 1.2rem;
-  }
-  .ab-stop--depart .ab-body { grid-row: 2; }
-  .ab-stop--depart .ab-node { margin-top: 0; }
-  .ab-photo img { aspect-ratio: 16 / 10; }
-
-  /* With the nodes top-aligned, the segment ends move with them. */
-  .ab-stop--depart::before { top: 1.5rem; }
-  .ab-stop--here::before { bottom: auto; height: 1.25rem; }
+  .ab-story { grid-template-columns: 1fr; }
+  .ab-story-media { max-width: 34rem; }
+  .ab-story-stamp { right: 0.9rem; bottom: 0.9rem; width: 8rem; }
+  .ab-stamps { grid-template-columns: repeat(2, 1fr); }
 }
 
-@media (max-width: 700px) {
-  .ab-tags { grid-template-columns: 1fr; }
+@media (max-width: 860px) {
+  .ab-crew { grid-template-columns: 1fr; max-width: 34rem; }
 }
 
-@media (max-width: 1024px) {
-  .ab-crew { grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 760px) {
+  .ab-form-rows { grid-template-columns: 1fr; }
 }
-@media (max-width: 640px) {
-  .ab-crew { gap: 1.9rem 1rem; }
-  .ab-pol strong { font-size: 1.05rem; }
-  .ab-pol small { font-size: 0.6rem; letter-spacing: 0.1em; }
+
+@media (max-width: 560px) {
+  .ab-stamps { grid-template-columns: 1fr; max-width: 20rem; }
+  .ab-stamp--round { max-width: 15.5rem; }
+  .ab-cover-row { gap: 0.4rem 1.25rem; }
+  .ab-id-main { gap: 1rem; }
+  .ab-id-photo { width: 5.6rem; }
+  .ab-id dl { grid-template-columns: 1fr; gap: 0.6rem; }
+  .ab-mrz { font-size: 0.64rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ab-node--here::after { animation: none; }
-  .ab-tag:hover, .ab-pol:hover { transform: rotate(var(--tilt)); box-shadow: var(--shadow-sm); }
-  .ab-pol:hover { box-shadow: var(--shadow-md); }
-  .ab-pol:hover .ab-pol-photo img { transform: none; }
+  .ab-stamp:hover { transform: rotate(var(--tilt)); }
+  .ab-stamp--reserved:hover { transform: rotate(0deg); }
+  .ab-id:hover { transform: none; }
 }
