@@ -1,0 +1,193 @@
+/* ============================================================
+   CONTACT — the enquiry form as a postcard.
+   See ContactPostcard.jsx for the concept: message on ruled
+   lines left of the divider, sender and address right of it,
+   the submit button where the stamp goes, airmail border
+   around the lot.
+   ============================================================ */
+/* The airmail edge: painted by the border itself — a white card layer over a
+   striped layer, so no pseudo-elements are spent on it. */
+.cp-card {
+  max-width: 62rem;
+  margin-inline: auto;
+  border: 0.45rem solid transparent;
+  border-radius: var(--r-lg);
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    repeating-linear-gradient(-45deg, #cd5b4c 0 0.55rem, #fdfaf3 0.55rem 1.1rem, #3f6cae 1.1rem 1.65rem, #fdfaf3 1.65rem 2.2rem) border-box;
+  box-shadow: var(--shadow-lg);
+}
+
+.cp-grid {
+  display: grid;
+  grid-template-columns: 1.15fr auto 1fr;
+  gap: clamp(1.5rem, 3vw, 2.4rem);
+  padding: clamp(1.6rem, 3.5vw, 2.6rem);
+}
+.cp-divider { border-left: 0.0625rem dashed rgba(19, 26, 42, 0.25); }
+
+/* ---- The message half ---- */
+.cp-msg { display: flex; flex-direction: column; }
+.cp-dear {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--blue-ink);
+  margin-bottom: 0.4rem;
+}
+/* Written by hand, on ruled lines. The rules are drawn at the textarea's own
+   line-height and scroll with the text (background-attachment: local), so the
+   writing always sits ON a line, like ink does. */
+.cp-msg textarea {
+  flex: 1;
+  width: 100%;
+  min-height: 16rem;
+  border: 0;
+  outline: 0;
+  resize: vertical;
+  padding: 0 0.1rem 0.5rem;
+  background: transparent;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0 calc(2em - 0.0625rem),
+    rgba(19, 26, 42, 0.16) calc(2em - 0.0625rem) 2em
+  );
+  background-attachment: local;
+  font-family: var(--font-hand);
+  font-size: 1.08rem;
+  line-height: 2;
+  color: var(--blue-ink);
+}
+.cp-msg textarea::placeholder { color: rgba(19, 26, 42, 0.35); }
+
+/* ---- The address half ---- */
+.cp-side { display: flex; flex-direction: column; gap: 1.05rem; }
+
+/* The stamp corner. Idle it is the printed "place stamp here" box every
+   postcard carries; hover or focus inks it in — perforations included
+   (the dotted white outline) — because pressing the stamp IS sending. */
+.cp-stamp {
+  align-self: flex-end;
+  width: 6.9rem;
+  min-height: 7.7rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  margin-bottom: 0.4rem;
+  border: 0.125rem dashed rgba(19, 26, 42, 0.35);
+  border-radius: 0.3rem;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transform: rotate(2deg);
+  transition: all 0.35s var(--ease-out);
+}
+.cp-stamp svg { width: 1.7rem; height: 1.7rem; }
+.cp-stamp b {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.82rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.cp-stamp small {
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.cp-stamp:hover,
+.cp-stamp:focus-visible {
+  background: var(--grad-orange);
+  border-color: transparent;
+  color: #fff;
+  outline: 0.2rem dotted #fff;
+  outline-offset: -0.55rem;
+  transform: rotate(-2deg) scale(1.05);
+  box-shadow: var(--shadow-md);
+}
+
+/* Sender fields: a postcard has no boxes, just lines to write on. */
+.cp-field label {
+  display: flex;
+  gap: 0.3rem;
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.15rem;
+}
+.cp-field .req { color: var(--orange); font-style: normal; }
+.cp-field input {
+  width: 100%;
+  border: 0;
+  border-bottom: 0.0625rem solid rgba(19, 26, 42, 0.28);
+  border-radius: 0;
+  padding: 0.35rem 0.1rem 0.45rem;
+  background: transparent;
+  outline: 0;
+  font-size: 0.95rem;
+  color: var(--ink);
+  transition: border-color 0.25s;
+}
+.cp-field input:focus { border-bottom-color: var(--orange); }
+.cp-field.is-error input { border-bottom-color: #e63946; }
+
+/* The subject <Select>, re-dressed from a boxed field into a written line. */
+.cp-field .tu-select-btn {
+  border: 0;
+  border-bottom: 0.0625rem solid rgba(19, 26, 42, 0.28);
+  border-radius: 0;
+  padding: 0.35rem 0.1rem 0.45rem;
+  background: transparent;
+}
+.cp-field .tu-select.is-open .tu-select-btn,
+.cp-field .tu-select-btn:focus-visible { border-bottom-color: var(--orange); box-shadow: none; }
+
+.cp-err { display: none; font-size: 0.76rem; color: #e63946; }
+.cp-field.is-error .cp-err, .cp-msg.is-error .cp-err { display: block; margin-top: 0.3rem; }
+
+/* The recipient — us, written the way a postcard writes it. */
+.cp-to {
+  margin-top: auto;
+  padding-top: 1.1rem;
+  border-top: 0.0625rem dashed rgba(19, 26, 42, 0.2);
+  font-style: normal;
+}
+.cp-to b {
+  display: block;
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+.cp-to span {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+/* ============================================================
+   RESPONSIVE — the card stacks, message first
+   ============================================================ */
+@media (max-width: 880px) {
+  .cp-grid { grid-template-columns: 1fr; }
+  .cp-divider { border-left: 0; border-top: 0.0625rem dashed rgba(19, 26, 42, 0.25); }
+  .cp-msg textarea { min-height: 12rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cp-stamp { transition: none; }
+  .cp-stamp:hover, .cp-stamp:focus-visible { transform: rotate(2deg); }
+}

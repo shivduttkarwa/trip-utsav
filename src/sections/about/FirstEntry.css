@@ -1,61 +1,271 @@
 /* ============================================================
-   ABOUT — Page 01, the first entry.
-   The founding story beside its photograph, with an arrival
-   stamp pressed half off the picture's corner.
+   ABOUT — the first entry, as an open passport spread.
+   See FirstEntry.jsx for the concept: photograph mounted on the
+   left page, the written entry on the right, a stitched gutter
+   between them, and the arrival stamp inked across both pages.
    ============================================================ */
-.ab-story {
+.fe-spread {
+  --paper: #fbf8f1;
+  position: relative;
   display: grid;
-  grid-template-columns: 1fr 1.05fr;
-  gap: clamp(2rem, 5vw, 3.75rem);
-  align-items: center;
-}
-.ab-story-title { margin: 0.875rem 0 1.125rem; }
-.ab-story-media { position: relative; }
-.ab-story-media > img {
-  width: 100%;
-  aspect-ratio: 4 / 3.4;
-  object-fit: cover;
+  grid-template-columns: 0.92fr 1.08fr;
+  max-width: 66rem;
+  margin-inline: auto;
+  background-color: var(--paper);
+  /* The same faint guilloché rings as the visa pages — one book, one paper. */
+  background-image:
+    repeating-radial-gradient(circle at 8% -12%, transparent 0 2.2rem, rgba(14, 75, 154, 0.035) 2.2rem calc(2.2rem + 1px)),
+    repeating-radial-gradient(circle at 102% 118%, transparent 0 2.7rem, rgba(224, 97, 58, 0.03) 2.7rem calc(2.7rem + 1px));
+  border: 0.0625rem solid rgba(19, 26, 42, 0.08);
   border-radius: var(--r-lg);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 1.5rem 3.5rem rgba(16, 24, 43, 0.12);
 }
-/* The arrival stamp, half off the photograph's corner — a paper disc under
-   orange ink so it stays legible over the picture. */
-.ab-story-stamp {
+/* The gutter: pages curve down into the binding, so each darkens toward the
+   centre… */
+.fe-spread::before {
+  content: "";
   position: absolute;
-  right: -1.2rem;
-  bottom: 1.6rem;
-  width: 9.5rem;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: clamp(3rem, 7vw, 5.5rem);
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent, rgba(19, 26, 42, 0.05) 38%, rgba(19, 26, 42, 0.1) 50%, rgba(19, 26, 42, 0.05) 62%, transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+/* …and the stitching that holds the book together. */
+.fe-spread::after {
+  content: "";
+  position: absolute;
+  top: 1.1rem;
+  bottom: 1.1rem;
+  left: 50%;
+  border-left: 0.0625rem dashed rgba(19, 26, 42, 0.22);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.fe-leaf { position: relative; padding: clamp(1.9rem, 3.5vw, 2.9rem); }
+
+/* ---- Verso: the mounted photograph ---- */
+.fe-leaf--photo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-right: clamp(2.4rem, 4vw, 3.4rem);
+  /* Room at the foot for the stamp's landing zone. */
+  padding-bottom: clamp(3rem, 5vw, 4rem);
+}
+.fe-photo { margin: 0; }
+.fe-print {
+  position: relative;
+  display: block;
+  transform: rotate(-2.2deg);
+  transition: transform 0.6s var(--ease-spring);
+}
+/* A print never quite un-tilts — hovering only settles it a little. */
+.fe-photo:hover .fe-print { transform: rotate(-0.8deg); }
+.fe-print img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3.2;
+  object-fit: cover;
+  border: 0.35rem solid #fff;
+  box-shadow: var(--shadow-md);
+}
+/* Paper mounting corners, one triangle of page-stock across each corner of
+   the print — the album idiom, drawn with gradients instead of extra DOM. */
+.fe-print::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to bottom right, var(--paper) 50%, transparent 50.5%),
+    linear-gradient(to bottom left, var(--paper) 50%, transparent 50.5%),
+    linear-gradient(to top right, var(--paper) 50%, transparent 50.5%),
+    linear-gradient(to top left, var(--paper) 50%, transparent 50.5%);
+  background-position: top left, top right, bottom left, bottom right;
+  background-size: 1.6rem 1.6rem;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+.fe-photo figcaption {
+  margin-top: 1rem;
+  text-align: center;
+  font-family: var(--font-hand);
+  font-size: 0.98rem;
+  color: var(--blue-ink);
+  transform: rotate(-1deg);
+}
+
+/* ---- Recto: the written entry ---- */
+.fe-leaf--entry {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: clamp(2.6rem, 4.5vw, 3.6rem);
+}
+.fe-entry-head {
+  align-self: stretch;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.5rem;
+  padding-bottom: 0.8rem;
+  margin-bottom: 1.4rem;
+  border-bottom: 0.0625rem dashed rgba(19, 26, 42, 0.22);
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.fe-title { margin: 0 0 1.1rem; }
+.fe-facts {
+  align-self: stretch;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem 1.5rem;
+  margin: 0 0 1.4rem;
+}
+.fe-facts dt {
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.18rem;
+}
+.fe-facts dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--ink);
+}
+.fe-leaf--entry p { font-size: 0.97rem; line-height: 1.62; color: var(--body); margin: 0 0 1.1rem; }
+
+/* The one sentence the company is built on, in the hand it was said to. */
+.fe-quote {
+  margin: 0.2rem 0 1.3rem;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 1.32rem;
+  line-height: 1.5;
+  color: var(--blue-ink);
+  transform: rotate(-1.2deg);
+}
+.fe-quote cite {
+  display: block;
+  margin-top: 0.5rem;
+  font-family: ui-monospace, "Courier New", monospace;
+  font-style: normal;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Decorative foot — this is the stamp's landing zone on the right page,
+   which is why it carries no meaning a reader needs. */
+.fe-mrz {
+  margin-top: clamp(2.6rem, 4vw, 3.4rem);
+  align-self: stretch;
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.13em;
+  line-height: 1.55;
+  color: rgba(76, 84, 104, 0.55);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.fe-mrz span { display: block; }
+
+.fe-folio {
+  position: absolute;
+  bottom: 1rem;
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+}
+.fe-leaf--photo .fe-folio { left: 1.4rem; }
+.fe-leaf--entry .fe-folio { right: 1.4rem; }
+
+/* ---- The arrival stamp, inked across the gutter ---- */
+/* No paper disc behind it: this is ink on the page, so it multiplies over
+   whatever it landed on — the caption's tail, the MRZ, the binding shade. */
+.fe-stamp {
+  --tx: -50%;
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1rem, 2.5vw, 1.8rem);
+  width: clamp(8rem, 11vw, 9.5rem);
   aspect-ratio: 1;
   display: grid;
   place-content: center;
   gap: 0.15rem;
   text-align: center;
   padding: 0.8rem;
-  background: rgba(253, 250, 243, 0.94);
   border: 0.1875rem solid var(--orange-dark);
   border-radius: 50%;
   color: var(--orange-dark);
-  transform: rotate(-10deg);
-  box-shadow: var(--shadow-md);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0;
+  transform: translateX(var(--tx)) rotate(-26deg) scale(1.5);
 }
-.ab-story-stamp::before {
+.fe-stamp::before {
   content: "";
   position: absolute;
   inset: 0.4rem;
   border: 0.0625rem solid var(--orange-dark);
   border-radius: 50%;
 }
-.ab-story-stamp b {
+.fe-stamp b {
   font-family: var(--font-display);
   font-weight: 800;
   font-size: 0.78rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
-.ab-story-stamp i { font-family: var(--font-heading); font-style: italic; font-size: 0.74rem; }
+.fe-stamp i { font-family: var(--font-heading); font-style: italic; font-size: 0.74rem; }
+/* Pressed once the spread is on the table: scale down, settle on the spring,
+   a beat after the book itself has arrived. */
+.fe-spread.in .fe-stamp {
+  opacity: 0.9;
+  transform: translateX(var(--tx)) rotate(-9deg) scale(1);
+  transition: transform 0.55s var(--ease-spring) 0.5s, opacity 0.3s ease 0.5s;
+}
 
-@media (max-width: 900px) {
-  .ab-story { grid-template-columns: 1fr; }
-  .ab-story-media { max-width: 34rem; }
-  .ab-story-stamp { right: 0.9rem; bottom: 0.9rem; width: 8rem; }
+/* ============================================================
+   RESPONSIVE — the book folds to a single page
+   ============================================================ */
+@media (max-width: 920px) {
+  .fe-spread { grid-template-columns: 1fr; max-width: 36rem; }
+  /* No gutter when there is only one page — the stitch becomes the seam
+     between the photograph and the entry. */
+  .fe-spread::before, .fe-spread::after { content: none; }
+  .fe-leaf--photo { padding-right: clamp(1.9rem, 3.5vw, 2.9rem); padding-bottom: 1.9rem; }
+  .fe-leaf--entry {
+    padding-left: clamp(1.9rem, 3.5vw, 2.9rem);
+    border-top: 0.0625rem dashed rgba(19, 26, 42, 0.22);
+  }
+  /* The stamp lands on the entry's foot, over the MRZ. */
+  .fe-stamp { --tx: 0; left: auto; right: 1.1rem; bottom: 0.9rem; width: 7.6rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fe-photo:hover .fe-print { transform: rotate(-2.2deg); }
+  .fe-stamp {
+    opacity: 0.9;
+    transform: translateX(var(--tx)) rotate(-9deg) scale(1);
+  }
+  .fe-spread.in .fe-stamp { transition: none; }
 }

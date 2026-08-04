@@ -266,8 +266,8 @@
 }
 .lc-nav a:hover { color: #fff; padding-left: 0.3rem; }
 
-/* Shared with the Contact page aside, which is the same dark ground — kept as
-   it was so this redesign cannot reach that page. */
+/* Footer-only now — the Contact page aside that once shared these rows was
+   rebuilt as the luggage tag in sections/contact/StudioFinder. */
 .footer-contact { display: grid; gap: 0.9375rem; }
 .footer-contact li { display: flex; gap: 0.75rem; font-size: 0.9rem; align-items: flex-start; }
 .footer-contact svg { width: 1.0625rem; height: 1.0625rem; color: var(--orange); flex: none; margin-top: 0.1875rem; }
