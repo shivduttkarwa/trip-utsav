@@ -1,6 +1,7 @@
 /* ============================================================
    SERVICES — the bento.
-   See pages/Services.jsx for the concept.
+   See ServicesBento.jsx for the concept: nine services, each
+   sized by what it is worth.
    ============================================================ */
 
 .sv { padding: clamp(3.25rem, 7vw, 5.5rem) 0; }
@@ -167,40 +168,6 @@
 .sv-tile--accent:hover .sv-go { color: rgba(255, 255, 255, 0.82); }
 .sv-tile--accent:hover .sv-ico { background: #fff; color: var(--orange); }
 
-/* ============================================================
-   FAQ — heading holds, questions move
-   ============================================================ */
-.sv-faq { padding: clamp(3.25rem, 7vw, 5.5rem) 0; background: var(--surface); }
-.sv-faq-grid {
-  display: grid;
-  grid-template-columns: 0.82fr 1.18fr;
-  gap: clamp(2rem, 5vw, 4.5rem);
-  align-items: start;
-}
-/* Sticky rather than centred above the list: the ask ("still stuck? talk to
-   us") is the point of the section, and it should still be on screen at
-   question six — which is exactly where someone gives up reading. */
-.sv-faq-aside { position: sticky; top: 6rem; }
-.sv-faq-aside h2 { margin: 0.7rem 0 0.9rem; }
-.sv-faq-aside p { font-size: 1rem; line-height: 1.6; color: var(--body); max-width: 26rem; }
-.sv-faq-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.5rem; }
-
-.sv-faq-list {
-  background: #fff;
-  border-radius: var(--r-lg);
-  border: 0.0625rem solid rgba(19, 26, 42, 0.07);
-  padding: clamp(0.5rem, 1.5vw, 1rem) clamp(1rem, 2.5vw, 1.75rem);
-}
-
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
-@media (max-width: 1024px) {
-  .sv-faq-grid { grid-template-columns: 1fr; gap: 2rem; }
-  .sv-faq-aside { position: static; }
-  .sv-faq-aside p { max-width: 40rem; }
-}
-
 /* Two columns. The feature keeps its double width — halve it and it stops
    being the feature, which is the one thing this layout exists to say — but it
    gives up the double height, since a 2x2 tile on a narrow screen is a full
@@ -219,7 +186,6 @@
   .sv-grid > .w2, .sv-grid > .h2 { grid-column: span 1; grid-row: span 1; }
   .sv-tile { min-height: 0; }
   .sv-tile--photo { min-height: 18rem; }
-  .sv-faq-actions .btn { flex: 1 1 12rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

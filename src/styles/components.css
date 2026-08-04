@@ -168,7 +168,7 @@
 .tl-item h4 { margin: 0.25rem 0 0.375rem; font-size: 1.06rem; }
 .tl-item p { font-size: 0.94rem; }
 
-/* (Service tiles → styles/services.css. The .icon-card block that lived here
+/* (Service tiles → sections/services/ServicesBento.css. The .icon-card block that lived here
    went with <IconCard>, whose only consumer was the Services page before it
    was rebuilt as a bento.) */
 
