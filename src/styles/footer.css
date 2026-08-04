@@ -332,8 +332,20 @@
   /* The index stops being one editorial line at this width and becomes a
      list, so the country drops — at two items per row it is the field that
      pushes the place name to wrap. */
-  .lc-index { gap: 0.25rem 1.5rem; }
+  .lc-index { gap: 0.25rem 1.5rem; justify-content: center; }
   .lc-index em { display: none; }
+
+  /* One column, centred: left-ragged blocks stacked down a phone read as
+     drift, so every block centres — logo chip, socials, link lists, contact
+     rows, the subscribe form, and the base line. */
+  .lc-grid, .lc-base .container { text-align: center; }
+  .lc-brand img { margin-inline: auto; }
+  .lc-brand p { margin-inline: auto; }
+  .lc-socials { justify-content: center; }
+  .footer-contact li { justify-content: center; }
+  .lc-sub form { max-width: 21rem; margin-inline: auto; }
+  .lc-base .container { justify-content: center; }
+  .lc-legal { justify-content: center; }
 }
 
 @media (prefers-reduced-motion: reduce) {
