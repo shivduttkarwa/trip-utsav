@@ -47,7 +47,6 @@ export default function ContactPostcard() {
     if (!form.name.trim()) er.name = true;
     if (!/^[0-9+\s-]{10,15}$/.test(form.phone.trim())) er.phone = true;
     if (form.email.trim() && !/^\S+@\S+\.\S+$/.test(form.email.trim())) er.email = true;
-    if (!form.message.trim()) er.message = true;
     setErrors(er);
     if (Object.keys(er).length) return;
     setForm(EMPTY);
@@ -65,16 +64,46 @@ export default function ContactPostcard() {
         />
         <Reveal className="cp-card" variant="zoom">
           <form className="cp-grid" onSubmit={submit} noValidate>
-            {/* the message half — written by hand, on ruled lines */}
-            <div className={`cp-msg${errors.message ? " is-error" : ""}`}>
+            {/* the message half — written by hand, on ruled lines. Optional:
+                the call-back only truly needs a name and a number. */}
+            <div className="cp-msg">
               <span className="cp-dear" aria-hidden="true">Dear VoyageNest,</span>
               <textarea
                 value={form.message}
                 onChange={set("message")}
-                aria-label="Message"
+                aria-label="Message (optional)"
                 placeholder="Destination, dates, headcount, budget — anything and everything…"
               />
-              <span className="cp-err">Please write a short message</span>
+              {/* the postmark, franked faintly across the empty stretch of
+                  the message page (desktop only — phones have no gap) */}
+              <svg className="cp-mark" viewBox="0 0 200 200" aria-hidden="true">
+                <circle cx="100" cy="100" r="88" fill="none" stroke="currentColor" strokeWidth="2.5" />
+                <circle cx="100" cy="100" r="60" fill="none" stroke="currentColor" strokeWidth="1.25" />
+                <defs>
+                  <path id="cp-mark-arc" d="M100 26 a74 74 0 1 1 -0.01 0" fill="none" />
+                </defs>
+                <text className="cp-mark-ring">
+                  <textPath href="#cp-mark-arc" textLength="455" lengthAdjust="spacingAndGlyphs">
+                    · VoyageNest Post · Mumbai · Travel More · Celebrate Life
+                  </textPath>
+                </text>
+                <path d="M63 106 L137 84 L105 118 L96 105 Z" fill="currentColor" />
+              </svg>
+
+              {/* the sign-off doodle every postcard ends up with */}
+              <div className="cp-ps" aria-hidden="true">
+                <svg className="cp-ps-trail" viewBox="0 0 110 26" fill="none">
+                  <path
+                    d="M4 20 C 28 4, 56 28, 82 10"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeDasharray="1 6"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <Icon name="plane" />
+                <span>P.S. Rough plans are our favourite kind.</span>
+              </div>
             </div>
 
             <div className="cp-divider" aria-hidden="true" />

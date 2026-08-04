@@ -6,9 +6,9 @@ import "./ContactChannels.css";
 /* Three lines into the studio, each with its honest response time — the
    status row is the promise, the card is just where it is written down. */
 const CHANNELS = [
-  { icon: "phone", tag: "Line 01", status: "Answering now", title: "Call Us", line1: SITE.phone, line2: "Mon–Sat, 9:30 AM – 7:30 PM", href: SITE.phoneHref, cta: "Call now" },
-  { icon: "whatsapp", tag: "Line 02", status: "Replies in minutes", title: "WhatsApp", line1: "Fastest replies, 24×7", line2: "Trip support & quick quotes", href: SITE.whatsapp, cta: "Start chat" },
-  { icon: "mail", tag: "Line 03", status: "Within 4 working hours", title: "Email", line1: SITE.email, line2: "For documents & detailed briefs", href: `mailto:${SITE.email}`, cta: "Write to us" }
+  { icon: "phone", tone: "call", tag: "Line 01", status: "Answering now", title: "Call Us", line1: SITE.phone, line2: "Mon–Sat, 9:30 AM – 7:30 PM", href: SITE.phoneHref, cta: "Call now" },
+  { icon: "whatsapp", tone: "wa", tag: "Line 02", status: "Replies in minutes", title: "WhatsApp", line1: "Fastest replies, 24×7", line2: "Trip support & quick quotes", href: SITE.whatsapp, cta: "Start chat" },
+  { icon: "mail", tone: "mail", tag: "Line 03", status: "Within 4 working hours", title: "Email", line1: SITE.email, line2: "For documents & detailed briefs", href: `mailto:${SITE.email}`, cta: "Write to us" }
 ];
 
 export default function ContactChannels() {
@@ -18,7 +18,7 @@ export default function ContactChannels() {
         {CHANNELS.map((c, i) => (
           <Reveal key={c.title} delay={i * 0.1}>
             <a
-              className="cc-card"
+              className={`cc-card cc--${c.tone}`}
               href={c.href}
               target={c.href.startsWith("http") ? "_blank" : undefined}
               rel="noopener noreferrer"

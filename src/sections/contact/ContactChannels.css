@@ -42,6 +42,12 @@
   box-shadow: 0 0 0 0.2rem rgba(46, 158, 107, 0.16);
 }
 
+/* Each line wears its service's native colour — the one you'd see on the
+   app icon it opens. */
+.cc--call { --cc: var(--blue); --cc-soft: var(--blue-soft); }
+.cc--wa { --cc: #25d366; --cc-soft: rgba(37, 211, 102, 0.12); }
+.cc--mail { --cc: #ea4335; --cc-soft: rgba(234, 67, 53, 0.1); }
+
 .cc-body { display: flex; gap: 1rem; align-items: flex-start; }
 .cc-ico {
   flex: none;
@@ -50,12 +56,12 @@
   width: 2.6rem;
   height: 2.6rem;
   border-radius: var(--r-sm);
-  background: var(--orange-soft);
-  color: var(--orange);
+  background: var(--cc-soft, var(--orange-soft));
+  color: var(--cc, var(--orange));
   transition: background-color 0.4s ease, color 0.4s ease, transform 0.5s var(--ease-spring);
 }
 .cc-ico svg { width: 1.25rem; height: 1.25rem; }
-.cc-card:hover .cc-ico { background: var(--grad-orange); color: #fff; transform: rotate(-6deg); }
+.cc-card:hover .cc-ico { background: var(--cc, var(--orange)); color: #fff; transform: rotate(-6deg); }
 .cc-body h3 { font-size: 1.12rem; margin: 0.1rem 0 0.35rem; }
 .cc-body p { font-size: 0.9rem; line-height: 1.55; color: var(--body); margin: 0; }
 .cc-body b { color: var(--ink); }
@@ -74,7 +80,7 @@
   transition: color 0.3s ease, gap 0.3s var(--ease-out);
 }
 .cc-cta svg { width: 0.85rem; height: 0.85rem; }
-.cc-card:hover .cc-cta { color: var(--orange); gap: 0.7rem; }
+.cc-card:hover .cc-cta { color: var(--cc, var(--orange)); gap: 0.7rem; }
 
 @media (max-width: 900px) { .cc-grid { grid-template-columns: 1fr; } }
 

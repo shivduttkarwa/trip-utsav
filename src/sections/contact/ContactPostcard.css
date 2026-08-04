@@ -39,9 +39,9 @@
    line-height and scroll with the text (background-attachment: local), so the
    writing always sits ON a line, like ink does. */
 .cp-msg textarea {
-  flex: 1;
+  flex: 0 1 auto;
   width: 100%;
-  min-height: 16rem;
+  min-height: 10rem;
   border: 0;
   outline: 0;
   resize: vertical;
@@ -59,6 +59,53 @@
   color: var(--blue-ink);
 }
 .cp-msg textarea::placeholder { color: rgba(19, 26, 42, 0.35); }
+
+/* The postmark: franked across the message page's empty middle in washed-out
+   ink — decoration with a passport-office accent, never competing with the
+   writing above it. */
+.cp-mark {
+  width: clamp(11rem, 15vw, 14.5rem);
+  /* The global reset squashes bare <svg> to 1em tall — restate the height or
+     the whole postmark collapses to a dot. */
+  height: auto;
+  aspect-ratio: 1;
+  margin: auto;               /* centres itself in the leftover stretch */
+  color: rgba(14, 75, 154, 0.32);
+  transform: rotate(-8deg);
+}
+.cp-mark-ring {
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  fill: currentColor;
+}
+/* The sign-off: a dashed flight-path doodle and a handwritten P.S., pinned
+   to the message page's foot in the space the shorter textarea freed up. */
+.cp-ps {
+  margin-top: auto;
+  padding-top: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--blue-ink);
+}
+.cp-ps-trail { width: 5.25rem; height: auto; flex: none; color: rgba(14, 75, 154, 0.45); }
+.cp-ps > svg:not(.cp-ps-trail) {
+  width: 1.05rem;
+  height: 1.05rem;
+  flex: none;
+  color: var(--orange-dark);
+  transform: rotate(-12deg);
+}
+.cp-ps span {
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 1rem;
+  transform: rotate(-1deg);
+  white-space: nowrap;
+}
 
 /* ---- The address half ---- */
 .cp-side { display: flex; flex-direction: column; gap: 1.05rem; }
@@ -208,6 +255,10 @@
   /* Stacked, the stamp signs off at the END of the card — a submit above the
      fields it submits reads backwards on a phone. */
   .cp-stamp { order: 9; margin: 0.8rem 0 0; }
+  .cp-ps { padding-top: 0.9rem; }
+  .cp-ps-trail { width: 2.6rem; }
+  /* Stacked, the page has no empty middle for the postmark to frank. */
+  .cp-mark { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
