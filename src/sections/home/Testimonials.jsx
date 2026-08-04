@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Reveal from "../../components/Reveal";
 import SectionHead from "../../components/SectionHead";
 import Icon from "../../components/Icon";
@@ -8,18 +8,20 @@ import "./Testimonials.css";
 
 /* One place per review, in the order TESTIMONIALS declares them — the trip
    names are prose ("Leh–Ladakh Group Trip"), so they are matched here rather
-   than parsed. Each resolves to a destination photo for the picture side. */
+   than parsed. Reviews passed in via the `items` prop carry their own `place`
+   instead. Each resolves to a destination photo for the picture side. */
 const PLACES = ["Maldives", "Ladakh", "Singapore", "Europe", "Thailand", "Kashmir"];
 
-const CARDS = TESTIMONIALS.map((t, i) => {
-  const place = PLACES[i] ?? PLACES[0];
-  return {
-    ...t,
-    place,
-    code: place.slice(0, 3).toUpperCase(),
-    image: DESTINATIONS.find((d) => d.name === place)?.image,
-  };
-});
+const buildCards = (items) =>
+  items.map((t, i) => {
+    const place = t.place ?? PLACES[i] ?? PLACES[0];
+    return {
+      ...t,
+      place,
+      code: place.slice(0, 3).toUpperCase(),
+      image: DESTINATIONS.find((d) => d.name === place)?.image,
+    };
+  });
 
 /* Reviews as postcards.
  *
@@ -34,9 +36,14 @@ const CARDS = TESTIMONIALS.map((t, i) => {
  * phone. Nothing but the photograph lives on the far side, so nothing is lost
  * if it is never turned.
  *
- * About still uses <TestimonialSlider>, which is why that component and its
- * .testi-* rules are left alone. */
-export default function Testimonials() {
+ * About reuses this section with its own reviews and heading via props; the
+ * defaults render the home version. */
+export default function Testimonials({
+  items = TESTIMONIALS,
+  eyebrow = "Traveller Stories",
+  title = "25,000+ Celebrations and Counting",
+}) {
+  const cards = useMemo(() => buildCards(items), [items]);
   const railRef = useRef(null);
   const [dragging, setDragging] = useState(false);
   const [flipped, setFlipped] = useState(() => new Set());
@@ -134,7 +141,7 @@ export default function Testimonials() {
   return (
     <section className="section notes-section">
       <div className="container">
-        <SectionHead eyebrow="Traveller Stories" title="25,000+ Celebrations and Counting" />
+        <SectionHead eyebrow={eyebrow} title={title} />
 
         <div
           className={`cards${dragging ? " is-dragging" : ""}`}
@@ -146,7 +153,7 @@ export default function Testimonials() {
           onPointerLeave={endDrag}
           onScroll={syncEdges}
         >
-          {CARDS.map((t, i) => (
+          {cards.map((t, i) => (
             <Reveal className="pc-wrap" key={t.name} delay={i * 0.08}>
               <article className={`pc${flipped.has(t.name) ? " is-flipped" : ""}`}>
                 <div className="pc-inner">

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="150" viewBox="0 0 480 150" fill="none" role="img" aria-labelledby="voyagenest-title voyagenest-desc">
+  <title id="voyagenest-title">VoyageNest</title>
+  <desc id="voyagenest-desc">VoyageNest logo with an abstract bird and nest symbol.</desc>
+
+  <!-- Abstract V / bird returning to a nest -->
+  <g stroke="#0E4B9A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M25 54C43 54 59 63 72 80C85 63 101 54 119 54"/>
+    <path d="M31 89C52 105 92 105 113 89"/>
+    <path d="M42 105C58 115 86 115 102 105"/>
+  </g>
+  <circle cx="72" cy="40" r="4" fill="#E0613A"/>
+
+  <!-- Wordmark -->
+  <text x="152" y="110" fill="#0E4B9A" font-family="Georgia, 'Times New Roman', serif" font-size="59" letter-spacing="-1.5">
+    Voyage<tspan fill="#E0613A" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="600" letter-spacing="-2">Nest</tspan>
+  </text>
+</svg>

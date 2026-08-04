@@ -1,7 +1,7 @@
 import asset from "../asset.js";
 
 /* ============================================================
-   TRIP UTSAV — Package data
+   VOYAGENEST — Package data
    All site content is driven from this file. Edit / add packages
    here and every page (home, listing, detail) updates itself.
    ============================================================ */
@@ -18,7 +18,7 @@ const FALLBACK_IMG =
         <stop offset='0' stop-color='#0f4c9c'/><stop offset='1' stop-color='#f26b21'/>
       </linearGradient></defs>
       <rect width='1200' height='800' fill='url(#g)'/>
-      <text x='600' y='410' font-family='Arial' font-size='44' fill='rgba(255,255,255,.85)' text-anchor='middle'>Trip Utsav</text>
+      <text x='600' y='410' font-family='Arial' font-size='44' fill='rgba(255,255,255,.85)' text-anchor='middle'>VoyageNest</text>
     </svg>`
   );
 
@@ -697,7 +697,7 @@ for (const pkg of PACKAGES) {
 }
 
 const TESTIMONIALS = [
-  { name: "Priya & Arjun Mehta", trip: "Maldives Honeymoon", text: "Trip Utsav planned our honeymoon down to the flower petals on the bed. The floating breakfast surprise had us in tears. Worth every rupee." },
+  { name: "Priya & Arjun Mehta", trip: "Maldives Honeymoon", text: "VoyageNest planned our honeymoon down to the flower petals on the bed. The floating breakfast surprise had us in tears. Worth every rupee." },
   { name: "Rakesh Sharma", trip: "Leh–Ladakh Group Trip", text: "Oxygen cylinders in the cab, hotel upgrades, permits sorted before we even asked. This team sweats the details so you don't have to." },
   { name: "The D'Souza Family", trip: "Singapore with Kids", text: "Travelling with a 4-year-old and grandparents is chaos — except it wasn't. Every transfer was on time and the itinerary pace was perfect." },
   { name: "Sneha Kulkarni", trip: "Europe Grand Tour", text: "Schengen visa done in 12 days, Indian dinners in Switzerland, and a tour manager who became family. 10 days felt like a dream." },

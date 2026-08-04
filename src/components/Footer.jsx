@@ -149,7 +149,7 @@ export default function Footer() {
         {/* ---- Quiet half ---- */}
         <div className="lc-grid">
           <div className="lc-brand">
-            <img src={asset("trip-utsav-logo.svg")} alt="Trip Utsav" />
+            <img src={asset("voyagenest-logo.svg")} alt="VoyageNest" />
             <p>
               Travel More, Celebrate Life. Journeys across India and the world — from weekend
               escapes to grand honeymoons — with the care of a friend and the precision of a pro.
@@ -208,7 +208,7 @@ export default function Footer() {
 
       <div className="lc-base">
         <div className="container">
-          <span>© {new Date().getFullYear()} Trip Utsav — Travel More, Celebrate Life.</span>
+          <span>© {new Date().getFullYear()} VoyageNest — Travel More, Celebrate Life.</span>
           <span className="lc-legal">
             <a href="#">Privacy Policy</a>
             <a href="#">Terms &amp; Conditions</a>

@@ -1,3 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <path d="M32 6c-11 0-20 9-20 20 0 15 20 32 20 32s20-17 20-32c0-11-9-20-20-20zm0 27a7 7 0 1 1 0-14 7 7 0 0 1 0 14z" fill="#f26b21"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="16 26 112 100">
+  <!-- VoyageNest mark: abstract bird returning to a nest -->
+  <g stroke="#0E4B9A" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M25 54C43 54 59 63 72 80C85 63 101 54 119 54"/>
+    <path d="M31 89C52 105 92 105 113 89"/>
+    <path d="M42 105C58 115 86 115 102 105"/>
+  </g>
+  <circle cx="72" cy="40" r="7" fill="#E0613A"/>
 </svg>

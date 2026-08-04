@@ -118,15 +118,15 @@ const DESKTOP_MENUS = [
   {
     id: "company",
     label: "Company",
-    eyebrow: "Meet Trip Utsav",
+    eyebrow: "Meet VoyageNest",
     title: "Travel planned with the care of a friend.",
-    description: "Discover the people, principles and personal service behind every Trip Utsav journey.",
+    description: "Discover the people, principles and personal service behind every VoyageNest journey.",
     cta: { to: "/about", label: "Read our story" },
     groups: [
       {
         title: "Discover",
         links: [
-          { label: "About Trip Utsav", to: "/about" },
+          { label: "About VoyageNest", to: "/about" },
           { label: "Why Travel With Us", to: "/about#why-us" },
           { label: "Our Services", to: "/services" },
           { label: "Contact Us", to: "/contact" },
@@ -249,14 +249,14 @@ export default function Navbar() {
           <Link
             className="brand"
             to="/"
-            aria-label="Trip Utsav home"
+            aria-label="VoyageNest home"
             onClick={() => {
               close();
               /* already home — the route won't change, so scroll instead */
               if (location.pathname === "/") window.scrollTo({ top: 0, behavior: "smooth" });
             }}
           >
-            <img src={asset("trip-utsav-logo.svg")} alt="Trip Utsav" />
+            <img src={asset("voyagenest-logo.svg")} alt="VoyageNest" />
           </Link>
 
           <div

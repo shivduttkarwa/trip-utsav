@@ -18,7 +18,7 @@ const SERVICES = [
    the holder. Kept as data rather than JSX text so the chevrons never have to
    be escaped. */
 const MRZ = [
-  "P<INDTRIP<UTSAV<<TRAVEL<MORE<<CELEBRATE<LIFE<<",
+  "P<INDVOYAGE<NEST<<TRAVEL<MORE<<CELEBRATE<LIFE<",
   "TU25000001<4IND<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<",
 ];
 
@@ -40,11 +40,11 @@ export default function ServicesPreview() {
         <SectionHead
           eyebrow="Beyond Packages"
           title="Every Travel Service, One Roof"
-          text="Trip Utsav is a full-service agency — whatever moves you, we arrange it."
+          text="VoyageNest is a full-service agency — whatever moves you, we arrange it."
         />
 
         <Reveal className="pp">
-          <span className="pp-mark" aria-hidden="true">Trip Utsav · Admitted</span>
+          <span className="pp-mark" aria-hidden="true">VoyageNest · Admitted</span>
 
           <div className="pp-grid">
             {SERVICES.map((s, i) => (

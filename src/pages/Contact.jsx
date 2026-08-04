@@ -152,7 +152,7 @@ export default function Contact() {
           <Reveal>
             <iframe
               className="map-frame"
-              title="Trip Utsav office location"
+              title="VoyageNest office location"
               src="https://www.openstreetmap.org/export/embed.html?bbox=75.83%2C22.70%2C75.90%2C22.75&layer=mapnik&marker=22.7196%2C75.8577"
               loading="lazy"
             ></iframe>

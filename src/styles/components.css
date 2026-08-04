@@ -133,51 +133,7 @@
 .acc-body { max-height: 0; overflow: hidden; transition: max-height 0.5s var(--ease-out); }
 .acc-body-inner { padding: 0 1.5rem 1.375rem; color: var(--body); }
 
-/* Testimonials slider */
-.testi-wrap { position: relative; }
-.testi-viewport { overflow: hidden; }
-.testi-track { display: flex; transition: transform 0.6s var(--ease-out); }
-.testi-slide { flex: 0 0 100%; padding: 0.375rem; }
-@media (min-width: 821px) { .testi-slide { flex-basis: 50%; } }
-@media (min-width: 1180px) { .testi-slide { flex-basis: 33.3334%; } }
-.testi-card {
-  height: 100%;
-  background: #fff;
-  border-radius: var(--r-lg);
-  padding: 2.125rem 2rem;
-  border: 0.0625rem solid var(--line);
-  display: flex;
-  flex-direction: column;
-  gap: 1.125rem;
-  transition: transform 0.4s var(--ease-out), box-shadow 0.4s, border-color 0.4s;
-}
-.testi-card:hover { transform: translateY(-0.375rem); box-shadow: var(--shadow-md); border-color: transparent; }
-.testi-card .quote-mark { font-family: var(--font-heading); font-style: italic; font-size: 3.4rem; line-height: 0.4; color: var(--orange); opacity: 0.9; }
-.testi-card p {
-  flex: 1;
-  font-family: var(--font-heading);
-  font-style: italic;
-  font-weight: 400;
-  font-size: 1.12rem;
-  line-height: 1.5;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-}
-.testi-author { display: flex; align-items: center; gap: 0.8125rem; }
-.testi-author .avatar {
-  width: 2.875rem; height: 2.875rem;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: var(--grad-brand);
-  color: #fff;
-  font-weight: 700;
-  font-family: var(--font-display);
-  flex: none;
-}
-.testi-author strong { display: block; color: var(--ink); font-size: 0.95rem; }
-.testi-author small { color: var(--muted); }
-.slider-nav { display: flex; gap: 0.625rem; }
+/* Slider arrows (postcard rails on Home and About) */
 .slider-btn {
   width: 2.875rem; height: 2.875rem;
   border-radius: 50%;
@@ -190,9 +146,6 @@
 }
 .slider-btn:hover { background: var(--orange); border-color: var(--orange); color: #fff; transform: translateY(-0.125rem); box-shadow: var(--shadow-orange); }
 .slider-btn svg { width: 1.125rem; height: 1.125rem; }
-.slider-dots { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1.75rem; }
-.slider-dots button { width: 0.5625rem; height: 0.5625rem; border-radius: var(--r-pill); background: var(--line); transition: all 0.35s var(--ease-out); }
-.slider-dots button.active { width: 1.75rem; background: var(--orange); }
 
 /* Timeline (itinerary) */
 .timeline { position: relative; padding-left: 2.125rem; }

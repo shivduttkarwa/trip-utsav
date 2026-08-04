@@ -212,7 +212,7 @@ export function Preloader() {
       <div className="pl-panels" aria-hidden="true"><i /><i /><i /></div>
 
       <div className="pl-content">
-        <img className="pl-logo" src={asset("trip-utsav-logo.svg")} alt="Trip Utsav" />
+        <img className="pl-logo" src={asset("voyagenest-logo.svg")} alt="VoyageNest" />
 
         <svg className="pl-map" viewBox="0 18 1000 404" fill="none" aria-hidden="true">
           <defs>

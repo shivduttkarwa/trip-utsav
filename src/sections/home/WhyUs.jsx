@@ -12,7 +12,7 @@ import asset from "../../asset";
 gsap.registerPlugin(ScrollTrigger);
 
 /* ============================================================
-   WHY TRIP UTSAV — stacking cards over a held photograph.
+   WHY VOYAGENEST — stacking cards over a held photograph.
 
    THE STACKING IS CSS. Not ScrollTrigger pins.
 
@@ -187,7 +187,7 @@ export default function WhyUs() {
     <section className="why" ref={root}>
       <div className="container">
         <SectionHead
-          eyebrow="Why Trip Utsav"
+          eyebrow="Why VoyageNest"
           title={<>We don't sell tours.<br />We craft <span className="text-grad">celebrations.</span></>}
           text="Anyone can book a hotel. We obsess over the sunrise slot at the Taj, the window seat over the Himalayas, the candle-lit surprise on your anniversary night."
         />

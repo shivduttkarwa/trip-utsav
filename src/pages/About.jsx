@@ -6,7 +6,7 @@ import Button from "../components/Button";
 import Reveal from "../components/Reveal";
 import SectionHead from "../components/SectionHead";
 import Stat from "../components/Stat";
-import TestimonialSlider from "../components/TestimonialSlider";
+import Testimonials from "../sections/home/Testimonials";
 import CtaBanner from "../components/CtaBanner";
 import { useUI } from "../components/UIContext";
 import "../styles/about.css";
@@ -41,25 +41,36 @@ const DECLARATIONS = [
 
 const TEAM = [
   {
-    name: "Kailash Utsav", role: "Founder & Chief Explorer", img: IMG("photo-1560250097-0b93528c311a", 600),
+    name: "James Carter", role: "Founder & Chief Explorer", img: IMG("photo-1560250097-0b93528c311a", 600),
     fields: [["On the road since", "2014"], ["Known for", "Replying at 2 a.m."]],
-    mrz: ["P<TUTSAV<<KAILASH<UTSAV<<<<<<<<<<<<<<<<<<<<", "FOUNDER<<SINCE2014<<INDORE<<<<<<<<<<<<<<<01"]
+    mrz: ["P<VNEST<<<JAMES<CARTER<<<<<<<<<<<<<<<<<<<<<", "FOUNDER<<SINCE2014<<INDORE<<<<<<<<<<<<<<<01"]
   },
   {
     name: "Meera Nair", role: "Head of Itineraries", img: IMG("photo-1573496359142-b8d87734a5a2", 600),
     fields: [["On the road since", "2016"], ["Known for", "Napkin sketches that become routes"]],
-    mrz: ["P<TUTSAV<<MEERA<NAIR<<<<<<<<<<<<<<<<<<<<<<<", "ITINERARIES<<SINCE2016<<<<<<<<<<<<<<<<<<<02"]
+    mrz: ["P<VNEST<<<MEERA<NAIR<<<<<<<<<<<<<<<<<<<<<<<", "ITINERARIES<<SINCE2016<<<<<<<<<<<<<<<<<<<02"]
   },
   {
     name: "Arjun Bhatt", role: "Visas & Documentation", img: IMG("photo-1472099645785-5658abf4ff4e", 600),
     fields: [["On the road since", "2017"], ["Known for", "Schengen files, first attempt"]],
-    mrz: ["P<TUTSAV<<ARJUN<BHATT<<<<<<<<<<<<<<<<<<<<<<", "VISAS<<SINCE2017<<FIRSTATTEMPT<<<<<<<<<<<03"]
+    mrz: ["P<VNEST<<<ARJUN<BHATT<<<<<<<<<<<<<<<<<<<<<<", "VISAS<<SINCE2017<<FIRSTATTEMPT<<<<<<<<<<<03"]
   },
   {
     name: "Sana Qureshi", role: "On-trip Support Lead", img: IMG("photo-1580489944761-15a19d654956", 600),
     fields: [["On the road since", "2019"], ["Known for", "Fixing missed flights before breakfast"]],
-    mrz: ["P<TUTSAV<<SANA<QURESHI<<<<<<<<<<<<<<<<<<<<<", "SUPPORT<<SINCE2019<<TIMEZONE<YOURS<<<<<<<04"]
+    mrz: ["P<VNEST<<<SANA<QURESHI<<<<<<<<<<<<<<<<<<<<<", "SUPPORT<<SINCE2019<<TIMEZONE<YOURS<<<<<<<04"]
   }
+];
+
+/* The About page's own postcards — reviews the home page doesn't show, each
+   pinned to a destination so the picture side has a photograph to turn to. */
+const INK_TESTIMONIALS = [
+  { name: "Emily & Jake Thompson", trip: "Bali Villa Escape", place: "Bali", text: "We handed over ten vague screenshots and got back the honeymoon we couldn't describe. The cliff-top dinner on the last night was entirely their idea." },
+  { name: "The Henderson Family", trip: "Kerala Backwaters", place: "Kerala", text: "A houseboat with our name on the chalkboard, a spice-garden lunch, and a driver who knew exactly when the kids needed ice cream. Flawless pacing." },
+  { name: "Marcus Bailey", trip: "Dubai Long Weekend", place: "Dubai", text: "Four days, zero queues. Desert safari at golden hour, Burj tickets already in my inbox, and a dinner booking I still don't know how they got." },
+  { name: "Olivia & Ryan Brooks", trip: "Rajasthan Heritage Trail", place: "Rajasthan", text: "Palaces by day, rooftop dinners by night. Our anniversary showed up mid-trip and so did a decorated suite we never asked for. They just knew." },
+  { name: "Grace Miller", trip: "Goa New Year", place: "Goa", text: "Flights, a sea-view stay and a table booked for midnight — planned in nine days flat. I did nothing but pack, which is exactly how I wanted it." },
+  { name: "Daniel & Sophie Reed", trip: "Andaman Island Hop", place: "Andaman", text: "Ferries, reefs and one perfectly empty beach. Every crossing was pre-booked, every snorkel fitted. We just floated from one blue to the next." }
 ];
 
 const onImgError = (e) => { e.currentTarget.onerror = null; e.currentTarget.src = FALLBACK_IMG; };
@@ -89,7 +100,7 @@ export default function About() {
           <Reveal className="ab-cover-frame" variant="zoom">
             <span className="ab-cover-emblem" aria-hidden="true"><Icon name="globe" /></span>
             <span className="ab-cover-type">Passport</span>
-            <h2 className="ab-cover-name">Trip Utsav</h2>
+            <h2 className="ab-cover-name">VoyageNest</h2>
             <em className="ab-cover-motto">The Republic of Celebration</em>
             <p>Issued in Indore, est. 2014 — valid wherever life throws a party.</p>
             <div className="ab-cover-row">
@@ -127,9 +138,10 @@ export default function About() {
               and this is the first week the whole family has belonged to each other."</em>
             </p>
             <p className="mb-3">
-              Trip Utsav was registered three months later and named in that spirit.
-              <b> Utsav</b> means festival — because we don't really sell travel. We sell the
-              occasions hiding inside it.
+              VoyageNest was registered three months later and named for that evening: the
+              <b> voyage</b> is the week away, the <b>nest</b> is what a family becomes on
+              deck — because we don't really sell travel. We sell the occasions hiding
+              inside it.
             </p>
             <Button icon="arrow" onClick={() => openEnquiry()}>Plan a Trip With Us</Button>
           </Reveal>
@@ -152,7 +164,7 @@ export default function About() {
                   className={`ab-stamp ab-stamp--${s.shape} ab-stamp--${s.ink}`}
                   style={{ "--tilt": s.tilt }}
                 >
-                  <span className="ab-stamp-org">Trip Utsav · Immigration of Joy</span>
+                  <span className="ab-stamp-org">VoyageNest · Immigration of Joy</span>
                   <span className="ab-stamp-year">{s.year}</span>
                   <strong>{s.title}</strong>
                   <em>{s.detail}</em>
@@ -163,7 +175,7 @@ export default function About() {
             {/* The blank slot the whole page walks toward. */}
             <Reveal variant="zoom" delay={STAMPS.length * 0.09}>
               <button className="ab-stamp ab-stamp--reserved" onClick={() => openEnquiry()}>
-                <span className="ab-stamp-org">Trip Utsav · Immigration of Joy</span>
+                <span className="ab-stamp-org">VoyageNest · Immigration of Joy</span>
                 <span className="ab-stamp-year">20__</span>
                 <strong>Space Reserved</strong>
                 <em>your trip goes here — tap to claim it</em>
@@ -217,10 +229,10 @@ export default function About() {
             </div>
             <div className="ab-form-foot">
               <div className="ab-sign">
-                <span className="ab-sign-name">Kailash Utsav</span>
+                <span className="ab-sign-name">James Carter</span>
                 <small>Signature of the undersigned</small>
               </div>
-              <span className="ab-form-seal" aria-hidden="true">Trip Utsav · Est. 2014 · Indore</span>
+              <span className="ab-form-seal" aria-hidden="true">VoyageNest · Est. 2014 · Indore</span>
             </div>
           </Reveal>
         </div>
@@ -240,7 +252,7 @@ export default function About() {
               <Reveal key={m.name} delay={(i % 2) * 0.1}>
                 <article className="ab-id">
                   <div className="ab-id-strip">
-                    <span>Trip Utsav · Crew Pass</span>
+                    <span>VoyageNest · Crew Pass</span>
                     <span>Type P</span>
                   </div>
                   <div className="ab-id-main">
@@ -276,12 +288,11 @@ export default function About() {
       </section>
 
       {/* ---------- IN THEIR OWN INK ---------- */}
-      <section className="section bg-surface">
-        <div className="container">
-          <SectionHead eyebrow="In Their Own Ink" title="What Travellers Write Back" />
-          <TestimonialSlider />
-        </div>
-      </section>
+      <Testimonials
+        eyebrow="In Their Own Ink"
+        title="What Travellers Write Back"
+        items={INK_TESTIMONIALS}
+      />
 
       <CtaBanner
         compact

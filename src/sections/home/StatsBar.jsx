@@ -53,7 +53,7 @@ export default function StatsBar() {
        set inline. */
     <section className="wstats" style={{ "--shot": `url("${STATS_IMAGE}")` }}>
       <div className="container">
-        <span className="wstats-eyebrow">Trip Utsav in numbers</span>
+        <span className="wstats-eyebrow">VoyageNest in numbers</span>
         <div className="wstats-grid">
           {STATS.map((stat, i) => (
             <StatWindow key={stat.label} index={i + 1} delay={i * 0.09} {...stat} />
