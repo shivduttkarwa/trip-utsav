@@ -1,0 +1,121 @@
+/* ============================================================
+   ABOUT — customs declaration.
+   Values as a filled-in form: dashed rules, ticked boxes, a
+   handwritten signature and a round orange seal.
+   ============================================================ */
+.ab-form {
+  max-width: 56rem;
+  margin-inline: auto;
+  background: #fff;
+  border: 0.0625rem solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+.ab-form-head {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  padding: 1.1rem clamp(1.4rem, 3vw, 2rem);
+  border-bottom: 0.0625rem dashed rgba(19, 26, 42, 0.25);
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.ab-form-intro {
+  padding: 1.4rem clamp(1.4rem, 3vw, 2rem) 0;
+  margin: 0;
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--body);
+}
+.ab-form-rows {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.25rem, 3vw, 1.9rem) clamp(1.5rem, 3.5vw, 2.75rem);
+  padding: clamp(1.4rem, 3vw, 1.9rem) clamp(1.4rem, 3vw, 2rem);
+}
+.ab-decl { display: flex; gap: 0.95rem; }
+.ab-box {
+  flex: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-top: 0.2rem;
+  display: grid;
+  place-items: center;
+  border: 0.125rem solid rgba(19, 26, 42, 0.7);
+  border-radius: 0.25rem;
+  color: var(--orange);
+}
+/* A tick never lands square in its box. */
+.ab-box svg { width: 1.05rem; height: 1.05rem; transform: rotate(-6deg) translateY(-0.05rem); }
+.ab-decl h3 { font-size: 1.05rem; margin: 0 0 0.3rem; }
+.ab-decl p { font-size: 0.92rem; margin: 0; }
+
+.ab-form-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1.25rem 2rem;
+  padding: 1.3rem clamp(1.4rem, 3vw, 2rem) 1.6rem;
+  border-top: 0.0625rem dashed rgba(19, 26, 42, 0.25);
+}
+.ab-sign-name {
+  display: inline-block;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 1.8rem;
+  line-height: 1;
+  color: var(--blue-ink);
+  transform: rotate(-2deg);
+}
+.ab-sign small {
+  display: block;
+  margin-top: 0.45rem;
+  padding-top: 0.45rem;
+  border-top: 0.0625rem solid var(--line);
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.ab-form-seal {
+  flex: none;
+  width: 6.4rem;
+  aspect-ratio: 1;
+  display: grid;
+  place-content: center;
+  position: relative;
+  padding: 0.7rem;
+  text-align: center;
+  border: 0.15rem solid var(--orange);
+  border-radius: 50%;
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.6;
+  color: var(--orange);
+  opacity: 0.85;
+  transform: rotate(8deg);
+}
+.ab-form-seal::before {
+  content: "";
+  position: absolute;
+  inset: 0.3rem;
+  border: 0.0625rem solid var(--orange);
+  border-radius: 50%;
+}
+
+@media (max-width: 760px) {
+  .ab-form-rows { grid-template-columns: 1fr; }
+}

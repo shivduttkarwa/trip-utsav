@@ -1,0 +1,61 @@
+/* ============================================================
+   ABOUT — Page 01, the first entry.
+   The founding story beside its photograph, with an arrival
+   stamp pressed half off the picture's corner.
+   ============================================================ */
+.ab-story {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: clamp(2rem, 5vw, 3.75rem);
+  align-items: center;
+}
+.ab-story-title { margin: 0.875rem 0 1.125rem; }
+.ab-story-media { position: relative; }
+.ab-story-media > img {
+  width: 100%;
+  aspect-ratio: 4 / 3.4;
+  object-fit: cover;
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
+}
+/* The arrival stamp, half off the photograph's corner — a paper disc under
+   orange ink so it stays legible over the picture. */
+.ab-story-stamp {
+  position: absolute;
+  right: -1.2rem;
+  bottom: 1.6rem;
+  width: 9.5rem;
+  aspect-ratio: 1;
+  display: grid;
+  place-content: center;
+  gap: 0.15rem;
+  text-align: center;
+  padding: 0.8rem;
+  background: rgba(253, 250, 243, 0.94);
+  border: 0.1875rem solid var(--orange-dark);
+  border-radius: 50%;
+  color: var(--orange-dark);
+  transform: rotate(-10deg);
+  box-shadow: var(--shadow-md);
+}
+.ab-story-stamp::before {
+  content: "";
+  position: absolute;
+  inset: 0.4rem;
+  border: 0.0625rem solid var(--orange-dark);
+  border-radius: 50%;
+}
+.ab-story-stamp b {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.ab-story-stamp i { font-family: var(--font-heading); font-style: italic; font-size: 0.74rem; }
+
+@media (max-width: 900px) {
+  .ab-story { grid-template-columns: 1fr; }
+  .ab-story-media { max-width: 34rem; }
+  .ab-story-stamp { right: 0.9rem; bottom: 0.9rem; width: 8rem; }
+}

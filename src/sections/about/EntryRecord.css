@@ -1,0 +1,12 @@
+/* ============================================================
+   ABOUT — entry record.
+   Centred eyebrow above the shared .stats row.
+   ============================================================ */
+.ab-meter { text-align: center; margin-bottom: clamp(1.75rem, 4vw, 2.5rem); }
+.ab-meter .eyebrow::after {
+  content: "";
+  width: 1.75rem;
+  height: 0.125rem;
+  background: currentColor;
+  border-radius: 0.125rem;
+}
