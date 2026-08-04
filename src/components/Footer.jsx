@@ -155,16 +155,16 @@ export default function Footer() {
               escapes to grand honeymoons — with the care of a friend and the precision of a pro.
             </p>
             <div className="lc-socials">
-              <a href="#" aria-label="Instagram">
+              <a className="s-ig" href="#" aria-label="Instagram">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="20" height="20" x="2" y="2" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg>
               </a>
-              <a href="#" aria-label="Facebook">
+              <a className="s-fb" href="#" aria-label="Facebook">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7h2.4l.5-3h-2.9V9.1c0-.9.3-1.6 1.7-1.6H16V4.8c-.3 0-1.2-.1-2.2-.1-2.2 0-3.8 1.4-3.8 3.9V11H7.5v3H10v7z" /></svg>
               </a>
-              <a href="#" aria-label="YouTube">
+              <a className="s-yt" href="#" aria-label="YouTube">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.3 5 12 5 12 5s-6.3 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2 26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8c1.5.4 7.8.4 7.8.4s6.3 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15.2V8.8l5.2 3.2Z" /></svg>
               </a>
-              <a href={SITE.whatsapp} aria-label="WhatsApp" target="_blank" rel="noopener noreferrer">
+              <a className="s-wa" href={SITE.whatsapp} aria-label="WhatsApp" target="_blank" rel="noopener noreferrer">
                 <Icon name="whatsapp" />
               </a>
             </div>

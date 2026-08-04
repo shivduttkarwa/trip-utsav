@@ -3,12 +3,20 @@
 /* Packages listing */
 .filter-bar {
   position: sticky;
-  top: 4.125rem;
+  /* Flush under the scrolled navbar: by the time this bar reaches the top
+     the navbar has already shrunk to its 4rem scrolled height, so anything
+     more leaves a gap between the two. */
+  top: 4rem;
   z-index: 500;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(0.875rem);
   border-block: 0.0625rem solid var(--line);
   padding: 1rem 0;
+}
+/* Phones: the bar stays in the flow. Sticky, it ate a third of a small
+   screen and shadowed every card beneath it. */
+@media (max-width: 700px) {
+  .filter-bar { position: static; }
 }
 .filter-bar .container { display: flex; gap: 0.875rem; align-items: center; flex-wrap: wrap; }
 .filter-search { flex: 1 1 15rem; display: flex; align-items: center; gap: 0.625rem; border: 0.09375rem solid var(--line); border-radius: var(--r-pill); padding: 0.625rem 1.125rem; background: #fff; transition: border-color 0.25s, box-shadow 0.25s; }

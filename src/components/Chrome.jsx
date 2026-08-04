@@ -19,7 +19,18 @@ export function ToastHost() {
 
 export function FloatingButtons() {
   const [showTop, setShowTop] = useState(false);
+  const [atFooter, setAtFooter] = useState(false);
   const topRef = useRef(null);
+
+  /* The footer carries its own contact block, so the talk floats bow out
+     when it arrives (phones only — see the is-away rules). */
+  useEffect(() => {
+    const footer = document.querySelector(".footer");
+    if (!footer) return;
+    const io = new IntersectionObserver(([e]) => setAtFooter(e.isIntersecting), { threshold: 0 });
+    io.observe(footer);
+    return () => io.disconnect();
+  }, []);
 
   /* Read progress drives the to-top ring. Written as a CSS var straight onto
      the button so scrolling never re-renders the component — the only state
@@ -44,10 +55,10 @@ export function FloatingButtons() {
       {/* One right-edge stack, top to bottom: call, WhatsApp, back-to-top.
           The talk pair sits a slot high; when the to-top ring arrives in the
           corner the pair steps up to make room (see the :has rules). */}
-      <a className="call-float" href={SITE.phoneHref} aria-label="Call us">
+      <a className={`call-float${atFooter ? " is-away" : ""}`} href={SITE.phoneHref} aria-label="Call us">
         <Icon name="phone" />
       </a>
-      <a className="wa-float" href={SITE.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+      <a className={`wa-float${atFooter ? " is-away" : ""}`} href={SITE.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
         <Icon name="whatsapp" />
       </a>
       {/* Back to top, with how far you've read drawn around it as a ring. */}

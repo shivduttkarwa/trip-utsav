@@ -296,4 +296,14 @@ body:has(.to-top.show) .call-float { bottom: 8.35rem; }
      stack (call top edge = 4.45 + 3.3 = 7.75rem); keep them in step. */
   body:has(.to-top.show) .wa-float { bottom: 4.45rem; }
   body:has(.to-top.show) .call-float { bottom: 8.15rem; }
+
+  /* At the footer the talk floats slide off the bottom edge — the footer has
+     its own contact rows, and a phone screen doesn't have room for both. The
+     to-top ring stays: the foot of the page is where it earns its keep. */
+  .wa-float, .call-float { transition: transform 0.5s var(--ease-out), bottom 0.45s var(--ease-out), opacity 0.4s ease; }
+  .wa-float.is-away, .call-float.is-away {
+    transform: translateY(200%);
+    opacity: 0;
+    pointer-events: none;
+  }
 }
