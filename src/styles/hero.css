@@ -434,11 +434,11 @@
      search card runs the full width, so at the hero's normal bottom padding
      the stack sits squarely on the Search button. Lift the card clear of it
      rather than moving the floats, which belong to every page equally.
-     Call's top edge = 3.7 (offset) + 2.6 (height) = 6.3, + 0.45 breathing
-     = 6.75rem — keep this in step with the phone float rules in
+     Call's top edge = 4.45 (offset) + 3.3 (height) = 7.75, + 0.45 breathing
+     = 8.2rem — keep this in step with the phone float rules in
      components.css. Every rem here is taken off the photograph, so it is
      derived, not rounded up. */
-  .hero { padding-bottom: 6.75rem; }
+  .hero { padding-bottom: 8.2rem; }
 
   .hs-cap {
     top: 33%;

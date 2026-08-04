@@ -277,23 +277,23 @@ body:has(.to-top.show) .call-float { bottom: 8.35rem; }
    .to-top rides directly above it, so the two move as one stack. */
 @media (max-width: 700px) {
   .wa-float {
-    right: 0.75rem;
+    right: 1.1rem;
     bottom: 0.75rem;
-    width: 2.6rem;
-    height: 2.6rem;
+    width: 3.3rem;
+    height: 3.3rem;
   }
-  .wa-float svg { width: 1.3rem; height: 1.3rem; }
+  .wa-float svg { width: 1.65rem; height: 1.65rem; }
   .call-float {
-    right: 0.75rem;
-    bottom: 3.7rem;
-    width: 2.6rem;
-    height: 2.6rem;
+    right: 1.1rem;
+    bottom: 4.45rem;
+    width: 3.3rem;
+    height: 3.3rem;
   }
-  .call-float svg { width: 1.2rem; height: 1.2rem; }
-  .to-top { right: 0.75rem; bottom: 0.75rem; width: 2.75rem; height: 2.75rem; }
-  /* Phone slots are shorter — restate the step-up with phone arithmetic.
+  .call-float svg { width: 1.5rem; height: 1.5rem; }
+  .to-top { right: 1.1rem; bottom: 0.75rem; width: 3.3rem; height: 3.3rem; }
+  /* Phone slots restated with phone arithmetic (3.3rem buttons + 0.4 gap).
      The hero card's clearance in hero.css is derived from the two-button
-     stack (call top edge = 3.7 + 2.6 = 6.3rem); keep them in step. */
-  body:has(.to-top.show) .wa-float { bottom: 3.85rem; }
-  body:has(.to-top.show) .call-float { bottom: 6.8rem; }
+     stack (call top edge = 4.45 + 3.3 = 7.75rem); keep them in step. */
+  body:has(.to-top.show) .wa-float { bottom: 4.45rem; }
+  body:has(.to-top.show) .call-float { bottom: 8.15rem; }
 }

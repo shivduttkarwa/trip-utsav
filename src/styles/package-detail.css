@@ -380,7 +380,10 @@
   -webkit-backdrop-filter: blur(1rem);
   border-top: 0.0625rem solid var(--line);
   box-shadow: 0 -0.5rem 2rem rgba(16, 24, 43, 0.1);
-  padding: 0.75rem 0;
+  /* The safe-area term keeps the buttons above the iPhone home indicator —
+     at bottom:0 without it, the tap zone sits under Safari's own chrome and
+     presses fall through to the browser. Zero everywhere else. */
+  padding: 0.75rem 0 calc(0.75rem + env(safe-area-inset-bottom, 0px));
   /* Parked below the edge and inert until the hero leaves — `visibility`
      rather than opacity alone so it cannot take a click while invisible. */
   transform: translateY(105%);
@@ -478,11 +481,13 @@ body:has(.tr-bar.is-on):has(.to-top.show) .call-float { bottom: 12.25rem; }
 
   /* The floats are smaller and sit tighter here (components.css), so the lift
      is measured from their phone positions, not the desktop ones. */
-  body:has(.tr-bar.is-on) .to-top { bottom: 4.75rem; }
-  body:has(.tr-bar.is-on) .wa-float { bottom: 4.75rem; }
-  body:has(.tr-bar.is-on) .call-float { bottom: 7.7rem; }
-  body:has(.tr-bar.is-on):has(.to-top.show) .wa-float { bottom: 7.85rem; }
-  body:has(.tr-bar.is-on):has(.to-top.show) .call-float { bottom: 10.8rem; }
+  /* The bar grows by the safe-area inset on iPhones, so the float lifts
+     carry the same term. */
+  body:has(.tr-bar.is-on) .to-top { bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px)); }
+  body:has(.tr-bar.is-on) .wa-float { bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px)); }
+  body:has(.tr-bar.is-on) .call-float { bottom: calc(8.45rem + env(safe-area-inset-bottom, 0px)); }
+  body:has(.tr-bar.is-on):has(.to-top.show) .wa-float { bottom: calc(8.45rem + env(safe-area-inset-bottom, 0px)); }
+  body:has(.tr-bar.is-on):has(.to-top.show) .call-float { bottom: calc(12.15rem + env(safe-area-inset-bottom, 0px)); }
 }
 
 /* Below this the bar cannot hold a price and two buttons, so WhatsApp drops —
@@ -490,6 +495,8 @@ body:has(.tr-bar.is-on):has(.to-top.show) .call-float { bottom: 12.25rem; }
 @media (max-width: 520px) {
   .tr-bar-actions .btn:first-child { display: none; }
   .tr-bar-price b span { display: none; }
+  /* Natural width beside the price — just taller for the thumb. */
+  .tr-bar-actions .btn { min-height: 3.1rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
