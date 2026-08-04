@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { PACKAGES, FALLBACK_IMG } from "../data/packages";
 import asset from "../asset";
@@ -85,6 +85,23 @@ export default function Packages() {
   const clearAll = () => setParams(new URLSearchParams(), { replace: true });
   const hasFilters = search || category || budget || duration;
 
+  /* Phones: the full filter bar goes with the scroll; once it has passed the
+     top of the viewport a slim three-filter rail takes over under the navbar.
+     The top<0 guard keeps the rail away while the bar is still BELOW the
+     fold (page load), where it also fails to intersect. */
+  const filterRef = useRef(null);
+  const [mini, setMini] = useState(false);
+  useEffect(() => {
+    const el = filterRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([e]) => setMini(!e.isIntersecting && e.boundingClientRect.top < 0),
+      { rootMargin: "-64px 0px 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <>
       <header className="page-hero">
@@ -102,7 +119,7 @@ export default function Packages() {
       </header>
 
       {/* ---------- FILTER BAR ---------- */}
-      <div className="filter-bar">
+      <div className="filter-bar" ref={filterRef}>
         <div className="container">
           <div className="filter-search">
             <Icon name="search" />
@@ -128,6 +145,14 @@ export default function Packages() {
           <Select variant="pill" ariaLabel="Duration" options={DURATIONS} value={duration} onChange={(v) => setParam("duration", v)} />
           <Select variant="pill" ariaLabel="Sort" options={SORTS} value={sort} onChange={setSort} />
         </div>
+      </div>
+
+      {/* Mobile-only mini rail — the three main filters, bound to the same
+          state as the full bar, so the two can never disagree. */}
+      <div className={`filter-mini${mini ? " on" : ""}`}>
+        <Select variant="pill" ariaLabel="Budget" options={BUDGETS} value={budget} onChange={(v) => setParam("budget", v)} />
+        <Select variant="pill" ariaLabel="Duration" options={DURATIONS} value={duration} onChange={(v) => setParam("duration", v)} />
+        <Select variant="pill" ariaLabel="Sort" options={SORTS} value={sort} onChange={setSort} />
       </div>
 
       {/* ---------- RESULTS ---------- */}

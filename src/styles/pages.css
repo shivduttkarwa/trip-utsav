@@ -13,11 +13,6 @@
   border-block: 0.0625rem solid var(--line);
   padding: 1rem 0;
 }
-/* Phones: the bar stays in the flow. Sticky, it ate a third of a small
-   screen and shadowed every card beneath it. */
-@media (max-width: 700px) {
-  .filter-bar { position: static; }
-}
 .filter-bar .container { display: flex; gap: 0.875rem; align-items: center; flex-wrap: wrap; }
 .filter-search { flex: 1 1 15rem; display: flex; align-items: center; gap: 0.625rem; border: 0.09375rem solid var(--line); border-radius: var(--r-pill); padding: 0.625rem 1.125rem; background: #fff; transition: border-color 0.25s, box-shadow 0.25s; }
 .filter-search:focus-within { border-color: var(--orange); box-shadow: 0 0 0 0.25rem rgba(242, 107, 33, 0.1); }
@@ -26,6 +21,40 @@
 .filter-select { border: 0.09375rem solid var(--line); border-radius: var(--r-pill); padding: 0.625rem 1rem; background: #fff; font-size: 0.88rem; font-weight: 600; color: var(--body); outline: 0; cursor: pointer; }
 .results-count { font-size: 0.9rem; color: var(--muted); }
 .results-count b { color: var(--ink); }
+
+/* Mobile mini-filter rail. The full bar scrolls away with the page on a
+   phone; once it has passed, this fixed three-filter strip slides in under
+   the navbar. Desktop never sees it. (Must FOLLOW the base .filter-* rules:
+   same specificity, so source order decides.) */
+.filter-mini {
+  position: fixed;
+  top: 4rem;
+  left: 0;
+  right: 0;
+  z-index: 500;
+  display: none;
+  gap: 0.5rem;
+  padding: 0.5rem 4vw;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(0.875rem);
+  border-bottom: 0.0625rem solid var(--line);
+  overflow-x: auto;
+  scrollbar-width: none;
+  transform: translateY(-0.6rem);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.35s var(--ease-out), opacity 0.3s ease, visibility 0.35s;
+}
+.filter-mini::-webkit-scrollbar { display: none; }
+.filter-mini.on { transform: none; opacity: 1; visibility: visible; }
+.filter-mini .tu-select--pill { flex: none; }
+.filter-mini .tu-select--pill .tu-select-btn { padding: 0.45rem 0.85rem; white-space: nowrap; }
+
+@media (max-width: 700px) {
+  /* The full bar rides out with the scroll — the mini rail replaces it. */
+  .filter-bar { position: static; }
+  .filter-mini { display: flex; }
+}
 
 .empty-state { text-align: center; padding: 5rem 1.25rem; }
 .empty-state .icon { font-size: 3.4rem; margin-bottom: 0.75rem; }
